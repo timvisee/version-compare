@@ -17,13 +17,19 @@ let b_ver = Version::from(b);
 // Comparisons
 a_ver.compare(b_ver); // Returns: CompOp::LT
 b_ver.compare(a_ver); // Returns: CompOp::GT
-VersionCompare.compare(a_ver, b_ver); // Returns: CompOp::LT
+VersionCompare::compare(a_ver, b_ver); // Returns: CompOp::LT
 
 // Boolean tests
 assert!(a_ver.is_compare(b_ver, CompOp::LT));
 assert!(b_ver.is_compare(a_ver, CompOp::GT));
-assert!(VersionCompare.is_compare(a_ver, b_ver, CompOp::LT));
+assert!(VersionCompare::is_compare(a_ver, b_ver, CompOp::LT));
 
+// Match
+match a_ver.compare(b_ver) {
+    CompOp::LT => println!("Version a is less than b"),
+    CompOp::EQ => println!("Version a is equal to b"),
+    CompOp::GE => println!("Version a is greater than b")
+}
 ```
 
 ## License
