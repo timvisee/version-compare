@@ -1,0 +1,32 @@
+# Rust language
+/target/
+
+## Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
+## More information here http://doc.crates.io/guide.html#cargotoml-vs-cargolock
+#Cargo.lock
+
+# JetBrains IDE
+.idea
+*.iml
+out
+gen
+!/.idea/dictionaries
+!/.idea/dictionaries/*
+
+# File-based project format:
+*.iws
+
+# IntelliJ
+/out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
