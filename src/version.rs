@@ -70,11 +70,11 @@ impl<'a> Version<'a> {
     ///
     /// # Examples:
     ///
-    /// ```
-    /// assert_eq!(Version::from("1.2").compare(Version::from("1.3.2)), CompOp::LT);
-    /// assert_eq!(Version::from("1.9").compare(Version::from("1.9)), CompOp::EQ);
+    /// ```ignore
+    /// assert_eq!(Version::from("1.2").compare(Version::from("1.3.2")), CompOp::LT);
+    /// assert_eq!(Version::from("1.9").compare(Version::from("1.9")), CompOp::EQ);
     /// assert_eq!(Version::from("0.3.0.0").compare(Version::from("0.3")), CompOp::EQ);
-    /// assert_eq!(Version::from("2").compare(Version::from("1.7.3)), CompOp::GT);
+    /// assert_eq!(Version::from("2").compare(Version::from("1.7.3")), CompOp::GT);
     /// ```
     pub fn compare(&self, other: &Version) -> CompOp {
         // Get an iterator over the other version's parts
