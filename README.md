@@ -1,3 +1,5 @@
+[![Build Status on Travis CI](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)
+
 # version-compare (Rust library)
 An easy to use library for rust to compare version strings.
 
