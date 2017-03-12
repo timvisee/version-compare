@@ -214,4 +214,24 @@ mod tests {
         assert_eq!(CompOp::GE.opposite(), CompOp::LE);
         assert_eq!(CompOp::GT.opposite(), CompOp::LT);
     }
+
+    #[test]
+    fn as_flipped() {
+        assert_eq!(CompOp::EQ.as_flipped(), CompOp::EQ);
+        assert_eq!(CompOp::NE.as_flipped(), CompOp::NE);
+        assert_eq!(CompOp::LT.as_flipped(), CompOp::GT);
+        assert_eq!(CompOp::LE.as_flipped(), CompOp::GE);
+        assert_eq!(CompOp::GE.as_flipped(), CompOp::LE);
+        assert_eq!(CompOp::GT.as_flipped(), CompOp::LT);
+    }
+
+    #[test]
+    fn flip() {
+        assert_eq!(CompOp::EQ.flip(), CompOp::EQ);
+        assert_eq!(CompOp::NE.flip(), CompOp::NE);
+        assert_eq!(CompOp::LT.flip(), CompOp::GT);
+        assert_eq!(CompOp::LE.flip(), CompOp::GE);
+        assert_eq!(CompOp::GE.flip(), CompOp::LE);
+        assert_eq!(CompOp::GT.flip(), CompOp::LT);
+    }
 }
