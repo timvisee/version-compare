@@ -1,5 +1,5 @@
 /// Comparison operators.
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum CompOp {
     /// Equal to. (==)
     EQ,
@@ -13,12 +13,11 @@ pub enum CompOp {
     /// Less than or equal to. (<=)
     LE,
 
-    /// Greater than. (>)
-    GT,
-
     /// Greater than or equal to. (>=)
     GE,
 
+    /// Greater than. (>)
+    GT
 }
 
 impl CompOp {
@@ -61,8 +60,8 @@ impl CompOp {
             &CompOp::NE => CompOp::EQ,
             &CompOp::LT => CompOp::GE,
             &CompOp::LE => CompOp::GT,
-            &CompOp::GT => CompOp::LE,
-            &CompOp::GE => CompOp::LT
+            &CompOp::GE => CompOp::LT,
+            &CompOp::GT => CompOp::LE
         }
     }
 
@@ -104,8 +103,8 @@ impl CompOp {
             &CompOp::NE => CompOp::EQ,
             &CompOp::LT => CompOp::GT,
             &CompOp::LE => CompOp::GE,
-            &CompOp::GT => CompOp::LT,
-            &CompOp::GE => CompOp::LE
+            &CompOp::GE => CompOp::LE,
+            &CompOp::GT => CompOp::LT
         }
     }
 
@@ -145,9 +144,29 @@ impl CompOp {
         match self {
             &CompOp::LT => CompOp::GT,
             &CompOp::LE => CompOp::GE,
-            &CompOp::GT => CompOp::LT,
             &CompOp::GE => CompOp::LE,
+            &CompOp::GT => CompOp::LT,
             _ => self.clone()
+        }
+    }
+
+    /// Get the sign for this comparison operator.
+    ///
+    /// The following signs are returned:
+    /// - EQ: `==`
+    /// - NE: `!=`
+    /// - LT: `<`
+    /// - LE: `<=`
+    /// - GE: `>=`
+    /// - GT: `>`
+    pub fn sign(&self) -> &'static str {
+        match self {
+            &CompOp::EQ => "==",
+            &CompOp::NE => "!=",
+            &CompOp::LT => "<",
+            &CompOp::LE => "<=",
+            &CompOp::GE => ">=",
+            &CompOp::GT => ">"
         }
     }
 }
