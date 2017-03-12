@@ -37,7 +37,8 @@ impl VersionCompare {
     /// assert_eq!(version_compare.compare("1.2.3", "1.2.4"), Ok(CompOp::LT));
     /// assert_eq!(version_compare.compare("1", "0.1"), Ok(CompOp::GT));
     /// ```
-    pub fn compare(a: &str, b: &str) -> Result<CompOp, ()> {
+    // TODO: Implement tests!
+    pub fn compare(&self, a: &str, b: &str) -> Result<CompOp, ()> {
         // Create version instances
         let a_ver = Version::from(a);
         let b_ver = Version::from(b);
@@ -68,7 +69,8 @@ impl VersionCompare {
     /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GT));
     /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GE));
     /// ```
-    pub fn compare_to(a: &str, b: &str, operator: &CompOp) -> Result<bool, ()> {
+    // TODO: Implement tests!
+    pub fn compare_to(&self, a: &str, b: &str, operator: &CompOp) -> Result<bool, ()> {
         // Create version instances
         let a_ver = Version::from(a);
         let b_ver = Version::from(b);
