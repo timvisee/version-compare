@@ -109,12 +109,12 @@ impl<'a> Version<'a> {
                 },
             CompOp::LT =>
                 match operator {
-                    &CompOp::LT | &CompOp::LE => true,
+                    &CompOp::NE | &CompOp::LT | &CompOp::LE => true,
                     _ => false
                 },
             CompOp::GT =>
                 match operator {
-                    &CompOp::GT | &CompOp::GE => true,
+                    &CompOp::NE | &CompOp::GT | &CompOp::GE => true,
                     _ => false
                 },
 
@@ -288,5 +288,12 @@ mod tests {
             // Make sure the inverse operator is not correct
             assert_eq!(version_a.compare_to(&version_b, &entry.2.invert()), false);
         }
+
+        // Assert an exceptional case, compare to not equal
+        assert!(
+            Version::from("1.2").unwrap().compare_to(
+                &Version::from("1.2.3").unwrap(),
+            &CompOp::NE)
+        );
     }
 }
