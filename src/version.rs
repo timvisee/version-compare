@@ -85,6 +85,42 @@ impl<'a> Version<'a> {
         )
     }
 
+    /// Compare this version to the given `other` version,
+    /// and check whether the given comparison operator is valid.
+    ///
+    /// # Examples:
+    ///
+    /// ```ignore
+    /// assert!(Version::from("1.2").compare_eq(Version::from("1.3.2"), CompOp::LT));
+    /// assert!(Version::from("1.2").compare_eq(Version::from("1.3.2"), CompOp::LE));
+    /// assert!(Version::from("1.2").compare_eq(Version::from("1.2"), CompOp::EQ));
+    /// assert!(Version::from("1.2").compare_eq(Version::from("1.2"), CompOp::LE));
+    /// ```
+    pub fn compare_eq(&self, other: &Version, operator: &CompOp) -> bool {
+        // Get the comparison result
+        let result = self.compare(&other);
+
+        // Match the result against the given operator
+        match result {
+            CompOp::EQ =>
+                match operator {
+                    &CompOp::EQ | &CompOp::LE | &CompOp::GE => true,
+                    _ => false
+                },
+            CompOp::LT =>
+                match operator {
+                    &CompOp::LT | &CompOp::LE => true,
+                    _ => false
+                },
+            CompOp::GT =>
+                match operator {
+                    &CompOp::GT | &CompOp::GE => true,
+                    _ => false
+                },
+            _ => false
+        }
+    }
+
     /// Compare two version numbers based on the iterators of their version parts.
     ///
     /// This method returns one of the following comparison operators:
