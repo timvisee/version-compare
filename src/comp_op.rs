@@ -28,6 +28,14 @@ impl CompOp {
     /// - EQ <-> NE
     /// - LT <-> GE
     /// - LE <-> GT
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// assert_eq!(CompOp::EQ.as_inverted(), CompOp::NE)
+    /// assert_eq!(CompOp::LT.as_inverted(), CompOp::GE)
+    /// assert_eq!(CompOp::GT.as_inverted(), CompOp::LE)
+    /// ```
     pub fn as_inverted(self) -> Self {
         self.invert()
     }
@@ -38,6 +46,14 @@ impl CompOp {
     /// - EQ <-> NE
     /// - LT <-> GE
     /// - LE <-> GT
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// assert_eq!(CompOp::EQ.invert(), CompOp::NE)
+    /// assert_eq!(CompOp::LT.invert(), CompOp::GE)
+    /// assert_eq!(CompOp::GT.invert(), CompOp::LE)
+    /// ```
     pub fn invert(&self) -> Self {
         match self {
             &CompOp::EQ => CompOp::NE,
@@ -55,6 +71,14 @@ impl CompOp {
     /// - EQ <-> NE
     /// - LT <-> GT
     /// - LE <-> GE
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// assert_eq!(CompOp::EQ.as_opposite(), CompOp::NE)
+    /// assert_eq!(CompOp::LT.as_opposite(), CompOp::GT)
+    /// assert_eq!(CompOp::GE.as_opposite(), CompOp::LE)
+    /// ```
     pub fn as_opposite(self) -> Self {
         self.opposite()
     }
@@ -65,6 +89,14 @@ impl CompOp {
     /// - EQ <-> NE
     /// - LT <-> GT
     /// - LE <-> GE
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// assert_eq!(CompOp::EQ.opposite(), CompOp::NE)
+    /// assert_eq!(CompOp::LT.opposite(), CompOp::GT)
+    /// assert_eq!(CompOp::GE.opposite(), CompOp::LE)
+    /// ```
     pub fn opposite(&self) -> Self {
         match self {
             &CompOp::EQ => CompOp::NE,
