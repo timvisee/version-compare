@@ -50,4 +50,35 @@ impl VersionCompare {
         // Compare and return the result
         Ok(a_ver.unwrap().compare(&b_ver.unwrap()))
     }
+
+    /// Compare two version number strings to each other and check whether the given comparison
+    /// `operator` is valid.
+    ///
+    /// The two given version numbers must be valid, or an error will be returned.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// let version_compare = VersionCompare::new();
+    ///
+    /// // Compare version numbers
+    /// assert!(version_compare.compare_to("1.2.3", "1.2.3", &CompOp::EQ));
+    /// assert!(version_compare.compare_to("1.2.3", "1.2.3", &CompOp::LE));
+    /// assert!(version_compare.compare_to("1.2.3", "1.2.4", &CompOp::LT));
+    /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GT));
+    /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GE));
+    /// ```
+    pub fn compare_to(a: &str, b: &str, operator: &CompOp) -> Result<bool, ()> {
+        // Create version instances
+        let a_ver = Version::from(a);
+        let b_ver = Version::from(b);
+
+        // Both version numbers must have been parsed
+        if a_ver.is_none() || b_ver.is_none() {
+            return Err(());
+        }
+
+        // Compare and return the result
+        Ok(a_ver.unwrap().compare_to(&b_ver.unwrap(), &operator))
+    }
 }
