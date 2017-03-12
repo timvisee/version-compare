@@ -1,4 +1,5 @@
 /// Comparison operators.
+#[derive(Clone)]
 pub enum CompOp {
     /// Equal to. (==)
     EQ,
@@ -105,6 +106,48 @@ impl CompOp {
             &CompOp::LE => CompOp::GE,
             &CompOp::GT => CompOp::LT,
             &CompOp::GE => CompOp::LE
+        }
+    }
+
+    /// Convert to the rotated comparison operator.
+    ///
+    /// This uses the following bidirectional rules:
+    /// - LT <-> GT
+    /// - LE <-> GE
+    /// - Other operators are returned as is.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// assert_eq!(CompOp::EQ.as_rotated(), CompOp::EQ);
+    /// assert_eq!(CompOp::LT.as_rotated(), CompOp::GT);
+    /// assert_eq!(CompOp::GE.as_rotated(), CompOp::LE);
+    /// ```
+    pub fn as_rotated(self) -> Self {
+        self.rotate()
+    }
+
+    /// Get the rotated comparison operator.
+    ///
+    /// This uses the following bidirectional rules:
+    /// - LT <-> GT
+    /// - LE <-> GE
+    /// - Other operators are returned as is.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// assert_eq!(CompOp::EQ.rotate(), CompOp::EQ);
+    /// assert_eq!(CompOp::LT.rotate(), CompOp::GT);
+    /// assert_eq!(CompOp::GE.rotate(), CompOp::LE);
+    /// ```
+    pub fn rotate(&self) -> Self {
+        match self {
+            &CompOp::LT => CompOp::GT,
+            &CompOp::LE => CompOp::GE,
+            &CompOp::GT => CompOp::LT,
+            &CompOp::GE => CompOp::LE,
+            _ => self.clone()
         }
     }
 }
