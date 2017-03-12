@@ -223,6 +223,18 @@ mod tests {
     use comp_op::CompOp;
     use version::Version;
 
+    /// Struct containing a version number with some meta data.
+    /// Such a set can be used for testing.
+    ///
+    /// # Arguments
+    ///
+    /// - `0`: The version string.
+    /// - `1`: Number of version parts.
+    struct TestVersion(
+        pub &'static str,
+        pub usize
+    );
+
     /// Struct containing two version numbers, and the comparison operator.
     /// Such a set can be used for testing.
     ///
@@ -231,60 +243,73 @@ mod tests {
     /// - `0`: The main version.
     /// - `1`: The other version.
     /// - `2`: The comparison operator.
-    struct VersionCompareSet(
+    struct TestVersionSet(
         pub &'static str,
         pub &'static str,
         pub CompOp
     );
 
-    /// List of version sets, that can be compared
-    const VERSION_LIST: &'static [VersionCompareSet] = &[
-        VersionCompareSet("1", "1", CompOp::EQ),
-        VersionCompareSet("1.0.0.0", "1", CompOp::EQ),
-        VersionCompareSet("1", "1.0.0.0", CompOp::EQ),
-        VersionCompareSet("0", "0", CompOp::EQ),
-        VersionCompareSet("0.0.0", "0", CompOp::EQ),
-        VersionCompareSet("0", "0.0.0", CompOp::EQ),
-        VersionCompareSet("", "", CompOp::EQ),
-        VersionCompareSet("", "0.0", CompOp::EQ),
-        VersionCompareSet("0.0", "", CompOp::EQ),
-        VersionCompareSet("", "0.1", CompOp::LT),
-        VersionCompareSet("0.1", "", CompOp::GT),
-        VersionCompareSet("1.2.3", "1.2.3", CompOp::EQ),
-        VersionCompareSet("1.2.3", "1.2.4", CompOp::LT),
-        VersionCompareSet("1.0.0.1", "1.0.0.0", CompOp::GT),
-        VersionCompareSet("1.0.0.0", "1.0.0.1", CompOp::LT),
-        VersionCompareSet("1.2.3.4", "1.2", CompOp::GT),
-        VersionCompareSet("1.2", "1.2.3.4", CompOp::LT),
-        VersionCompareSet("1.2.3.4", "2", CompOp::LT),
-        VersionCompareSet("2", "1.2.3.4", CompOp::GT),
-        VersionCompareSet("123", "123", CompOp::EQ),
-        VersionCompareSet("123", "1.2.3", CompOp::GT),
-        VersionCompareSet("1.2.3", "123", CompOp::LT)
+    /// List of version numbers with metadata for dynamic tests
+    const TEST_VERSIONS: &'static [TestVersion] = &[
+        TestVersion("1", 1),
+        TestVersion("1.2", 2),
+        TestVersion("1.2.3.4", 4),
+        TestVersion("1.2.3.4.5.6.7.8", 8),
+        TestVersion("0", 1),
+        TestVersion("0.0.0", 3),
+        TestVersion("1.0.0", 3),
+        TestVersion("0.0.1", 3),
+        TestVersion("", 0)
+    ];
+
+    /// List of version sets for dynamic tests
+    const TEST_VERSION_SETS: &'static [TestVersionSet] = &[
+        TestVersionSet("1", "1", CompOp::EQ),
+        TestVersionSet("1.0.0.0", "1", CompOp::EQ),
+        TestVersionSet("1", "1.0.0.0", CompOp::EQ),
+        TestVersionSet("0", "0", CompOp::EQ),
+        TestVersionSet("0.0.0", "0", CompOp::EQ),
+        TestVersionSet("0", "0.0.0", CompOp::EQ),
+        TestVersionSet("", "", CompOp::EQ),
+        TestVersionSet("", "0.0", CompOp::EQ),
+        TestVersionSet("0.0", "", CompOp::EQ),
+        TestVersionSet("", "0.1", CompOp::LT),
+        TestVersionSet("0.1", "", CompOp::GT),
+        TestVersionSet("1.2.3", "1.2.3", CompOp::EQ),
+        TestVersionSet("1.2.3", "1.2.4", CompOp::LT),
+        TestVersionSet("1.0.0.1", "1.0.0.0", CompOp::GT),
+        TestVersionSet("1.0.0.0", "1.0.0.1", CompOp::LT),
+        TestVersionSet("1.2.3.4", "1.2", CompOp::GT),
+        TestVersionSet("1.2", "1.2.3.4", CompOp::LT),
+        TestVersionSet("1.2.3.4", "2", CompOp::LT),
+        TestVersionSet("2", "1.2.3.4", CompOp::GT),
+        TestVersionSet("123", "123", CompOp::EQ),
+        TestVersionSet("123", "1.2.3", CompOp::GT),
+        TestVersionSet("1.2.3", "123", CompOp::LT)
     ];
 
     #[test]
     fn as_str() {
-        assert_eq!(Version::from("1").unwrap().as_str(), "1");
-        assert_eq!(Version::from("1.2.3").unwrap().as_str(), "1.2.3");
-        assert_eq!(Version::from("0.0.0").unwrap().as_str(), "0.0.0");
-        assert_eq!(Version::from("").unwrap().as_str(), "");
+        // Test for each test version
+        for version in TEST_VERSIONS {
+            // The input version string must be the same as the returned string
+            assert_eq!(Version::from(&version.0).unwrap().as_str(), version.0);
+        }
     }
 
     #[test]
     fn part_count() {
-        assert_eq!(Version::from("1").unwrap().part_count(), 1);
-        assert_eq!(Version::from("1.2").unwrap().part_count(), 2);
-        assert_eq!(Version::from("1.2.3.4").unwrap().part_count(), 4);
-        assert_eq!(Version::from("0.0.1").unwrap().part_count(), 3);
-        assert_eq!(Version::from("0.0.0").unwrap().part_count(), 3);
-        assert_eq!(Version::from("").unwrap().part_count(), 0);
+        // Test for each test version
+        for version in TEST_VERSIONS {
+            // The number of parts must match the metadata
+            assert_eq!(Version::from(&version.0).unwrap().part_count(), version.1);
+        }
     }
 
     #[test]
     fn compare() {
         // Compare each version in the version set
-        for entry in VERSION_LIST {
+        for entry in TEST_VERSION_SETS {
             // Get both versions
             let version_a = Version::from(&entry.0).unwrap();
             let version_b = Version::from(&entry.1).unwrap();
@@ -300,7 +325,7 @@ mod tests {
     #[test]
     fn compare_to() {
         // Compare each version in the version set
-        for entry in VERSION_LIST {
+        for entry in TEST_VERSION_SETS {
             // Get both versions
             let version_a = Version::from(&entry.0).unwrap();
             let version_b = Version::from(&entry.1).unwrap();
