@@ -117,7 +117,9 @@ impl<'a> Version<'a> {
                     &CompOp::GT | &CompOp::GE => true,
                     _ => false
                 },
-            _ => false
+
+            // This should never be reached
+            _ => panic!()
         }
     }
 
@@ -190,8 +192,7 @@ impl<'a> Version<'a> {
 
                                 // This part can't be reached
                                 _ => panic!()
-                            }
-                        ,
+                            },
 
                         // This part can't be reached
                         _ => panic!()
