@@ -41,6 +41,11 @@ impl<'a> Version<'a> {
 
         // Loop over the parts, and parse them
         for part in split {
+            // Skip empty parts
+            if part.is_empty() {
+                continue;
+            }
+
             // Try to parse the value as an number
             match part.parse::<i32>() {
                 Ok(number) => parts.push(VersionPart::Number(number)),
