@@ -264,6 +264,16 @@ mod tests {
     ];
 
     #[test]
+    fn part_count() {
+        assert_eq!(Version::from("1").unwrap().part_count(), 1);
+        assert_eq!(Version::from("1.2").unwrap().part_count(), 2);
+        assert_eq!(Version::from("1.2.3.4").unwrap().part_count(), 4);
+        assert_eq!(Version::from("0.0.1").unwrap().part_count(), 3);
+        assert_eq!(Version::from("0.0.0").unwrap().part_count(), 3);
+        assert_eq!(Version::from("").unwrap().part_count(), 0);
+    }
+
+    #[test]
     fn compare() {
         // Compare each version in the version set
         for entry in VERSION_LIST {
