@@ -109,7 +109,7 @@ impl CompOp {
         }
     }
 
-    /// Convert to the rotated comparison operator.
+    /// Convert to the flipped comparison operator.
     ///
     /// This uses the following bidirectional rules:
     /// - LT <-> GT
@@ -123,11 +123,11 @@ impl CompOp {
     /// assert_eq!(CompOp::LT.as_rotated(), CompOp::GT);
     /// assert_eq!(CompOp::GE.as_rotated(), CompOp::LE);
     /// ```
-    pub fn as_rotated(self) -> Self {
-        self.rotate()
+    pub fn as_flipped(self) -> Self {
+        self.flip()
     }
 
-    /// Get the rotated comparison operator.
+    /// Get the flipped comparison operator.
     ///
     /// This uses the following bidirectional rules:
     /// - LT <-> GT
@@ -141,7 +141,7 @@ impl CompOp {
     /// assert_eq!(CompOp::LT.rotate(), CompOp::GT);
     /// assert_eq!(CompOp::GE.rotate(), CompOp::LE);
     /// ```
-    pub fn rotate(&self) -> Self {
+    pub fn flip(&self) -> Self {
         match self {
             &CompOp::LT => CompOp::GT,
             &CompOp::LE => CompOp::GE,
