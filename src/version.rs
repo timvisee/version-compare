@@ -96,7 +96,7 @@ impl<'a> Version<'a> {
     /// assert!(Version::from("1.2").compare_eq(Version::from("1.2"), CompOp::EQ));
     /// assert!(Version::from("1.2").compare_eq(Version::from("1.2"), CompOp::LE));
     /// ```
-    pub fn compare_eq(&self, other: &Version, operator: &CompOp) -> bool {
+    pub fn compare_to(&self, other: &Version, operator: &CompOp) -> bool {
         // Get the comparison result
         let result = self.compare(&other);
 
@@ -274,15 +274,18 @@ mod tests {
     }
 
     #[test]
-    fn compare_eq() {
+    fn compare_to() {
         // Compare each version in the version set
         for entry in VERSION_LIST {
             // Get both versions
             let version_a = Version::from(&entry.0).unwrap();
             let version_b = Version::from(&entry.1).unwrap();
 
-            // Compare them
-            assert!(version_a.compare_eq(&version_b, &entry.2));
+            // Test
+            assert!(version_a.compare_to(&version_b, &entry.2));
+
+            // Make sure the inverse operator is not correct
+            assert_eq!(version_a.compare_to(&version_b, &entry.2.invert()), false);
         }
     }
 }
