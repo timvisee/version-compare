@@ -272,4 +272,17 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn compare_eq() {
+        // Compare each version in the version set
+        for entry in VERSION_LIST {
+            // Get both versions
+            let version_a = Version::from(&entry.0).unwrap();
+            let version_b = Version::from(&entry.1).unwrap();
+
+            // Compare them
+            assert!(version_a.compare_eq(&version_b, &entry.2));
+        }
+    }
 }
