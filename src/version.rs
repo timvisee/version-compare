@@ -264,6 +264,14 @@ mod tests {
     ];
 
     #[test]
+    fn as_str() {
+        assert_eq!(Version::from("1").unwrap().as_str(), "1");
+        assert_eq!(Version::from("1.2.3").unwrap().as_str(), "1.2.3");
+        assert_eq!(Version::from("0.0.0").unwrap().as_str(), "0.0.0");
+        assert_eq!(Version::from("").unwrap().as_str(), "");
+    }
+
+    #[test]
     fn part_count() {
         assert_eq!(Version::from("1").unwrap().part_count(), 1);
         assert_eq!(Version::from("1.2").unwrap().part_count(), 2);
