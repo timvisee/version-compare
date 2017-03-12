@@ -2,5 +2,9 @@
 name = "version-compare"
 version = "0.0.1"
 authors = ["timvisee <timvisee@gmail.com>"]
+license = "GNU GPL-3.0"
+readme = "README.md"
+repository = "https://github.com/timvisee/version-compare"
+description = "Rust library to easily compare version strings. "
 
 [dependencies]
