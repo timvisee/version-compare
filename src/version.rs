@@ -1,3 +1,4 @@
+use std::iter::Peekable;
 use std::slice::Iter;
 
 use comp_op::CompOp;
@@ -77,95 +78,99 @@ impl<'a> Version<'a> {
     /// assert_eq!(Version::from("2").compare(Version::from("1.7.3")), CompOp::GT);
     /// ```
     pub fn compare(&self, other: &Version) -> CompOp {
-        // Get an iterator over the other version's parts
-        // TODO: Should this really be mutable?
-        let mut other_iter = other.parts.iter();
+        // Compare the versions with their peekable iterators
+        Self::compare_iter(
+            self.parts.iter().peekable(),
+            other.parts.iter().peekable()
+        )
+    }
 
+    /// Compare two version numbers based on the iterators of their version parts.
+    ///
+    /// This method returns one of the following comparison operators:
+    /// - LT
+    /// - EQ
+    /// - GT
+    fn compare_iter(mut iter: Peekable<Iter<VersionPart<'a>>>, mut other_iter: Peekable<Iter<VersionPart<'a>>>) -> CompOp {
         // Iterate through the parts of this version
         let mut other_part: Option<&VersionPart> = None;
-        for part in &self.parts {
-            // Skip this part if it's non-numeric
-            match part {
-                &VersionPart::Number(_) => {},
-                _ => continue
-            }
 
-            // Get the next numerical part for the other version
-            loop {
-                match other_iter.next() {
-                    Some(val) =>
-                        match val {
-                            &VersionPart::Number(_) => {
-                                other_part = Some(val);
-                                break;
-                            },
+        // Iterate over the iterator, without consuming it
+        loop {
+            match iter.next() {
+                Some(part) => {
+                    // Skip this part if it's non-numeric
+                    match part {
+                        &VersionPart::Number(_) => {},
+                        _ => continue
+                    }
+
+                    // Get the next numerical part for the other version
+                    loop {
+                        match other_iter.next() {
+                            Some(val) =>
+                                match val {
+                                    &VersionPart::Number(_) => {
+                                        other_part = Some(val);
+                                        break;
+                                    },
+                                    _ => {}
+                                },
+                            None => {}
+                        }
+                    }
+
+                    // If there are no parts left in the other version, try to determine the result
+                    if other_part.is_none() {
+                        // In the main version: if the current part is zero, continue to the next one
+                        match part {
+                            &VersionPart::Number(num) =>
+                                if num == 0 {
+                                    continue;
+                                },
                             _ => {}
-                        },
-                    None => {}
-                }
-            }
+                        }
 
-            // If there are no parts left in the other version, try to determine the result
-            if other_part.is_none() {
-                // In the main version: if the current part is zero, continue to the next one
-                match part {
-                    &VersionPart::Number(num) =>
-                        if num == 0 {
-                            continue;
-                        },
-                    _ => {}
-                }
+                        // The main version is greater
+                        return CompOp::GT;
+                    }
 
-                // The main version is greater
-                return CompOp::GT;
-            }
+                    // Match both part as numbers to destruct their numerical values
+                    match part {
+                        &VersionPart::Number(num) =>
+                            match other_part.unwrap() {
+                                &VersionPart::Number(other_num) => {
+                                    // Compare the numbers
+                                    match num {
+                                        n if n < other_num => return CompOp::LT,
+                                        n if n > other_num => return CompOp::GT,
+                                        n if n == other_num => continue,
 
-            // Match both part as numbers to destruct their numerical values
-            match part {
-                &VersionPart::Number(num) =>
-                    match other_part.unwrap() {
-                        &VersionPart::Number(other_num) => {
-                            // Compare the numbers
-                            match num {
-                                n if n < other_num => return CompOp::LT,
-                                n if n > other_num => return CompOp::GT,
-                                n if n == other_num => continue,
+                                        // This part can't be reached
+                                        _ => panic!()
+                                    }
+                                },
 
                                 // This part can't be reached
                                 _ => panic!()
                             }
-                        },
+                        ,
 
                         // This part can't be reached
                         _ => panic!()
                     }
-                ,
-
-                // This part can't be reached
-                _ => panic!()
+                },
+                None => break
             }
         }
 
-        // TODO: What happens when the main version parts are drained, but the other version parts
-        // aren't drained yet because the iteration wasn't yet invoked
+        // Check whether we should iterate over the other iterator, if it has any items left
+        match other_iter.peek() {
+            // Compare based on the other iterator
+            Some(_) => Self::compare_iter(other_iter, iter).as_flipped(),
 
-        // There are no parts left in the main version, try to determine the result based on the other version
-        for other_part in other_iter {
-            match other_part {
-                &VersionPart::Number(other_num) =>
-                    // Compare the part value
-                    match other_num {
-                        // If the value is greater than zero, the main version is less than the other
-                        n if n > 0 => return CompOp::LT,
-                        _ => continue
-                    },
-
-                // Skip this part if it's non-numeric
-                _ => continue
-            }
+            // Nothing more to iterate over, the versions should be equal
+            None => CompOp::EQ
         }
-
-        // The versions are equal
-        CompOp::EQ
     }
 }
