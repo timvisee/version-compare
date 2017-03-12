@@ -194,4 +194,24 @@ mod tests {
         assert_eq!(CompOp::GE.invert(), CompOp::LT);
         assert_eq!(CompOp::GT.invert(), CompOp::LE);
     }
+
+    #[test]
+    fn as_opposite() {
+        assert_eq!(CompOp::EQ.as_opposite(), CompOp::NE);
+        assert_eq!(CompOp::NE.as_opposite(), CompOp::EQ);
+        assert_eq!(CompOp::LT.as_opposite(), CompOp::GT);
+        assert_eq!(CompOp::LE.as_opposite(), CompOp::GE);
+        assert_eq!(CompOp::GE.as_opposite(), CompOp::LE);
+        assert_eq!(CompOp::GT.as_opposite(), CompOp::LT);
+    }
+
+    #[test]
+    fn opposite() {
+        assert_eq!(CompOp::EQ.opposite(), CompOp::NE);
+        assert_eq!(CompOp::NE.opposite(), CompOp::EQ);
+        assert_eq!(CompOp::LT.opposite(), CompOp::GT);
+        assert_eq!(CompOp::LE.opposite(), CompOp::GE);
+        assert_eq!(CompOp::GE.opposite(), CompOp::LE);
+        assert_eq!(CompOp::GT.opposite(), CompOp::LT);
+    }
 }
