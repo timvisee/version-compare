@@ -170,3 +170,28 @@ impl CompOp {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use comp_op::CompOp;
+
+    #[test]
+    fn as_inverted() {
+        assert_eq!(CompOp::EQ.as_inverted(), CompOp::NE);
+        assert_eq!(CompOp::NE.as_inverted(), CompOp::EQ);
+        assert_eq!(CompOp::LT.as_inverted(), CompOp::GE);
+        assert_eq!(CompOp::LE.as_inverted(), CompOp::GT);
+        assert_eq!(CompOp::GE.as_inverted(), CompOp::LT);
+        assert_eq!(CompOp::GT.as_inverted(), CompOp::LE);
+    }
+
+    #[test]
+    fn invert() {
+        assert_eq!(CompOp::EQ.invert(), CompOp::NE);
+        assert_eq!(CompOp::NE.invert(), CompOp::EQ);
+        assert_eq!(CompOp::LT.invert(), CompOp::GE);
+        assert_eq!(CompOp::LE.invert(), CompOp::GT);
+        assert_eq!(CompOp::GE.invert(), CompOp::LT);
+        assert_eq!(CompOp::GT.invert(), CompOp::LE);
+    }
+}

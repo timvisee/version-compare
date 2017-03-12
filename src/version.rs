@@ -217,7 +217,7 @@ mod tests {
     ];
 
     #[test]
-    fn compare_versions() {
+    fn compare() {
         // Compare each version in the version set
         for entry in VERSION_LIST {
             // Get both versions
