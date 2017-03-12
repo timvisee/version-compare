@@ -15,8 +15,4 @@ impl VersionCompare {
     pub fn new() -> Self {
         VersionCompare { }
     }
-
-    pub fn compare() {
-
-    }
 }
