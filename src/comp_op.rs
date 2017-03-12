@@ -234,4 +234,14 @@ mod tests {
         assert_eq!(CompOp::GE.flip(), CompOp::LE);
         assert_eq!(CompOp::GT.flip(), CompOp::LT);
     }
+
+    #[test]
+    fn sign() {
+        assert_eq!(CompOp::EQ.sign(), "==");
+        assert_eq!(CompOp::NE.sign(), "!=");
+        assert_eq!(CompOp::LT.sign(), "<");
+        assert_eq!(CompOp::LE.sign(), "<=");
+        assert_eq!(CompOp::GE.sign(), ">=");
+        assert_eq!(CompOp::GT.sign(), ">");
+    }
 }
