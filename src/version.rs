@@ -107,16 +107,17 @@ impl<'a> Version<'a> {
 
                     // Get the next numerical part for the other version
                     loop {
-                        match other_iter.next() {
+                        // Get the next other part
+                        other_part = other_iter.next();
+
+                        // Make sure it's a number or none
+                        match other_part {
                             Some(val) =>
                                 match val {
-                                    &VersionPart::Number(_) => {
-                                        other_part = Some(val);
-                                        break;
-                                    },
+                                    &VersionPart::Number(_) => break,
                                     _ => {}
                                 },
-                            None => {}
+                            None => break
                         }
                     }
 
@@ -171,6 +172,63 @@ impl<'a> Version<'a> {
 
             // Nothing more to iterate over, the versions should be equal
             None => CompOp::EQ
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use comp_op::CompOp;
+    use version::Version;
+
+    /// Struct containing two version numbers, and the comparison operator.
+    /// Such a set can be used for testing.
+    ///
+    /// # Arguments
+    ///
+    /// - `0`: The main version.
+    /// - `1`: The other version.
+    /// - `2`: The comparison operator.
+    struct VersionCompareSet(
+        pub &'static str,
+        pub &'static str,
+        pub CompOp
+    );
+
+    /// List of version sets, that can be compared
+    const VERSION_LIST: &'static [VersionCompareSet] = &[
+        VersionCompareSet("1", "1", CompOp::EQ),
+        VersionCompareSet("1.0.0.0", "1", CompOp::EQ),
+        VersionCompareSet("1", "1.0.0.0", CompOp::EQ),
+        VersionCompareSet("0", "0", CompOp::EQ),
+        VersionCompareSet("0.0.0", "0", CompOp::EQ),
+        VersionCompareSet("0", "0.0.0", CompOp::EQ),
+        VersionCompareSet("1.2.3", "1.2.3", CompOp::EQ),
+        VersionCompareSet("1.2.3", "1.2.4", CompOp::LT),
+        VersionCompareSet("1.0.0.1", "1.0.0.0", CompOp::GT),
+        VersionCompareSet("1.0.0.0", "1.0.0.1", CompOp::LT),
+        VersionCompareSet("1.2.3.4", "1.2", CompOp::GT),
+        VersionCompareSet("1.2", "1.2.3.4", CompOp::LT),
+        VersionCompareSet("1.2.3.4", "2", CompOp::LT),
+        VersionCompareSet("2", "1.2.3.4", CompOp::GT),
+        VersionCompareSet("123", "123", CompOp::EQ),
+        VersionCompareSet("123", "1.2.3", CompOp::GT),
+        VersionCompareSet("1.2.3", "123", CompOp::LT)
+    ];
+
+    #[test]
+    fn compare_versions() {
+        // Compare each version in the version set
+        for entry in VERSION_LIST {
+            // Get both versions
+            let version_a = Version::from(&entry.0).unwrap();
+            let version_b = Version::from(&entry.1).unwrap();
+
+            // Compare them
+            assert_eq!(
+                version_a.compare(&version_b),
+                entry.2.clone()
+            );
         }
     }
 }
