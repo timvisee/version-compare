@@ -31,7 +31,9 @@ impl CompOp {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
     /// assert_eq!(CompOp::EQ.as_inverted(), CompOp::NE);
     /// assert_eq!(CompOp::LT.as_inverted(), CompOp::GE);
     /// assert_eq!(CompOp::GT.as_inverted(), CompOp::LE);
@@ -49,7 +51,9 @@ impl CompOp {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
     /// assert_eq!(CompOp::EQ.invert(), CompOp::NE);
     /// assert_eq!(CompOp::LT.invert(), CompOp::GE);
     /// assert_eq!(CompOp::GT.invert(), CompOp::LE);
@@ -74,7 +78,9 @@ impl CompOp {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
     /// assert_eq!(CompOp::EQ.as_opposite(), CompOp::NE);
     /// assert_eq!(CompOp::LT.as_opposite(), CompOp::GT);
     /// assert_eq!(CompOp::GE.as_opposite(), CompOp::LE);
@@ -92,7 +98,9 @@ impl CompOp {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
     /// assert_eq!(CompOp::EQ.opposite(), CompOp::NE);
     /// assert_eq!(CompOp::LT.opposite(), CompOp::GT);
     /// assert_eq!(CompOp::GE.opposite(), CompOp::LE);
@@ -117,10 +125,12 @@ impl CompOp {
     ///
     /// # Examples
     ///
-    /// ```ignore
-    /// assert_eq!(CompOp::EQ.as_rotated(), CompOp::EQ);
-    /// assert_eq!(CompOp::LT.as_rotated(), CompOp::GT);
-    /// assert_eq!(CompOp::GE.as_rotated(), CompOp::LE);
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
+    /// assert_eq!(CompOp::EQ.as_flipped(), CompOp::EQ);
+    /// assert_eq!(CompOp::LT.as_flipped(), CompOp::GT);
+    /// assert_eq!(CompOp::GE.as_flipped(), CompOp::LE);
     /// ```
     pub fn as_flipped(self) -> Self {
         self.flip()
@@ -135,10 +145,12 @@ impl CompOp {
     ///
     /// # Examples
     ///
-    /// ```ignore
-    /// assert_eq!(CompOp::EQ.rotate(), CompOp::EQ);
-    /// assert_eq!(CompOp::LT.rotate(), CompOp::GT);
-    /// assert_eq!(CompOp::GE.rotate(), CompOp::LE);
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
+    /// assert_eq!(CompOp::EQ.flip(), CompOp::EQ);
+    /// assert_eq!(CompOp::LT.flip(), CompOp::GT);
+    /// assert_eq!(CompOp::GE.flip(), CompOp::LE);
     /// ```
     pub fn flip(&self) -> Self {
         match self {
