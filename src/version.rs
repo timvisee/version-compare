@@ -25,7 +25,7 @@ impl<'a> Version<'a> {
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
-    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), CompOp::EQ);
+    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), CompOp::Eq);
     /// ```
     pub fn from(version: &'a str) -> Option<Self> {
         // Split the version string
@@ -103,9 +103,9 @@ impl<'a> Version<'a> {
     /// Compare this version to the given `other` version.
     ///
     /// This method returns one of the following comparison operators:
-    /// - LT
-    /// - EQ
-    /// - GT
+    /// - Lt
+    /// - Eq
+    /// - Gt
     ///
     /// # Examples:
     ///
@@ -113,10 +113,10 @@ impl<'a> Version<'a> {
     /// use version_compare::comp_op::CompOp;
     /// use version_compare::version::Version;
     ///
-    /// assert_eq!(Version::from("1.2").unwrap().compare(&Version::from("1.3.2").unwrap()), CompOp::LT);
-    /// assert_eq!(Version::from("1.9").unwrap().compare(&Version::from("1.9").unwrap()), CompOp::EQ);
-    /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(&Version::from("0.3").unwrap()), CompOp::EQ);
-    /// assert_eq!(Version::from("2").unwrap().compare(&Version::from("1.7.3").unwrap()), CompOp::GT);
+    /// assert_eq!(Version::from("1.2").unwrap().compare(&Version::from("1.3.2").unwrap()), CompOp::Lt);
+    /// assert_eq!(Version::from("1.9").unwrap().compare(&Version::from("1.9").unwrap()), CompOp::Eq);
+    /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(&Version::from("0.3").unwrap()), CompOp::Eq);
+    /// assert_eq!(Version::from("2").unwrap().compare(&Version::from("1.7.3").unwrap()), CompOp::Gt);
     /// ```
     pub fn compare(&self, other: &Version) -> CompOp {
         // Compare the versions with their peekable iterators
@@ -135,10 +135,10 @@ impl<'a> Version<'a> {
     /// use version_compare::comp_op::CompOp;
     /// use version_compare::version::Version;
     ///
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::LT));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::LE));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), &CompOp::EQ));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), &CompOp::LE));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::Lt));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::Le));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), &CompOp::Eq));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), &CompOp::Le));
     /// ```
     pub fn compare_to(&self, other: &Version, operator: &CompOp) -> bool {
         // Get the comparison result
@@ -146,19 +146,19 @@ impl<'a> Version<'a> {
 
         // Match the result against the given operator
         match result {
-            CompOp::EQ =>
+            CompOp::Eq =>
                 match operator {
-                    &CompOp::EQ | &CompOp::LE | &CompOp::GE => true,
+                    &CompOp::Eq | &CompOp::Le | &CompOp::Ge => true,
                     _ => false
                 },
-            CompOp::LT =>
+            CompOp::Lt =>
                 match operator {
-                    &CompOp::NE | &CompOp::LT | &CompOp::LE => true,
+                    &CompOp::Ne | &CompOp::Lt | &CompOp::Le => true,
                     _ => false
                 },
-            CompOp::GT =>
+            CompOp::Gt =>
                 match operator {
-                    &CompOp::NE | &CompOp::GT | &CompOp::GE => true,
+                    &CompOp::Ne | &CompOp::Gt | &CompOp::Ge => true,
                     _ => false
                 },
 
@@ -170,9 +170,9 @@ impl<'a> Version<'a> {
     /// Compare two version numbers based on the iterators of their version parts.
     ///
     /// This method returns one of the following comparison operators:
-    /// - LT
-    /// - EQ
-    /// - GT
+    /// - Lt
+    /// - Eq
+    /// - Gt
     fn compare_iter(mut iter: Peekable<Iter<VersionPart<'a>>>, mut other_iter: Peekable<Iter<VersionPart<'a>>>) -> CompOp {
         // Iterate through the parts of this version
         let mut other_part: Option<&VersionPart>;
@@ -215,7 +215,7 @@ impl<'a> Version<'a> {
                         }
 
                         // The main version is greater
-                        return CompOp::GT;
+                        return CompOp::Gt;
                     }
 
                     // Match both part as numbers to destruct their numerical values
@@ -225,8 +225,8 @@ impl<'a> Version<'a> {
                                 &VersionPart::Number(other_num) => {
                                     // Compare the numbers
                                     match num {
-                                        n if n < other_num => return CompOp::LT,
-                                        n if n > other_num => return CompOp::GT,
+                                        n if n < other_num => return CompOp::Lt,
+                                        n if n > other_num => return CompOp::Gt,
                                         n if n == other_num => continue,
 
                                         // This part can't be reached
@@ -252,7 +252,7 @@ impl<'a> Version<'a> {
             Some(_) => Self::compare_iter(other_iter, iter).as_flipped(),
 
             // Nothing more to iterate over, the versions should be equal
-            None => CompOp::EQ
+            None => CompOp::Eq
         }
     }
 }
@@ -317,7 +317,7 @@ mod tests {
         assert!(
             Version::from("1.2").unwrap().compare_to(
                 &Version::from("1.2.3").unwrap(),
-            &CompOp::NE)
+            &CompOp::Ne)
         );
     }
 }

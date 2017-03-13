@@ -20,9 +20,9 @@ impl VersionCompare {
     /// The two given version numbers must be valid, or an error will be returned.
     ///
     /// One of the following ok results may be returned:
-    /// - CompOp::EQ
-    /// - CompOp::LT
-    /// - CompOp::GT
+    /// - CompOp::Eq
+    /// - CompOp::Lt
+    /// - CompOp::Gt
     ///
     /// # Examples
     ///
@@ -31,9 +31,9 @@ impl VersionCompare {
     /// use version_compare::comp_op::CompOp;
     ///
     /// // Compare version numbers
-    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.3"), Ok(CompOp::EQ));
-    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.4"), Ok(CompOp::LT));
-    /// assert_eq!(VersionCompare::compare("1", "0.1"), Ok(CompOp::GT));
+    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.3"), Ok(CompOp::Eq));
+    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.4"), Ok(CompOp::Lt));
+    /// assert_eq!(VersionCompare::compare("1", "0.1"), Ok(CompOp::Gt));
     /// ```
     pub fn compare(a: &str, b: &str) -> Result<CompOp, ()> {
         // Create version instances
@@ -61,11 +61,11 @@ impl VersionCompare {
     /// use version_compare::comp_op::CompOp;
     ///
     /// // Compare version numbers
-    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::EQ).unwrap());
-    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::LE).unwrap());
-    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.4", &CompOp::LT).unwrap());
-    /// assert!(VersionCompare::compare_to("1", "0.1", &CompOp::GT).unwrap());
-    /// assert!(VersionCompare::compare_to("1", "0.1", &CompOp::GE).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::Eq).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::Le).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.4", &CompOp::Lt).unwrap());
+    /// assert!(VersionCompare::compare_to("1", "0.1", &CompOp::Gt).unwrap());
+    /// assert!(VersionCompare::compare_to("1", "0.1", &CompOp::Ge).unwrap());
     /// ```
     pub fn compare_to(a: &str, b: &str, operator: &CompOp) -> Result<bool, ()> {
         // Create version instances
@@ -111,6 +111,6 @@ mod tests {
         }
 
         // Assert an exceptional case, compare to not equal
-        assert!(VersionCompare::compare_to("1.2.3", "1.2", &CompOp::NE).unwrap());
+        assert!(VersionCompare::compare_to("1.2.3", "1.2", &CompOp::Ne).unwrap());
     }
 }

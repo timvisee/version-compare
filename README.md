@@ -14,32 +14,32 @@ let a = "1.2";
 let b = "1.5.1";
 
 // The following comparison operators are used:
-// - CompOp::EQ -> Equal
-// - CompOp::NE -> Not equal
-// - CompOp::LT -> Less than
-// - CompOp::LE -> Less than or equal to
-// - CompOp::GE -> Greater than or equal to
-// - CompOp::GT -> Greater than
+// - CompOp::Eq -> Equal
+// - CompOp::Ne -> Not equal
+// - CompOp::Lt -> Less than
+// - CompOp::Le -> Less than or equal to
+// - CompOp::Ge -> Greater than or equal to
+// - CompOp::Gt -> Greater than
 
 // Easily compare
-VersionCompare::compare(&a, &b); // -> CompOp::LT
-VersionCompare::compare_to(&a, &b, &CompOp::LE); // -> true
-VersionCompare::compare_to(&a, &b, &CompOp::GT); // -> false
+VersionCompare::compare(&a, &b); // -> CompOp::Lt
+VersionCompare::compare_to(&a, &b, &CompOp::Le); // -> true
+VersionCompare::compare_to(&a, &b, &CompOp::Gt); // -> false
 
 // Version string parsing
 let a_ver = Version::from(a).unwrap();
 let b_ver = Version::from(b).unwrap();
 
 // Directly compare versions
-a_ver.compare(&b_ver); // -> CompOp::LT
-b_ver.compare(&a_ver); // -> CompOp::GT
+a_ver.compare(&b_ver); // -> CompOp::Lt
+b_ver.compare(&a_ver); // -> CompOp::Gt
 a_ver.compare_to(&b_ver, &CompOp::LT); // -> true
 
 // Match
 match a_ver.compare(&b_ver) {
-    CompOp::LT => println!("Version a is less than b"),
-    CompOp::EQ => println!("Version a is equal to b"),
-    CompOp::GT => println!("Version a is greater than b")
+    CompOp::Lt => println!("Version a is less than b"),
+    CompOp::Eq => println!("Version a is equal to b"),
+    CompOp::Gt => println!("Version a is greater than b")
 }
 ```
 
