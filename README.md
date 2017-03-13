@@ -1,14 +1,30 @@
 [![Build Status on Travis CI](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)
 
-# version-compare (Rust library)
-An easy to use library for rust to compare version strings.
+# Rust library: version-compare
+> A Rust library to easily compare version numbers, and test them against various comparison operators.
 
-This library is still a work in progress.
+Comparing version numbers is hard. Especially when version numbers get really complex,
+or when their formatting differs. 
+
+This library helps you to easily compare any kind of version number with a single code-statement.
+Version numbers can also be parsed to inspect a version number by it's _parts_ if desired.
+
+Note: This library is still a work in progress. See the list below for a list of currently available and future features.
+
+## Features
+* Compare two version numbers, get: `<`, `==` or `>`.
+* Compare two version numbers against any comparison operator.
+* Parse complex version numbers.
+* Static, single-statement methods available.
+
+The following features will be added in a later version:
+* Version manifest, to specify detailed version number constraints.
+* Batch comparisons.
 
 ## Usage
-This shows a possible usage representation of the library. This might change, as the library is still a work in progress.
+This library is very easy to use. Here's a basic usage example:
 
-```Rust
+```rust
 // Define some version numbers
 let a = "1.2";
 let b = "1.5.1";
@@ -17,8 +33,8 @@ let b = "1.5.1";
 // - CompOp::Eq -> Equal
 // - CompOp::Ne -> Not equal
 // - CompOp::Lt -> Less than
-// - CompOp::Le -> Less than or equal to
-// - CompOp::Ge -> Greater than or equal to
+// - CompOp::Le -> Less than or equal
+// - CompOp::Ge -> Greater than or equal
 // - CompOp::Gt -> Greater than
 
 // Easily compare
