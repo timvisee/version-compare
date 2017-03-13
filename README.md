@@ -45,6 +45,8 @@ version-compare = "0.0.3"
 
 main.rs:
 ```rust
+extern crate version_compare;
+
 use version_compare::VersionCompare;
 use version_compare::version::Version;
 use version_compare::comp_op::CompOp;
@@ -74,13 +76,14 @@ fn main() {
     // Directly compare versions
     a_ver.compare(&b_ver); // -> CompOp::Lt
     b_ver.compare(&a_ver); // -> CompOp::Gt
-    a_ver.compare_to(&b_ver, &CompOp::LT); // -> true
+    a_ver.compare_to(&b_ver, &CompOp::Lt); // -> true
 
     // Match
     match a_ver.compare(&b_ver) {
         CompOp::Lt => println!("Version a is less than b"),
         CompOp::Eq => println!("Version a is equal to b"),
-        CompOp::Gt => println!("Version a is greater than b")
+        CompOp::Gt => println!("Version a is greater than b"),
+        _ => panic!("This is never reached")
     }
 }
 ```
