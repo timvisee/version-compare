@@ -35,14 +35,12 @@ impl VersionCompare {
     /// use version_compare::VersionCompare;
     /// use version_compare::comp_op::CompOp;
     ///
-    /// let version_compare = VersionCompare::new();
-    ///
     /// // Compare version numbers
-    /// assert_eq!(version_compare.compare("1.2.3", "1.2.3"), Ok(CompOp::EQ));
-    /// assert_eq!(version_compare.compare("1.2.3", "1.2.4"), Ok(CompOp::LT));
-    /// assert_eq!(version_compare.compare("1", "0.1"), Ok(CompOp::GT));
+    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.3"), Ok(CompOp::EQ));
+    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.4"), Ok(CompOp::LT));
+    /// assert_eq!(VersionCompare::compare("1", "0.1"), Ok(CompOp::GT));
     /// ```
-    pub fn compare(&self, a: &str, b: &str) -> Result<CompOp, ()> {
+    pub fn compare(a: &str, b: &str) -> Result<CompOp, ()> {
         // Create version instances
         let a_ver = Version::from(a);
         let b_ver = Version::from(b);
@@ -67,16 +65,14 @@ impl VersionCompare {
     /// use version_compare::VersionCompare;
     /// use version_compare::comp_op::CompOp;
     ///
-    /// let version_compare = VersionCompare::new();
-    ///
     /// // Compare version numbers
-    /// assert!(version_compare.compare_to("1.2.3", "1.2.3", &CompOp::EQ).unwrap());
-    /// assert!(version_compare.compare_to("1.2.3", "1.2.3", &CompOp::LE).unwrap());
-    /// assert!(version_compare.compare_to("1.2.3", "1.2.4", &CompOp::LT).unwrap());
-    /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GT).unwrap());
-    /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GE).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::EQ).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::LE).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.4", &CompOp::LT).unwrap());
+    /// assert!(VersionCompare::compare_to("1", "0.1", &CompOp::GT).unwrap());
+    /// assert!(VersionCompare::compare_to("1", "0.1", &CompOp::GE).unwrap());
     /// ```
-    pub fn compare_to(&self, a: &str, b: &str, operator: &CompOp) -> Result<bool, ()> {
+    pub fn compare_to(a: &str, b: &str, operator: &CompOp) -> Result<bool, ()> {
         // Create version instances
         let a_ver = Version::from(a);
         let b_ver = Version::from(b);
@@ -99,13 +95,10 @@ mod tests {
 
     #[test]
     fn compare() {
-        // Create a new version compare instance
-        let version_compare = VersionCompare::new();
-
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             assert_eq!(
-                version_compare.compare(&entry.0, &entry.1),
+                VersionCompare::compare(&entry.0, &entry.1),
                 Ok(entry.2.clone())
             );
         }
@@ -113,19 +106,16 @@ mod tests {
 
     #[test]
     fn compare_to() {
-        // Create a new version compare instance
-        let version_compare = VersionCompare::new();
-
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             // Test
-            assert!(version_compare.compare_to(&entry.0, &entry.1, &entry.2).unwrap());
+            assert!(VersionCompare::compare_to(&entry.0, &entry.1, &entry.2).unwrap());
 
             // Make sure the inverse operator is not correct
-            assert_eq!(version_compare.compare_to(&entry.0, &entry.1, &entry.2.invert()).unwrap(), false);
+            assert_eq!(VersionCompare::compare_to(&entry.0, &entry.1, &entry.2.invert()).unwrap(), false);
         }
 
         // Assert an exceptional case, compare to not equal
-        assert!(version_compare.compare_to("1.2.3", "1.2", &CompOp::NE).unwrap());
+        assert!(VersionCompare::compare_to("1.2.3", "1.2", &CompOp::NE).unwrap());
     }
 }
