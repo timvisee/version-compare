@@ -7,6 +7,8 @@
 # Rust library: version-compare
 > A Rust library to easily compare version numbers, and test them against various comparison operators.
 
+[Documentation](https://timvisee.github.io/version-compare)
+
 Comparing version numbers is hard. Especially when version numbers get really complex,
 or when their formatting differs. 
 
@@ -38,7 +40,7 @@ This library is very easy to use. Here's a basic usage example:
 Cargo.toml:
 ```toml
 [dependencies]
-version-compare = "0.0.2"
+version-compare = "0.0.3"
 ```
 
 main.rs:
