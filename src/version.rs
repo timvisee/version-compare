@@ -95,6 +95,31 @@ impl<'a> Version<'a> {
         &self.version
     }
 
+    /// Get a specific version part by it's `index`.
+    /// An error is returned if the given index is out of bound.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version::Version;
+    /// use version_compare::version_part::VersionPart;
+    ///
+    /// let ver = Version::from("1.2.3").unwrap();
+    ///
+    /// assert_eq!(ver.part(0), Ok(&VersionPart::Number(1)));
+    /// assert_eq!(ver.part(1), Ok(&VersionPart::Number(2)));
+    /// assert_eq!(ver.part(2), Ok(&VersionPart::Number(3)));
+    /// ```
+    pub fn part(&self, index: usize) -> Result<&VersionPart<'a>, ()> {
+        // Make sure the index is in-bound
+        if index < 0 || index >= self.parts.len() {
+            return Err(());
+        }
+
+        // Return the requested part
+        Ok(&self.parts[index])
+    }
+
     /// Get a vector of all version parts.
     ///
     /// # Examples
@@ -316,6 +341,23 @@ mod tests {
         for version in TEST_VERSIONS {
             // The input version string must be the same as the returned string
             assert_eq!(Version::from(&version.0).unwrap().as_str(), version.0);
+        }
+    }
+
+    #[test]
+    fn part() {
+        // Test for each test version
+        for version in TEST_VERSIONS {
+            // Create a version object
+            let ver = Version::from(&version.0).unwrap();
+
+            // Loop through each part
+            for i in 0..version.1 {
+                assert_eq!(ver.part(i), Ok(&ver.parts[i]));
+            }
+
+            // A value outside the range must return an error
+            assert!(ver.part(version.1).is_err());
         }
     }
 
