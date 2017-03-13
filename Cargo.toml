@@ -7,6 +7,8 @@ license-file = "LICENSE"
 readme = "README.md"
 repository = "https://github.com/timvisee/version-compare"
 description = "A Rust library to easily compare version numbers, and test them against various comparison operators."
+keywords = ["version", "compare", "comparison", "comparing"]
+categories = ["parsing"]
 
 [badges]
 travis-ci = { repository = "timvisee/version-compare" }
