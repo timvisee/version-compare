@@ -31,7 +31,7 @@ impl<'a> Version<'a> {
     /// ```
     pub fn from(version: &'a str) -> Option<Self> {
         // Split the version string
-        let parts = Self::split_version_str(version);
+        let parts = Self::split_version_str(version, None);
 
         // Return nothing if the parts are none
         if parts.is_none() {
@@ -64,7 +64,7 @@ impl<'a> Version<'a> {
     /// ```
     pub fn from_manifest(version: &'a str, manifest: &'a VersionManifest) -> Option<Self> {
         // Split the version string
-        let parts = Self::split_version_str(version);
+        let parts = Self::split_version_str(version, Some(&manifest));
 
         // Return nothing if the parts are none
         if parts.is_none() {
@@ -141,16 +141,27 @@ impl<'a> Version<'a> {
 
     /// Split the given version string, in it's version parts.
     /// TODO: Move this method to some sort of helper class, maybe as part of `VersionPart`.
-    fn split_version_str(version: &'a str) -> Option<Vec<VersionPart>> {
+    fn split_version_str(version: &'a str, manifest: Option<&'a VersionManifest>) -> Option<Vec<VersionPart<'a>>> {
         // Split the version string, and create a vector to put the parts in
         let split = version.split('.');
         let mut parts = Vec::new();
+
+        // Get the manifest to follow
+        let mut used_manifest = &VersionManifest::new();
+        if manifest.is_some() {
+            used_manifest = manifest.unwrap();
+        }
 
         // Flag to determine whether this version number contains any number part
         let mut has_number = false;
 
         // Loop over the parts, and parse them
         for part in split {
+            // We may not go over the maximum depth
+            if used_manifest.max_depth().is_some() && parts.len() >= used_manifest.max_depth_number() {
+                break;
+            }
+
             // Skip empty parts
             if part.is_empty() {
                 continue;
@@ -163,7 +174,15 @@ impl<'a> Version<'a> {
                     parts.push(VersionPart::Number(number));
                     has_number = true;
                 },
-                Err(_) => parts.push(VersionPart::Text(part))
+                Err(_) => {
+                    // Ignore text parts if specified
+                    if used_manifest.ignore_text() {
+                        continue;
+                    }
+
+                    // Push the text part to the vector
+                    parts.push(VersionPart::Text(part))
+                }
             }
         }
 
@@ -208,7 +227,7 @@ impl<'a> Version<'a> {
     /// ```
     pub fn part(&self, index: usize) -> Result<&VersionPart<'a>, ()> {
         // Make sure the index is in-bound
-        if index < 0 || index >= self.parts.len() {
+        if index >= self.parts.len() {
             return Err(());
         }
 
@@ -412,11 +431,14 @@ impl<'a> Version<'a> {
 
 #[cfg(test)]
 mod tests {
+    use std::cmp;
+
     use comp_op::CompOp;
     use test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use test::test_version_set::TEST_VERSION_SETS;
     use version::Version;
     use version_manifest::VersionManifest;
+    use version_part::VersionPart;
 
     #[test]
     // TODO: This doesn't really test whether this method fully works
@@ -517,6 +539,83 @@ mod tests {
         for version in TEST_VERSIONS {
             // The number of parts must match
             assert_eq!(Version::from(&version.0).unwrap().parts().len(), version.1);
+        }
+    }
+
+    #[test]
+    fn parts_max_depth() {
+        // Create a manifest
+        let mut manifest = VersionManifest::new();
+
+        // Loop through a range of numbers
+        for depth in 0..5 {
+            // Set the maximum depth
+            manifest.set_max_depth_number(depth);
+
+            // Test for each test version with the manifest
+            for version in TEST_VERSIONS {
+                // Create a version object, and count it's parts
+                let ver = Version::from_manifest(&version.0, &manifest);
+
+                // Some versions might be none, because not all of the start with a number when the
+                // maximum depth is 1. A version string with only text isn't allowed,
+                // resulting in none.
+                if ver.is_none() {
+                    continue;
+                }
+
+                // Get the part count
+                let count = ver.unwrap().parts().len();
+
+                // The number of parts must match
+                if depth == 0 {
+                    assert_eq!(count, version.1);
+                } else {
+                    assert_eq!(count, cmp::min(version.1, depth));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn parts_ignore_text() {
+        // Create a manifest
+        let mut manifest = VersionManifest::new();
+
+        // Try this for true and false
+        for ignore in vec![true, false] {
+            // Set to ignore text
+            manifest.set_ignore_text(ignore);
+
+            // Keep track whether any version passed with text
+            let mut had_text = false;
+
+            // Test each test version
+            for version in TEST_VERSIONS {
+                // Create a version instance, and get it's parts
+                let ver = Version::from_manifest(&version.0, &manifest).unwrap();
+
+                // Loop through all version parts
+                for part in ver.parts() {
+                    match part {
+                        &VersionPart::Text(_) => {
+                            // Set the flag
+                            had_text = true;
+
+                            // Break the loop if we already reached text when not ignored
+                            if !ignore {
+                                break;
+                            } else {
+                                panic!("Found text when it should have been ignored");
+                            }
+                        },
+                        _ => {}
+                    }
+                }
+            }
+
+            // Assert had text
+            assert_eq!(had_text, !ignore);
         }
     }
 
