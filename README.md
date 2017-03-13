@@ -7,9 +7,14 @@ Comparing version numbers is hard. Especially when version numbers get really co
 or when their formatting differs. 
 
 This library helps you to easily compare any kind of version number with a single code-statement.
-Version numbers can also be parsed to inspect a version number by it's _parts_ if desired.
+Two version numbers can be compared to each other, to get a relevant comparison operator (`<`, `==`, `>`),
+or version numbers can be tested against any given comparison operator.
 
-Note: This library is still a work in progress. See the list below for a list of currently available and future features.
+Along with version comparison, the library also features other useful tools.
+For example; version numbers can also be parsed to inspect a version number by it's bare _parts_ if desired.
+
+Note: This library is still a work in progress.
+See the list below for a list of currently available and future features.
 
 ## Features
 * Compare two version numbers, get: `<`, `==` or `>`.
