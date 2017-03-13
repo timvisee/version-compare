@@ -13,11 +13,6 @@ pub struct VersionCompare { }
 /// Version compare implementation.
 impl VersionCompare {
 
-    /// Create a new version compare instance.
-    pub fn new() -> Self {
-        VersionCompare { }
-    }
-
     /// Compare two version number strings to each other.
     /// This compares version `a` to version `b`, and returns whether version `a` is greater, less
     /// or equal to version `b`.
