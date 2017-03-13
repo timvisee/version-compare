@@ -95,6 +95,26 @@ impl<'a> Version<'a> {
         &self.version
     }
 
+    /// Get a vector of all version parts.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version::Version;
+    /// use version_compare::version_part::VersionPart;
+    ///
+    /// let ver = Version::from("1.2.3").unwrap();
+    ///
+    /// assert_eq!(ver.parts(), &vec![
+    ///     VersionPart::Number(1),
+    ///     VersionPart::Number(2),
+    ///     VersionPart::Number(3)
+    /// ]);
+    /// ```
+    pub fn parts(&self) -> &Vec<VersionPart<'a>> {
+        &self.parts
+    }
+
     /// Get the number of parts in this version string.
     ///
     /// # Examples
@@ -296,6 +316,15 @@ mod tests {
         for version in TEST_VERSIONS {
             // The input version string must be the same as the returned string
             assert_eq!(Version::from(&version.0).unwrap().as_str(), version.0);
+        }
+    }
+
+    #[test]
+    fn parts() {
+        // Test for each test version
+        for version in TEST_VERSIONS {
+            // The number of parts must match
+            assert_eq!(Version::from(&version.0).unwrap().parts().len(), version.1);
         }
     }
 

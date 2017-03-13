@@ -1,4 +1,5 @@
 /// Part of a version string.
+#[derive(Debug, PartialEq)]
 pub enum VersionPart<'a> {
 
     /// Numeric part.
