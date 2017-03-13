@@ -175,7 +175,7 @@ impl<'a> Version<'a> {
     /// - GT
     fn compare_iter(mut iter: Peekable<Iter<VersionPart<'a>>>, mut other_iter: Peekable<Iter<VersionPart<'a>>>) -> CompOp {
         // Iterate through the parts of this version
-        let mut other_part: Option<&VersionPart> = None;
+        let mut other_part: Option<&VersionPart>;
 
         // Iterate over the iterator, without consuming it
         loop {
