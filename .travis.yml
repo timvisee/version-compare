@@ -20,7 +20,7 @@ script:
   travis-cargo build &&
   travis-cargo test &&
   travis-cargo bench &&
-  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo --only stable doc;
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo --only stable doc; fi
 addons:
   apt:
     packages:
