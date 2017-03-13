@@ -1,6 +1,7 @@
 pub mod comp_op;
 pub mod version;
 pub mod version_part;
+pub mod version_manifest;
 #[cfg(test)]
 mod test;
 
