@@ -1,6 +1,6 @@
-mod comp_op;
-mod version;
-mod version_part;
+pub mod comp_op;
+pub mod version;
+pub mod version_part;
 #[cfg(test)]
 mod test;
 
@@ -31,7 +31,10 @@ impl VersionCompare {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use version_compare::VersionCompare;
+    /// use version_compare::comp_op::CompOp;
+    ///
     /// let version_compare = VersionCompare::new();
     ///
     /// // Compare version numbers
@@ -61,15 +64,18 @@ impl VersionCompare {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
+    /// use version_compare::VersionCompare;
+    /// use version_compare::comp_op::CompOp;
+    ///
     /// let version_compare = VersionCompare::new();
     ///
     /// // Compare version numbers
-    /// assert!(version_compare.compare_to("1.2.3", "1.2.3", &CompOp::EQ));
-    /// assert!(version_compare.compare_to("1.2.3", "1.2.3", &CompOp::LE));
-    /// assert!(version_compare.compare_to("1.2.3", "1.2.4", &CompOp::LT));
-    /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GT));
-    /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GE));
+    /// assert!(version_compare.compare_to("1.2.3", "1.2.3", &CompOp::EQ).unwrap());
+    /// assert!(version_compare.compare_to("1.2.3", "1.2.3", &CompOp::LE).unwrap());
+    /// assert!(version_compare.compare_to("1.2.3", "1.2.4", &CompOp::LT).unwrap());
+    /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GT).unwrap());
+    /// assert!(version_compare.compare_to("1", "0.1", &CompOp::GE).unwrap());
     /// ```
     // TODO: Implement tests!
     pub fn compare_to(&self, a: &str, b: &str, operator: &CompOp) -> Result<bool, ()> {
