@@ -1,6 +1,7 @@
 [![Build Status on Travis CI](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)
 [![Library on crates.io](https://img.shields.io/crates/v/version-compare.svg)](https://crates.io/crates/version-compare)
 [![Download statistics on crates.io](https://img.shields.io/crates/d/version-compare.svg)](https://crates.io/crates/version-compare)
+[![Coverage Status](https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master)](https://coveralls.io/github/timvisee/version-compare?branch=master)
 [![Library on crates.io](https://img.shields.io/crates/l/version-compare.svg)](https://crates.io/crates/version-compare)
 
 # Rust library: version-compare
