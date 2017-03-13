@@ -12,6 +12,17 @@ pub struct VersionManifest {
 impl VersionManifest {
 
     /// Constructor.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version_manifest::VersionManifest;
+    ///
+    /// let mut manifest = VersionManifest::new();
+    ///
+    /// // Ignore text parts
+    /// manifest.set_ignore_text(true);
+    /// ```
     pub fn new() -> Self {
         VersionManifest {
             max_depth: None,
@@ -159,5 +170,105 @@ impl VersionManifest {
     /// ```
     pub fn set_ignore_text(&mut self, ignore_text: bool) {
         self.ignore_text = ignore_text;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use version_manifest::VersionManifest;
+
+    #[test]
+    fn max_depth() {
+        let mut manifest = VersionManifest::new();
+
+        manifest.max_depth = Some(1);
+        assert_eq!(manifest.max_depth(), &Some(1));
+
+        manifest.max_depth = Some(3);
+        assert_eq!(manifest.max_depth(), &Some(3));
+
+        manifest.max_depth = None;
+        assert_eq!(manifest.max_depth(), &None);
+    }
+
+    #[test]
+    fn max_depth_number() {
+        let mut manifest = VersionManifest::new();
+
+        manifest.max_depth = Some(1);
+        assert_eq!(manifest.max_depth_number(), 1);
+
+        manifest.max_depth = Some(3);
+        assert_eq!(manifest.max_depth_number(), 3);
+
+        manifest.max_depth = None;
+        assert_eq!(manifest.max_depth_number(), 0);
+    }
+
+    #[test]
+    fn set_max_depth() {
+        let mut manifest = VersionManifest::new();
+
+        manifest.set_max_depth(Some(1));
+        assert_eq!(manifest.max_depth, Some(1));
+
+        manifest.set_max_depth(Some(3));
+        assert_eq!(manifest.max_depth, Some(3));
+
+        manifest.set_max_depth(Some(0));
+        assert_eq!(manifest.max_depth, None);
+
+        manifest.set_max_depth(None);
+        assert_eq!(manifest.max_depth, None);
+    }
+
+    #[test]
+    fn set_max_depth_number() {
+        let mut manifest = VersionManifest::new();
+
+        manifest.set_max_depth_number(1);
+        assert_eq!(manifest.max_depth, Some(1));
+
+        manifest.set_max_depth_number(3);
+        assert_eq!(manifest.max_depth, Some(3));
+
+        manifest.set_max_depth_number(0);
+        assert_eq!(manifest.max_depth, None);
+    }
+
+    #[test]
+    fn has_max_depth() {
+        let mut manifest = VersionManifest::new();
+
+        manifest.max_depth = Some(1);
+        assert!(manifest.has_max_depth());
+
+        manifest.max_depth = Some(3);
+        assert!(manifest.has_max_depth());
+
+        manifest.max_depth = None;
+        assert!(!manifest.has_max_depth());
+    }
+
+    #[test]
+    fn ignore_text() {
+        let mut manifest = VersionManifest::new();
+
+        manifest.ignore_text = true;
+        assert!(manifest.ignore_text());
+
+        manifest.ignore_text = false;
+        assert!(!manifest.ignore_text());
+    }
+
+    #[test]
+    fn set_ignore_text() {
+        let mut manifest = VersionManifest::new();
+
+        manifest.set_ignore_text(true);
+        assert!(manifest.ignore_text);
+
+        manifest.set_ignore_text(false);
+        assert!(!manifest.ignore_text);
     }
 }
