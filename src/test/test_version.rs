@@ -20,5 +20,8 @@ pub const TEST_VERSIONS: &'static [TestVersion] = &[
     TestVersion("0.0.0", 3),
     TestVersion("1.0.0", 3),
     TestVersion("0.0.1", 3),
-    TestVersion("", 0)
+    TestVersion("", 0),
+    TestVersion("1.2.dev", 3),
+    TestVersion("1.2.alpha.4", 4),
+    TestVersion("snapshot.1.2", 3)
 ];

@@ -37,5 +37,9 @@ pub const TEST_VERSION_SETS: &'static [TestVersionSet] = &[
     TestVersionSet("2", "1.2.3.4", CompOp::Gt),
     TestVersionSet("123", "123", CompOp::Eq),
     TestVersionSet("123", "1.2.3", CompOp::Gt),
-    TestVersionSet("1.2.3", "123", CompOp::Lt)
+    TestVersionSet("1.2.3", "123", CompOp::Lt),
+    TestVersionSet("1.2.3", "1.2.3.alpha", CompOp::Eq),
+    TestVersionSet("1.2.3.dev", "1.2.3.alpha", CompOp::Eq),
+    TestVersionSet("1.2.3.dev.1", "1.2.3.alpha", CompOp::Gt),
+    TestVersionSet("snapshot.1.2.3", "1.2.3.alpha", CompOp::Eq)
 ];
