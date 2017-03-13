@@ -221,8 +221,8 @@ impl<'a> Version<'a> {
 #[cfg(test)]
 mod tests {
     use comp_op::CompOp;
-    use test::test_version::{TestVersion, TEST_VERSIONS};
-    use test::test_version_set::{TestVersionSet, TEST_VERSION_SETS};
+    use test::test_version::TEST_VERSIONS;
+    use test::test_version_set::TEST_VERSION_SETS;
     use version::Version;
 
     #[test]
