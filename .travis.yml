@@ -27,6 +27,7 @@ addons:
     - libcurl4-openssl-dev
     - libelf-dev
     - libdw-dev
+    - binutils-dev
 after_success:
 - travis-cargo --only stable doc-upload
 #- travis-cargo coveralls --no-sudo
