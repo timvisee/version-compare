@@ -43,7 +43,7 @@ Cargo.toml:
 version-compare = "0.0.3"
 ```
 
-main.rs:
+[main.rs:](examples/example.rs)
 ```rust
 extern crate version_compare;
 
