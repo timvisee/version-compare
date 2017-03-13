@@ -16,6 +16,17 @@ impl<'a> Version<'a> {
     /// Create a `Version` instance from a version string.
     ///
     /// The version string should be passed to the `version` parameter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::version::Version;
+    ///
+    /// let ver = Version::from("1.2.3").unwrap();
+    ///
+    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), CompOp::EQ);
+    /// ```
     pub fn from(version: &'a str) -> Option<Self> {
         // Split the version string
         let parts = Self::split_version_str(version);
