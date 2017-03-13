@@ -21,7 +21,16 @@ pub const TEST_VERSIONS: &'static [TestVersion] = &[
     TestVersion("1.0.0", 3),
     TestVersion("0.0.1", 3),
     TestVersion("", 0),
+    TestVersion(".", 0),
+    TestVersion("...", 0),
     TestVersion("1.2.dev", 3),
     TestVersion("1.2.alpha.4", 4),
     TestVersion("snapshot.1.2", 3)
+];
+
+/// List of version numbers that contain errors with metadata for dynamic tests
+pub const TEST_VERSIONS_ERROR: &'static [TestVersion] = &[
+    TestVersion("abc", 1),
+    TestVersion("alpha.dev.snapshot", 3),
+    TestVersion("test. .snapshot", 3)
 ];

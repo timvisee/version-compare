@@ -272,9 +272,23 @@ impl<'a> Version<'a> {
 #[cfg(test)]
 mod tests {
     use comp_op::CompOp;
-    use test::test_version::TEST_VERSIONS;
+    use test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use test::test_version_set::TEST_VERSION_SETS;
     use version::Version;
+
+    #[test]
+    // TODO: This doesn't really test whether this method fully works
+    fn from() {
+        // Test whether parsing works for each test version
+        for version in TEST_VERSIONS {
+            assert!(Version::from(&version.0).is_some());
+        }
+
+        // Test whether parsing works for each test invalid version
+        for version in TEST_VERSIONS_ERROR {
+            assert!(Version::from(&version.0).is_none());
+        }
+    }
 
     #[test]
     fn as_str() {
