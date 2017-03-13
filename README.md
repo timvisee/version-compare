@@ -10,8 +10,10 @@ This library helps you to easily compare any kind of version number with a singl
 Two version numbers can be compared to each other, to get a relevant comparison operator (`<`, `==`, `>`),
 or version numbers can be tested against any given comparison operator.
 
-Along with version comparison, the library also features other useful tools.
-For example; version numbers can also be parsed to inspect a version number by it's bare _parts_ if desired.
+Along with version comparison, the library also features other useful tools.  
+For example: version numbers can also be parsed to inspect a version number by it's bare _parts_ if desired.
+
+Inspired by PHP's [version_compare()](http://php.net/manual/en/function.version-compare.php).
 
 Note: This library is still a work in progress.
 See the list below for a list of currently available and future features.
