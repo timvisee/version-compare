@@ -2,12 +2,14 @@ use std::iter::Peekable;
 use std::slice::Iter;
 
 use comp_op::CompOp;
+use version_manifest::VersionManifest;
 use version_part::VersionPart;
 
 /// Version struct. A wrapper for a version number string.
 pub struct Version<'a> {
     version: &'a str,
-    parts: Vec<VersionPart<'a>>
+    parts: Vec<VersionPart<'a>>,
+    manifest: Option<&'a VersionManifest>
 }
 
 /// Version struct implementation.
@@ -39,8 +41,102 @@ impl<'a> Version<'a> {
         // Create and return the object
         Some(Version {
             version: version,
-            parts: parts.unwrap()
+            parts: parts.unwrap(),
+            manifest: None
         })
+    }
+
+    /// Create a `Version` instance from a version string with the given `manifest`.
+    ///
+    /// The version string should be passed to the `version` parameter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::version::Version;
+    /// use version_compare::version_manifest::VersionManifest;
+    ///
+    /// let manifest = VersionManifest::new();
+    /// let ver = Version::from_manifest("1.2.3", &manifest).unwrap();
+    ///
+    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), CompOp::Eq);
+    /// ```
+    pub fn from_manifest(version: &'a str, manifest: &'a VersionManifest) -> Option<Self> {
+        // Split the version string
+        let parts = Self::split_version_str(version);
+
+        // Return nothing if the parts are none
+        if parts.is_none() {
+            return None;
+        }
+
+        // Create and return the object
+        Some(Version {
+            version: version,
+            parts: parts.unwrap(),
+            manifest: Some(&manifest)
+        })
+    }
+
+    /// Get the version manifest, if available.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version::Version;
+    ///
+    /// let version = Version::from("1.2.3").unwrap();
+    ///
+    /// if version.has_manifest() {
+    ///     println!(
+    ///         "Maximum version part depth is {} for this version",
+    ///         version.manifest().unwrap().max_depth_number()
+    ///     );
+    /// } else {
+    ///     println!("Version has no manifest");
+    /// }
+    /// ```
+    pub fn manifest(&self) -> Option<&VersionManifest> {
+        self.manifest
+    }
+
+    /// Check whether this version has a manifest.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version::Version;
+    ///
+    /// let version = Version::from("1.2.3").unwrap();
+    ///
+    /// if version.has_manifest() {
+    ///     println!("This version does have a manifest");
+    /// } else {
+    ///     println!("This version does not have a manifest");
+    /// }
+    /// ```
+    pub fn has_manifest(&self) -> bool {
+        self.manifest().is_some()
+    }
+
+    /// Set the version manifest.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version::Version;
+    /// use version_compare::version_manifest::VersionManifest;
+    ///
+    /// let manifest = VersionManifest::new();
+    /// let mut version = Version::from("1.2.3").unwrap();
+    ///
+    /// version.set_manifest(Some(&manifest));
+    /// ```
+    pub fn set_manifest(&mut self, manifest: Option<&'a VersionManifest>) {
+        self.manifest = manifest;
+
+        // TODO: Re-parse the version string, because the manifest might have changed.
     }
 
     /// Split the given version string, in it's version parts.
@@ -320,6 +416,7 @@ mod tests {
     use test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use test::test_version_set::TEST_VERSION_SETS;
     use version::Version;
+    use version_manifest::VersionManifest;
 
     #[test]
     // TODO: This doesn't really test whether this method fully works
@@ -333,6 +430,59 @@ mod tests {
         for version in TEST_VERSIONS_ERROR {
             assert!(Version::from(&version.0).is_none());
         }
+    }
+
+    #[test]
+    // TODO: This doesn't really test whether this method fully works
+    fn from_manifest() {
+        // Create a manifest
+        let manifest = VersionManifest::new();
+
+        // Test whether parsing works for each test version
+        for version in TEST_VERSIONS {
+            assert_eq!(Version::from_manifest(&version.0, &manifest).unwrap().manifest, Some(&manifest));
+        }
+
+        // Test whether parsing works for each test invalid version
+        for version in TEST_VERSIONS_ERROR {
+            assert!(Version::from_manifest(&version.0, &manifest).is_none());
+        }
+    }
+
+    #[test]
+    fn manifest() {
+        let manifest = VersionManifest::new();
+        let mut version = Version::from("1.2.3").unwrap();
+
+        version.manifest = Some(&manifest);
+        assert_eq!(version.manifest(), Some(&manifest));
+
+        version.manifest = None;
+        assert_eq!(version.manifest(), None);
+    }
+
+    #[test]
+    fn has_manifest() {
+        let manifest = VersionManifest::new();
+        let mut version = Version::from("1.2.3").unwrap();
+
+        version.manifest = Some(&manifest);
+        assert!(version.has_manifest());
+
+        version.manifest = None;
+        assert!(!version.has_manifest());
+    }
+
+    #[test]
+    fn set_manifest() {
+        let manifest = VersionManifest::new();
+        let mut version = Version::from("1.2.3").unwrap();
+
+        version.set_manifest(Some(&manifest));
+        assert_eq!(version.manifest, Some(&manifest));
+
+        version.set_manifest(None);
+        assert_eq!(version.manifest, None);
     }
 
     #[test]

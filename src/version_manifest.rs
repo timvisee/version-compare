@@ -1,5 +1,6 @@
 /// Version manifest.
 /// A manifest (configuration) that is used respectively when parsing and comparing version strings.
+#[derive(Debug, PartialEq)]
 pub struct VersionManifest {
     /// The maximum depth of a version number. This specifies the maximum number of parts.
     max_depth: Option<usize>,
