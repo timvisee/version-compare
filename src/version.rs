@@ -84,6 +84,18 @@ impl<'a> Version<'a> {
     }
 
     /// Get the number of parts in this version string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version::Version;
+    ///
+    /// let ver_a = Version::from("1.2.3").unwrap();
+    /// let ver_b = Version::from("1.2.3.4").unwrap();
+    ///
+    /// assert_eq!(ver_a.part_count(), 3);
+    /// assert_eq!(ver_b.part_count(), 4);
+    /// ```
     pub fn part_count(&self) -> usize {
         self.parts.len()
     }
