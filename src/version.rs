@@ -50,6 +50,9 @@ impl<'a> Version<'a> {
         let split = version.split('.');
         let mut parts = Vec::new();
 
+        // Flag to determine whether this version number contains any number part
+        let mut has_number = false;
+
         // Loop over the parts, and parse them
         for part in split {
             // Skip empty parts
@@ -59,9 +62,18 @@ impl<'a> Version<'a> {
 
             // Try to parse the value as an number
             match part.parse::<i32>() {
-                Ok(number) => parts.push(VersionPart::Number(number)),
+                Ok(number) => {
+                    // Push the number part to the vector, and set the has number flag
+                    parts.push(VersionPart::Number(number));
+                    has_number = true;
+                },
                 Err(_) => parts.push(VersionPart::Text(part))
             }
+        }
+
+        // The version must contain a number part, if any part was parsed
+        if !has_number && !parts.is_empty() {
+            return None
         }
 
         // Return the list of parts
