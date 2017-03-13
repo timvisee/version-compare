@@ -69,6 +69,16 @@ impl<'a> Version<'a> {
     }
 
     /// Get the original version string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version::Version;
+    ///
+    /// let ver = Version::from("1.2.3").unwrap();
+    ///
+    /// assert_eq!(ver.as_str(), "1.2.3");
+    /// ```
     pub fn as_str(&self) -> &str {
         &self.version
     }
