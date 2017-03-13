@@ -119,6 +119,15 @@ mod tests {
             assert_eq!(VersionCompare::compare_to(&entry.0, &entry.1, &entry.2.invert()).unwrap(), false);
         }
 
+        // Compare each error version in the version set
+        for entry in TEST_VERSION_SETS_ERROR {
+            let result = VersionCompare::compare_to(&entry.0, &entry.1, &entry.2);
+
+            if result.is_ok() {
+                assert!(!result.unwrap())
+            }
+        }
+
         // Assert an exceptional case, compare to not equal
         assert!(VersionCompare::compare_to("1.2.3", "1.2", &CompOp::Ne).unwrap());
     }
