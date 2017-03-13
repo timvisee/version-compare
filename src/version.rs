@@ -76,11 +76,14 @@ impl<'a> Version<'a> {
     ///
     /// # Examples:
     ///
-    /// ```ignore
-    /// assert_eq!(Version::from("1.2").compare(Version::from("1.3.2")), CompOp::LT);
-    /// assert_eq!(Version::from("1.9").compare(Version::from("1.9")), CompOp::EQ);
-    /// assert_eq!(Version::from("0.3.0.0").compare(Version::from("0.3")), CompOp::EQ);
-    /// assert_eq!(Version::from("2").compare(Version::from("1.7.3")), CompOp::GT);
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::version::Version;
+    ///
+    /// assert_eq!(Version::from("1.2").unwrap().compare(&Version::from("1.3.2").unwrap()), CompOp::LT);
+    /// assert_eq!(Version::from("1.9").unwrap().compare(&Version::from("1.9").unwrap()), CompOp::EQ);
+    /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(&Version::from("0.3").unwrap()), CompOp::EQ);
+    /// assert_eq!(Version::from("2").unwrap().compare(&Version::from("1.7.3").unwrap()), CompOp::GT);
     /// ```
     pub fn compare(&self, other: &Version) -> CompOp {
         // Compare the versions with their peekable iterators
