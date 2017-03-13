@@ -9,22 +9,31 @@ This library is still a work in progress.
 This shows a possible usage representation of the library. This might change, as the library is still a work in progress.
 
 ```Rust
+// Define some version numbers
 let a = "1.2";
 let b = "1.5.1";
+
+// The following comparison operators are used:
+// - CompOp::EQ -> Equal
+// - CompOp::NE -> Not equal
+// - CompOp::LT -> Less than
+// - CompOp::LE -> Less than or equal to
+// - CompOp::GE -> Greater than or equal to
+// - CompOp::GT -> Greater than
+
+// Easily compare
+VersionCompare::compare(&a, &b); // -> CompOp::LT
+VersionCompare::compare_to(&a, &b, &CompOp::LE); // -> true
+VersionCompare::compare_to(&a, &b, &CompOp::GT); // -> false
 
 // Version string parsing
 let a_ver = Version::from(a).unwrap();
 let b_ver = Version::from(b).unwrap();
 
-// Comparisons
-a_ver.compare(&b_ver); // Returns: CompOp::LT
-b_ver.compare(&a_ver); // Returns: CompOp::GT
-VersionCompare::compare(&a_ver, &b_ver); // Returns: CompOp::LT
-
-// Boolean tests
-assert!(a_ver.compare_to(&b_ver, CompOp::LT));
-assert!(b_ver.compare_to(&a_ver, CompOp::GT));
-assert!(VersionCompare::compare_to(&a_ver, &b_ver, CompOp::LT));
+// Directly compare versions
+a_ver.compare(&b_ver); // -> CompOp::LT
+b_ver.compare(&a_ver); // -> CompOp::GT
+a_ver.compare_to(&b_ver, &CompOp::LT); // -> true
 
 // Match
 match a_ver.compare(&b_ver) {
