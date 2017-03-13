@@ -399,10 +399,7 @@ impl<'a> Version<'a> {
                                     match num {
                                         n if n < other_num => return CompOp::Lt,
                                         n if n > other_num => return CompOp::Gt,
-                                        n if n == other_num => continue,
-
-                                        // This part can't be reached
-                                        _ => panic!()
+                                        _ => continue
                                     }
                                 },
 
@@ -663,7 +660,7 @@ mod tests {
         assert!(
             Version::from("1.2").unwrap().compare_to(
                 &Version::from("1.2.3").unwrap(),
-            &CompOp::Ne)
-        );
+                &CompOp::Ne
+            ));
     }
 }
