@@ -56,6 +56,32 @@ impl CompOp {
         }
     }
 
+    /// Get a comparison operator by it's name.
+    /// Names are case-insensitive, and whitespaces are stripped from the string.
+    /// An error is returned if the name isn't recognized.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
+    /// assert_eq!(CompOp::from_name("eq"), Ok(CompOp::EQ));
+    /// assert_eq!(CompOp::from_name("lt"), Ok(CompOp::LT));
+    /// assert_eq!(CompOp::from_name("  Ge   "), Ok(CompOp::GE));
+    /// assert!(CompOp::from_name("abc").is_err());
+    /// ```
+    pub fn from_name(sign: &str) -> Result<CompOp, ()> {
+        match sign.trim().to_lowercase().as_ref() {
+            "eq" => Ok(CompOp::EQ),
+            "ne" => Ok(CompOp::NE),
+            "lt" => Ok(CompOp::LT),
+            "le" => Ok(CompOp::LE),
+            "ge" => Ok(CompOp::GE),
+            "gt" => Ok(CompOp::GT),
+            _ => Err(())
+        }
+    }
+
     /// Covert to the inverted comparison operator.
     ///
     /// This uses the following bidirectional rules:
@@ -271,6 +297,21 @@ mod tests {
         // Exceptional cases
         assert_eq!(CompOp::from_sign("  <=  ").unwrap(), CompOp::LE);
         assert!(CompOp::from_sign("*").is_err());
+    }
+
+    #[test]
+    fn from_name() {
+        // Normal names
+        assert_eq!(CompOp::from_name("eq").unwrap(), CompOp::EQ);
+        assert_eq!(CompOp::from_name("ne").unwrap(), CompOp::NE);
+        assert_eq!(CompOp::from_name("lt").unwrap(), CompOp::LT);
+        assert_eq!(CompOp::from_name("le").unwrap(), CompOp::LE);
+        assert_eq!(CompOp::from_name("ge").unwrap(), CompOp::GE);
+        assert_eq!(CompOp::from_name("gt").unwrap(), CompOp::GT);
+
+        // Exceptional cases
+        assert_eq!(CompOp::from_name("  Le  ").unwrap(), CompOp::LE);
+        assert!(CompOp::from_name("abc").is_err());
     }
 
     #[test]
