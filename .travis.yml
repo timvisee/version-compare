@@ -5,10 +5,6 @@ rust:
   - stable
   - beta
   - nightly
-matrix:
-  include:
-    - os: osx
-      rust: stable
 
 # Documentation generation, and coverage data
 before_script:
@@ -20,7 +16,7 @@ script:
   travis-cargo build &&
   travis-cargo test &&
   travis-cargo bench &&
-  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo --only stable doc; fi
+  travis-cargo --only stable doc
 addons:
   apt:
     packages:
