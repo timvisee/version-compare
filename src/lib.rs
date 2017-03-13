@@ -1,6 +1,8 @@
 mod comp_op;
 mod version;
 mod version_part;
+#[cfg(test)]
+mod test;
 
 use comp_op::CompOp;
 use version::Version;
