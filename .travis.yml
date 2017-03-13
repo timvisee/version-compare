@@ -20,7 +20,7 @@ script:
   travis-cargo build &&
   travis-cargo test &&
   travis-cargo bench &&
-  travis-cargo --only stable doc
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo --only stable doc; fi
 addons:
   apt:
     packages:
@@ -29,7 +29,6 @@ addons:
     - libdw-dev
     - binutils-dev
 after_success:
-- travis-cargo --only stable doc-upload
-#- travis-cargo coveralls --no-sudo
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo --only stable doc-upload; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo coveralls --no-sudo --verify; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./kcov/build/src/kcov --verify --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov target/debug/version*compare-*; fi
