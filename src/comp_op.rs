@@ -191,6 +191,33 @@ impl CompOp {
             &CompOp::GT => ">"
         }
     }
+
+    /// Get a factor (number) for this comparison operator.
+    /// These factors can be useful for quick calculations.
+    ///
+    /// The following factor numbers are returned:
+    /// - EQ | NE: `0`
+    /// - LT | LE: `-1`
+    /// - GT | GE: `1`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::version::Version;
+    ///
+    /// let ver_a = Version::from("1.2.3").unwrap();
+    /// let ver_b = Version::from("1.3").unwrap();
+    ///
+    /// assert_eq!(ver_a.compare(&ver_b).factor(), -1);
+    /// assert_eq!(10 * ver_b.compare(&ver_a).factor(), 10);
+    /// ```
+    pub fn factor(&self) -> i8 {
+        match self {
+            &CompOp::EQ | &CompOp::NE => 0,
+            &CompOp::LT | &CompOp::LE => -1,
+            &CompOp::GT | &CompOp::GE => 1
+        }
+    }
 }
 
 #[cfg(test)]
@@ -265,5 +292,15 @@ mod tests {
         assert_eq!(CompOp::LE.sign(), "<=");
         assert_eq!(CompOp::GE.sign(), ">=");
         assert_eq!(CompOp::GT.sign(), ">");
+    }
+
+    #[test]
+    fn factor() {
+        assert_eq!(CompOp::EQ.factor(), 0);
+        assert_eq!(CompOp::NE.factor(), 0);
+        assert_eq!(CompOp::LT.factor(), -1);
+        assert_eq!(CompOp::LE.factor(), -1);
+        assert_eq!(CompOp::GE.factor(), 1);
+        assert_eq!(CompOp::GT.factor(), 1);
     }
 }

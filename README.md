@@ -39,7 +39,7 @@ a_ver.compare_to(&b_ver, &CompOp::LT); // -> true
 match a_ver.compare(&b_ver) {
     CompOp::LT => println!("Version a is less than b"),
     CompOp::EQ => println!("Version a is equal to b"),
-    CompOp::GE => println!("Version a is greater than b")
+    CompOp::GT => println!("Version a is greater than b")
 }
 ```
 
