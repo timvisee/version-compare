@@ -82,6 +82,28 @@ impl CompOp {
         }
     }
 
+    /// Get the name of this comparison operator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
+    /// assert_eq!(CompOp::EQ.name(), "eq");
+    /// assert_eq!(CompOp::LT.name(), "lt");
+    /// assert_eq!(CompOp::GE.name(), "ge");
+    /// ```
+    pub fn name(&self) -> &str {
+        match self {
+            &CompOp::EQ => "eq",
+            &CompOp::NE => "ne",
+            &CompOp::LT => "lt",
+            &CompOp::LE => "le",
+            &CompOp::GE => "ge",
+            &CompOp::GT => "gt"
+        }
+    }
+
     /// Covert to the inverted comparison operator.
     ///
     /// This uses the following bidirectional rules:
@@ -312,6 +334,16 @@ mod tests {
         // Exceptional cases
         assert_eq!(CompOp::from_name("  Le  ").unwrap(), CompOp::LE);
         assert!(CompOp::from_name("abc").is_err());
+    }
+
+    #[test]
+    fn name() {
+        assert_eq!(CompOp::EQ.name(), "eq");
+        assert_eq!(CompOp::NE.name(), "ne");
+        assert_eq!(CompOp::LT.name(), "lt");
+        assert_eq!(CompOp::LE.name(), "le");
+        assert_eq!(CompOp::GE.name(), "ge");
+        assert_eq!(CompOp::GT.name(), "gt");
     }
 
     #[test]
