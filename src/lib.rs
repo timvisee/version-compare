@@ -86,3 +86,24 @@ impl VersionCompare {
         Ok(a_ver.unwrap().compare_to(&b_ver.unwrap(), &operator))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::VersionCompare;
+    use test::test_version::{TestVersion, TEST_VERSIONS};
+    use test::test_version_set::{TestVersionSet, TEST_VERSION_SETS};
+
+    #[test]
+    fn compare() {
+        // Create a new version compare instance
+        let version_compare = VersionCompare::new();
+
+        // Compare each version in the version set
+        for entry in TEST_VERSION_SETS {
+            assert_eq!(
+                version_compare.compare(&entry.0, &entry.1),
+                Ok(entry.2.clone())
+            );
+        }
+    }
+}
