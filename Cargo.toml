@@ -4,6 +4,7 @@ version = "0.0.3"
 authors = ["timvisee <timvisee@gmail.com>"]
 license = "GPL-3.0"
 readme = "README.md"
+homepage = "https://github.com/timvisee/version-compare"
 repository = "https://github.com/timvisee/version-compare"
 documentation = "https://timvisee.github.io/version-compare"
 description = "A Rust library to easily compare version numbers, and test them against various comparison operators."
