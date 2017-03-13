@@ -43,3 +43,11 @@ pub const TEST_VERSION_SETS: &'static [TestVersionSet] = &[
     TestVersionSet("1.2.3.dev.1", "1.2.3.alpha", CompOp::Gt),
     TestVersionSet("snapshot.1.2.3", "1.2.3.alpha", CompOp::Eq)
 ];
+
+/// List of invalid version sets for dynamic tests
+pub const TEST_VERSION_SETS_ERROR: &'static [TestVersionSet] = &[
+    TestVersionSet("1.2.3", "1.2.3", CompOp::Lt),
+    TestVersionSet("1.2", "1.2.0.0", CompOp::Ne),
+    TestVersionSet("1.2.3.dev", "dev", CompOp::Eq),
+    TestVersionSet("snapshot", "1", CompOp::Lt)
+];

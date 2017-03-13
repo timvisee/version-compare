@@ -85,7 +85,7 @@ impl VersionCompare {
 #[cfg(test)]
 mod tests {
     use comp_op::CompOp;
-    use test::test_version_set::TEST_VERSION_SETS;
+    use test::test_version_set::{TEST_VERSION_SETS, TEST_VERSION_SETS_ERROR};
     use super::VersionCompare;
 
     #[test]
@@ -96,6 +96,15 @@ mod tests {
                 VersionCompare::compare(&entry.0, &entry.1),
                 Ok(entry.2.clone())
             );
+        }
+
+        // Compare each error version in the version set
+        for entry in TEST_VERSION_SETS_ERROR {
+            let result = VersionCompare::compare(&entry.0, &entry.1);
+
+            if result.is_ok() {
+                assert!(result != Ok(entry.2.clone()));
+            }
         }
     }
 
