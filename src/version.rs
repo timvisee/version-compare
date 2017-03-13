@@ -95,11 +95,14 @@ impl<'a> Version<'a> {
     ///
     /// # Examples:
     ///
-    /// ```ignore
-    /// assert!(Version::from("1.2").compare_eq(Version::from("1.3.2"), CompOp::LT));
-    /// assert!(Version::from("1.2").compare_eq(Version::from("1.3.2"), CompOp::LE));
-    /// assert!(Version::from("1.2").compare_eq(Version::from("1.2"), CompOp::EQ));
-    /// assert!(Version::from("1.2").compare_eq(Version::from("1.2"), CompOp::LE));
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::version::Version;
+    ///
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::LT));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::LE));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), &CompOp::EQ));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), &CompOp::LE));
     /// ```
     pub fn compare_to(&self, other: &Version, operator: &CompOp) -> bool {
         // Get the comparison result
