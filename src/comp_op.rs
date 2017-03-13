@@ -22,6 +22,40 @@ pub enum CompOp {
 
 impl CompOp {
 
+    /// Get a comparison operator by it's sign.
+    /// Whitespaces are stripped from the sign string.
+    /// An error is returned if the sign isn't recognized.
+    ///
+    /// The following signs are supported:
+    /// - ==: `EQ`
+    /// - !=: `NE`
+    /// - <:  `LT`
+    /// - <=: `LE`
+    /// - >=: `GE`
+    /// - >:  `GT`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
+    /// assert_eq!(CompOp::from_sign("=="), Ok(CompOp::EQ));
+    /// assert_eq!(CompOp::from_sign("<"), Ok(CompOp::LT));
+    /// assert_eq!(CompOp::from_sign("  >=   "), Ok(CompOp::GE));
+    /// assert!(CompOp::from_sign("*").is_err());
+    /// ```
+    pub fn from_sign(sign: &str) -> Result<CompOp, ()> {
+        match sign.trim().as_ref() {
+            "==" => Ok(CompOp::EQ),
+            "!=" => Ok(CompOp::NE),
+            "<" => Ok(CompOp::LT),
+            "<=" => Ok(CompOp::LE),
+            ">=" => Ok(CompOp::GE),
+            ">" => Ok(CompOp::GT),
+            _ => Err(())
+        }
+    }
+
     /// Covert to the inverted comparison operator.
     ///
     /// This uses the following bidirectional rules:
@@ -225,33 +259,48 @@ mod tests {
     use comp_op::CompOp;
 
     #[test]
+    fn from_sign() {
+        // Normal signs
+        assert_eq!(CompOp::from_sign("==").unwrap(), CompOp::EQ);
+        assert_eq!(CompOp::from_sign("!=").unwrap(), CompOp::NE);
+        assert_eq!(CompOp::from_sign("<").unwrap(), CompOp::LT);
+        assert_eq!(CompOp::from_sign("<=").unwrap(), CompOp::LE);
+        assert_eq!(CompOp::from_sign(">=").unwrap(), CompOp::GE);
+        assert_eq!(CompOp::from_sign(">").unwrap(), CompOp::GT);
+
+        // Exceptional cases
+        assert_eq!(CompOp::from_sign("  <=  ").unwrap(), CompOp::LE);
+        assert!(CompOp::from_sign("*").is_err());
+    }
+
+    #[test]
     fn as_inverted() {
-        assert_eq!(CompOp::EQ.as_inverted(), CompOp::NE);
         assert_eq!(CompOp::NE.as_inverted(), CompOp::EQ);
-        assert_eq!(CompOp::LT.as_inverted(), CompOp::GE);
-        assert_eq!(CompOp::LE.as_inverted(), CompOp::GT);
+        assert_eq!(CompOp::EQ.as_inverted(), CompOp::NE);
         assert_eq!(CompOp::GE.as_inverted(), CompOp::LT);
         assert_eq!(CompOp::GT.as_inverted(), CompOp::LE);
+        assert_eq!(CompOp::LT.as_inverted(), CompOp::GE);
+        assert_eq!(CompOp::LE.as_inverted(), CompOp::GT);
     }
 
     #[test]
     fn invert() {
-        assert_eq!(CompOp::EQ.invert(), CompOp::NE);
         assert_eq!(CompOp::NE.invert(), CompOp::EQ);
-        assert_eq!(CompOp::LT.invert(), CompOp::GE);
-        assert_eq!(CompOp::LE.invert(), CompOp::GT);
+        assert_eq!(CompOp::EQ.invert(), CompOp::NE);
         assert_eq!(CompOp::GE.invert(), CompOp::LT);
         assert_eq!(CompOp::GT.invert(), CompOp::LE);
+        assert_eq!(CompOp::LT.invert(), CompOp::GE);
+        assert_eq!(CompOp::LE.invert(), CompOp::GT);
     }
 
     #[test]
     fn as_opposite() {
-        assert_eq!(CompOp::EQ.as_opposite(), CompOp::NE);
         assert_eq!(CompOp::NE.as_opposite(), CompOp::EQ);
-        assert_eq!(CompOp::LT.as_opposite(), CompOp::GT);
-        assert_eq!(CompOp::LE.as_opposite(), CompOp::GE);
-        assert_eq!(CompOp::GE.as_opposite(), CompOp::LE);
+        assert_eq!(CompOp::EQ.as_opposite(), CompOp::NE);
         assert_eq!(CompOp::GT.as_opposite(), CompOp::LT);
+        assert_eq!(CompOp::GE.as_opposite(), CompOp::LE);
+        assert_eq!(CompOp::LE.as_opposite(), CompOp::GE);
+        assert_eq!(CompOp::LT.as_opposite(), CompOp::GT);
     }
 
     #[test]
