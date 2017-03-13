@@ -1,4 +1,5 @@
 [![Build Status on Travis CI](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)
+[![Library on crates.io](https://img.shields.io/crates/v/version-compare.svg)](https://crates.io/crates/version-compare)
 
 # Rust library: version-compare
 > A Rust library to easily compare version numbers, and test them against various comparison operators.
@@ -28,41 +29,54 @@ The following features will be added in a later version:
 * Version manifest, to specify detailed version number constraints.
 * Batch comparisons.
 
-## Usage
+## Example
 This library is very easy to use. Here's a basic usage example:
 
+Cargo.toml:
+```toml
+[dependencies]
+version-compare = "0.0.1"
+```
+
+main.rs:
 ```rust
-// Define some version numbers
-let a = "1.2";
-let b = "1.5.1";
+use version_compare::VersionCompare;
+use version_compare::version::Version;
+use version_compare::comp_op::CompOp;
 
-// The following comparison operators are used:
-// - CompOp::Eq -> Equal
-// - CompOp::Ne -> Not equal
-// - CompOp::Lt -> Less than
-// - CompOp::Le -> Less than or equal
-// - CompOp::Ge -> Greater than or equal
-// - CompOp::Gt -> Greater than
+fn main() {
+    // Define some version numbers
+    let a = "1.2";
+    let b = "1.5.1";
 
-// Easily compare
-VersionCompare::compare(&a, &b); // -> CompOp::Lt
-VersionCompare::compare_to(&a, &b, &CompOp::Le); // -> true
-VersionCompare::compare_to(&a, &b, &CompOp::Gt); // -> false
+    // The following comparison operators are used:
+    // - CompOp::Eq -> Equal
+    // - CompOp::Ne -> Not equal
+    // - CompOp::Lt -> Less than
+    // - CompOp::Le -> Less than or equal
+    // - CompOp::Ge -> Greater than or equal
+    // - CompOp::Gt -> Greater than
 
-// Version string parsing
-let a_ver = Version::from(a).unwrap();
-let b_ver = Version::from(b).unwrap();
+    // Easily compare
+    VersionCompare::compare(&a, &b); // -> CompOp::Lt
+    VersionCompare::compare_to(&a, &b, &CompOp::Le); // -> true
+    VersionCompare::compare_to(&a, &b, &CompOp::Gt); // -> false
 
-// Directly compare versions
-a_ver.compare(&b_ver); // -> CompOp::Lt
-b_ver.compare(&a_ver); // -> CompOp::Gt
-a_ver.compare_to(&b_ver, &CompOp::LT); // -> true
+    // Version string parsing
+    let a_ver = Version::from(a).unwrap();
+    let b_ver = Version::from(b).unwrap();
 
-// Match
-match a_ver.compare(&b_ver) {
-    CompOp::Lt => println!("Version a is less than b"),
-    CompOp::Eq => println!("Version a is equal to b"),
-    CompOp::Gt => println!("Version a is greater than b")
+    // Directly compare versions
+    a_ver.compare(&b_ver); // -> CompOp::Lt
+    b_ver.compare(&a_ver); // -> CompOp::Gt
+    a_ver.compare_to(&b_ver, &CompOp::LT); // -> true
+
+    // Match
+    match a_ver.compare(&b_ver) {
+        CompOp::Lt => println!("Version a is less than b"),
+        CompOp::Eq => println!("Version a is equal to b"),
+        CompOp::Gt => println!("Version a is greater than b")
+    }
 }
 ```
 
