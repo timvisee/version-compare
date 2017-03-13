@@ -171,6 +171,16 @@ impl CompOp {
     /// - LE: `<=`
     /// - GE: `>=`
     /// - GT: `>`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::comp_op::CompOp;
+    ///
+    /// assert_eq!(CompOp::EQ.sign(), "==");
+    /// assert_eq!(CompOp::LT.sign(), "<");
+    /// assert_eq!(CompOp::GE.flip().sign(), "<=");
+    /// ```
     pub fn sign(&self) -> &'static str {
         match self {
             &CompOp::EQ => "==",
