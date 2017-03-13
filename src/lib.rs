@@ -89,6 +89,7 @@ impl VersionCompare {
 
 #[cfg(test)]
 mod tests {
+    use comp_op::CompOp;
     use super::VersionCompare;
     use test::test_version::{TestVersion, TEST_VERSIONS};
     use test::test_version_set::{TestVersionSet, TEST_VERSION_SETS};
@@ -105,5 +106,23 @@ mod tests {
                 Ok(entry.2.clone())
             );
         }
+    }
+
+    #[test]
+    fn compare_to() {
+        // Create a new version compare instance
+        let version_compare = VersionCompare::new();
+
+        // Compare each version in the version set
+        for entry in TEST_VERSION_SETS {
+            // Test
+            assert!(version_compare.compare_to(&entry.0, &entry.1, &entry.2).unwrap());
+
+            // Make sure the inverse operator is not correct
+            assert_eq!(version_compare.compare_to(&entry.0, &entry.1, &entry.2.invert()).unwrap(), false);
+        }
+
+        // Assert an exceptional case, compare to not equal
+        assert!(version_compare.compare_to("1.2.3", "1.2", &CompOp::NE).unwrap());
     }
 }
