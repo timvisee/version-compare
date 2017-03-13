@@ -1,5 +1,7 @@
 [![Build Status on Travis CI](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)
 [![Library on crates.io](https://img.shields.io/crates/v/version-compare.svg)](https://crates.io/crates/version-compare)
+[![Download statistics on crates.io](https://img.shields.io/crates/d/version-compare.svg)](https://crates.io/crates/version-compare)
+[![Library on crates.io](https://img.shields.io/crates/l/version-compare.svg)](https://crates.io/crates/version-compare)
 
 # Rust library: version-compare
 > A Rust library to easily compare version numbers, and test them against various comparison operators.
