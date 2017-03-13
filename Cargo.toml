@@ -12,3 +12,7 @@ categories = ["parsing"]
 
 [badges]
 travis-ci = { repository = "timvisee/version-compare" }
+
+[features]
+default = []
+dev = []
