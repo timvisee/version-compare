@@ -66,5 +66,13 @@ match a_ver.compare(&b_ver) {
 }
 ```
 
+## Builds
+This library is automatically build and tested for each commit using CI services.
+
+|Service|Branch|Build Status| |
+|---:|:---|:---:|:---|
+|Travis CI|master|[![Build status on Travis CI on master](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
+|Travis CI|last commit|[![Build status on Travis CI for last commit](https://travis-ci.org/timvisee/version-compare.svg)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
+
 ## License
 This project is released under the GNU GPL-3.0 license. Check out the [LICENSE](LICENSE) file for more information.
