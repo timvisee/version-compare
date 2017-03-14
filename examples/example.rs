@@ -1,8 +1,8 @@
 extern crate version_compare;
 
-use version_compare::VersionCompare;
-use version_compare::version::Version;
 use version_compare::comp_op::CompOp;
+use version_compare::version::Version;
+use version_compare::version_compare::VersionCompare;
 
 fn main() {
     // Define some version numbers
@@ -36,6 +36,6 @@ fn main() {
         CompOp::Lt => println!("Version a is less than b"),
         CompOp::Eq => println!("Version a is equal to b"),
         CompOp::Gt => println!("Version a is greater than b"),
-        _ => panic!("This is never reached")
+        _ => unreachable!()
     }
 }
