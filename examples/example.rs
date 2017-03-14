@@ -16,9 +16,9 @@ fn main() {
     // - CompOp::Gt -> Greater than
 
     // Easily compare
-    VersionCompare::compare(&a, &b); // -> CompOp::Lt
-    VersionCompare::compare_to(&a, &b, &CompOp::Le); // -> true
-    VersionCompare::compare_to(&a, &b, &CompOp::Gt); // -> false
+    let _ = VersionCompare::compare(&a, &b); // -> CompOp::Lt
+    let _ = VersionCompare::compare_to(&a, &b, &CompOp::Le); // -> true
+    let _ = VersionCompare::compare_to(&a, &b, &CompOp::Gt); // -> false
 
     // Version string parsing
     let a_ver = Version::from(a).unwrap();
