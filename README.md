@@ -18,9 +18,9 @@ Two version numbers can be compared to each other, to get a relevant comparison 
 or version numbers can be tested against any given comparison operator.
 
 Along with version comparison, the library also features other useful tools.  
-For example: version numbers can also be parsed to inspect a version number by it's bare _parts_ if desired.
+For example: version numbers can be parsed to inspect a version number by it's bare numeric or text based parts.
 
-Inspired by PHP's [version_compare()](http://php.net/manual/en/function.version-compare.php).
+Inspired by PHPs [version_compare()](http://php.net/manual/en/function.version-compare.php).
 
 Note: This library is still a work in progress.
 See the list below for a list of currently available and future features.
@@ -88,6 +88,8 @@ fn main() {
     }
 }
 ```
+
+Check out the [examples](examples) directory for more complete examples.
 
 ## Builds
 This library is automatically build and tested for each commit using CI services.

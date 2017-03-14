@@ -1,22 +1,36 @@
-/// Comparison operators.
+//! Module with all supported comparison operators.
+//!
+//! This module provides an enum with all comparison operators that can be used with this library.
+//! The enum provides various useful helper functions to inverse or flip an operator.
+//!
+//! Methods like `CompOp::from_sign(">");` can be used to get a comparison operator by it's logical
+//! sign from a string.
+
+/// Enum of supported comparison operators.
 #[derive(Debug, Clone, PartialEq)]
 pub enum CompOp {
-    /// Equal to. (==)
+    /// Equal (`==`).
+    /// When version `A` is equal to `B`.
     Eq,
 
-    /// Not equal to. (!=)
+    /// Not equal (`!=`).
+    /// When version `A` is not equal to `B`.
     Ne,
 
-    /// Less than. (<)
+    /// Less than (`<`).
+    /// When version `A` is less than `B` but not equal.
     Lt,
 
-    /// Less than or equal to. (<=)
+    /// Less or equal (`<=`).
+    /// When version `A` is less than or equal to `B`.
     Le,
 
-    /// Greater than or equal to. (>=)
+    /// Greater or equal (`>=`).
+    /// When version `A` is greater than or equal to `B`.
     Ge,
 
-    /// Greater than. (>)
+    /// Greater than (`>`).
+    /// When version `A` is greater than `B` but not equal.
     Gt
 }
 
@@ -27,12 +41,13 @@ impl CompOp {
     /// An error is returned if the sign isn't recognized.
     ///
     /// The following signs are supported:
-    /// - ==: `Eq`
-    /// - !=: `Ne`
-    /// - <:  `Lt`
-    /// - <=: `Le`
-    /// - >=: `Ge`
-    /// - >:  `Gt`
+    ///
+    /// * `==` -> `Eq`
+    /// * `!=` -> `Ne`
+    /// * `< ` -> `Lt`
+    /// * `<=` -> `Le`
+    /// * `>=` -> `Ge`
+    /// * `> ` -> `Gt`
     ///
     /// # Examples
     ///
@@ -107,9 +122,10 @@ impl CompOp {
     /// Covert to the inverted comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Eq <-> Ne
-    /// - Lt <-> Ge
-    /// - Le <-> Gt
+    ///
+    /// * `Eq` <-> `Ne`
+    /// * `Lt` <-> `Ge`
+    /// * `Le` <-> `Gt`
     ///
     /// # Examples
     ///
@@ -127,9 +143,10 @@ impl CompOp {
     /// Get the inverted comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Eq <-> Ne
-    /// - Lt <-> Ge
-    /// - Le <-> Gt
+    ///
+    /// * `Eq` <-> `Ne`
+    /// * `Lt` <-> `Ge`
+    /// * `Le` <-> `Gt`
     ///
     /// # Examples
     ///
@@ -154,9 +171,10 @@ impl CompOp {
     /// Convert to the opposite comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Eq <-> Ne
-    /// - Lt <-> Gt
-    /// - Le <-> Ge
+    ///
+    /// * `Eq` <-> `Ne`
+    /// * `Lt` <-> `Gt`
+    /// * `Le` <-> `Ge`
     ///
     /// # Examples
     ///
@@ -174,9 +192,10 @@ impl CompOp {
     /// Get the opposite comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Eq <-> Ne
-    /// - Lt <-> Gt
-    /// - Le <-> Ge
+    ///
+    /// * `Eq` <-> `Ne`
+    /// * `Lt` <-> `Gt`
+    /// * `Le` <-> `Ge`
     ///
     /// # Examples
     ///
@@ -201,9 +220,10 @@ impl CompOp {
     /// Convert to the flipped comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Lt <-> Gt
-    /// - Le <-> Ge
-    /// - Other operators are returned as is.
+    ///
+    /// * `Lt` <-> `Gt`
+    /// * `Le` <-> `Ge`
+    /// * Other operators are returned as is.
     ///
     /// # Examples
     ///
@@ -221,9 +241,10 @@ impl CompOp {
     /// Get the flipped comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Lt <-> Gt
-    /// - Le <-> Ge
-    /// - Other operators are returned as is.
+    ///
+    /// * `Lt` <-> `Gt`
+    /// * `Le` <-> `Ge`
+    /// * Other operators are returned as is.
     ///
     /// # Examples
     ///
@@ -247,12 +268,13 @@ impl CompOp {
     /// Get the sign for this comparison operator.
     ///
     /// The following signs are returned:
-    /// - Eq: `==`
-    /// - Ne: `!=`
-    /// - Lt: `<`
-    /// - Le: `<=`
-    /// - Ge: `>=`
-    /// - Gt: `>`
+    ///
+    /// * `Eq` -> `==`
+    /// * `Ne` -> `!=`
+    /// * `Lt` -> `< `
+    /// * `Le` -> `<=`
+    /// * `Ge` -> `>=`
+    /// * `Gt` -> `> `
     ///
     /// # Examples
     ///
@@ -278,9 +300,10 @@ impl CompOp {
     /// These factors can be useful for quick calculations.
     ///
     /// The following factor numbers are returned:
-    /// - Eq | Ne: `0`
-    /// - Lt | Le: `-1`
-    /// - Gt | Ge: `1`
+    ///
+    /// * `Eq` or `Ne` -> ` 0 `
+    /// * `Lt` or `Le` -> `-1`
+    /// * `Gt` or `Ge` -> ` 1`
     ///
     /// # Examples
     ///

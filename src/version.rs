@@ -1,3 +1,9 @@
+//! Version module, which provides the `Version` struct as parsed version representation.
+//!
+//! Version numbers in the form of a string are parsed to a `Version` first, before any comparison
+//! is made. This struct provides many methods and features for easy comparison, probing and other
+//! things.
+
 use std::iter::Peekable;
 use std::slice::Iter;
 
@@ -5,14 +11,22 @@ use comp_op::CompOp;
 use version_manifest::VersionManifest;
 use version_part::VersionPart;
 
-/// Version struct. A wrapper for a version number string.
+/// Version struct, which is a representation for a parsed version string.
+///
+/// A version in string format can be parsed using methods like `Version::from("1.2.3");`.
+/// These methods return a `Result` holding the parsed version or an error on failure.
+///
+/// The original version string is stored in the struct, and can be accessed using the
+/// `version.as_str()` method. Note, that when the version wasn't parsed from a string
+/// representation, the returned value is generated.
+///
+/// The struct provides many methods for comparison and probing.
 pub struct Version<'a> {
     version: &'a str,
     parts: Vec<VersionPart<'a>>,
     manifest: Option<&'a VersionManifest>
 }
 
-/// Version struct implementation.
 impl<'a> Version<'a> {
 
     /// Create a `Version` instance from a version string.
@@ -275,9 +289,12 @@ impl<'a> Version<'a> {
     /// Compare this version to the given `other` version.
     ///
     /// This method returns one of the following comparison operators:
-    /// - Lt
-    /// - Eq
-    /// - Gt
+    ///
+    /// * `Lt`
+    /// * `Eq`
+    /// * `Gt`
+    ///
+    /// Other comparison operators can be used when comparing, but aren't returned by this method.
     ///
     /// # Examples:
     ///
@@ -300,6 +317,8 @@ impl<'a> Version<'a> {
 
     /// Compare this version to the given `other` version,
     /// and check whether the given comparison operator is valid.
+    ///
+    /// All comparison operators can be used.
     ///
     /// # Examples:
     ///
@@ -341,9 +360,12 @@ impl<'a> Version<'a> {
     /// Compare two version numbers based on the iterators of their version parts.
     ///
     /// This method returns one of the following comparison operators:
-    /// - Lt
-    /// - Eq
-    /// - Gt
+    ///
+    /// * `Lt`
+    /// * `Eq`
+    /// * `Gt`
+    ///
+    /// Other comparison operators can be used when comparing, but aren't returned by this method.
     fn compare_iter(mut iter: Peekable<Iter<VersionPart<'a>>>, mut other_iter: Peekable<Iter<VersionPart<'a>>>) -> CompOp {
         // Iterate through the parts of this version
         let mut other_part: Option<&VersionPart>;

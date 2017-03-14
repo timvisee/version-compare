@@ -1,4 +1,11 @@
-/// Version manifest.
+//! Module for the version manifest.
+//!
+//! A version manifest can be used to configure and specify how versions are parsed and compared.
+//! For example, you can configure the maximum depth of a version number, and set whether text
+//! parts are ignored in a version string.
+
+/// Version manifest (configuration).
+///
 /// A manifest (configuration) that is used respectively when parsing and comparing version strings.
 #[derive(Debug, PartialEq)]
 pub struct VersionManifest {
