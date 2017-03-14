@@ -20,15 +20,16 @@ impl VersionCompare {
     /// The two given version numbers must be valid, or an error will be returned.
     ///
     /// One of the following ok results may be returned:
-    /// - CompOp::Eq
-    /// - CompOp::Lt
-    /// - CompOp::Gt
+    ///
+    /// * `CompOp::Eq`
+    /// * `CompOp::Lt`
+    /// * `CompOp::Gt`
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_compare::VersionCompare;
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::VersionCompare;
+    /// use version_compare::CompOp;
     ///
     /// // Compare version numbers
     /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.3"), Ok(CompOp::Eq));
@@ -57,8 +58,8 @@ impl VersionCompare {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_compare::VersionCompare;
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::VersionCompare;
+    /// use version_compare::CompOp;
     ///
     /// // Compare version numbers
     /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::Eq).unwrap());
@@ -86,6 +87,7 @@ impl VersionCompare {
 mod tests {
     use comp_op::CompOp;
     use test::test_version_set::{TEST_VERSION_SETS, TEST_VERSION_SETS_ERROR};
+
     use super::VersionCompare;
 
     #[test]

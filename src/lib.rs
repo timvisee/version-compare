@@ -35,3 +35,10 @@ pub mod version_part;
 #[cfg(test)]
 mod test;
 
+// Publicly implement all library modules
+pub use comp_op::CompOp;
+pub use version::Version;
+pub use version_compare::VersionCompare;
+pub use version_manifest::VersionManifest;
+pub use version_part::VersionPart;
+

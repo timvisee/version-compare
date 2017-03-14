@@ -36,8 +36,8 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
-    /// use version_compare::version::Version;
+    /// use version_compare::CompOp;
+    /// use version_compare::Version;
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
@@ -67,9 +67,9 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
-    /// use version_compare::version::Version;
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::CompOp;
+    /// use version_compare::Version;
+    /// use version_compare::VersionManifest;
     ///
     /// let manifest = VersionManifest::new();
     /// let ver = Version::from_manifest("1.2.3", &manifest).unwrap();
@@ -98,7 +98,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version::Version;
+    /// use version_compare::Version;
     ///
     /// let version = Version::from("1.2.3").unwrap();
     ///
@@ -120,7 +120,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version::Version;
+    /// use version_compare::Version;
     ///
     /// let version = Version::from("1.2.3").unwrap();
     ///
@@ -139,8 +139,8 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version::Version;
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::Version;
+    /// use version_compare::VersionManifest;
     ///
     /// let manifest = VersionManifest::new();
     /// let mut version = Version::from("1.2.3").unwrap();
@@ -214,7 +214,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version::Version;
+    /// use version_compare::Version;
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
@@ -230,8 +230,8 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version::Version;
-    /// use version_compare::version_part::VersionPart;
+    /// use version_compare::Version;
+    /// use version_compare::VersionPart;
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
@@ -254,8 +254,8 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version::Version;
-    /// use version_compare::version_part::VersionPart;
+    /// use version_compare::Version;
+    /// use version_compare::VersionPart;
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
@@ -274,7 +274,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version::Version;
+    /// use version_compare::Version;
     ///
     /// let ver_a = Version::from("1.2.3").unwrap();
     /// let ver_b = Version::from("1.2.3.4").unwrap();
@@ -299,8 +299,8 @@ impl<'a> Version<'a> {
     /// # Examples:
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
-    /// use version_compare::version::Version;
+    /// use version_compare::CompOp;
+    /// use version_compare::Version;
     ///
     /// assert_eq!(Version::from("1.2").unwrap().compare(&Version::from("1.3.2").unwrap()), CompOp::Lt);
     /// assert_eq!(Version::from("1.9").unwrap().compare(&Version::from("1.9").unwrap()), CompOp::Eq);
@@ -323,8 +323,8 @@ impl<'a> Version<'a> {
     /// # Examples:
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
-    /// use version_compare::version::Version;
+    /// use version_compare::CompOp;
+    /// use version_compare::Version;
     ///
     /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::Lt));
     /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::Le));
@@ -452,9 +452,10 @@ mod tests {
     use comp_op::CompOp;
     use test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use test::test_version_set::TEST_VERSION_SETS;
-    use version::Version;
     use version_manifest::VersionManifest;
     use version_part::VersionPart;
+
+    use super::Version;
 
     #[test]
     // TODO: This doesn't really test whether this method fully works

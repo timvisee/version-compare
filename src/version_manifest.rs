@@ -24,7 +24,7 @@ impl VersionManifest {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::VersionManifest;
     ///
     /// let mut manifest = VersionManifest::new();
     ///
@@ -44,7 +44,7 @@ impl VersionManifest {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::VersionManifest;
     ///
     /// let manifest = VersionManifest::new();
     ///
@@ -63,7 +63,7 @@ impl VersionManifest {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::VersionManifest;
     ///
     /// let manifest = VersionManifest::new();
     ///
@@ -82,7 +82,7 @@ impl VersionManifest {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::VersionManifest;
     ///
     /// let mut manifest = VersionManifest::new();
     ///
@@ -106,7 +106,7 @@ impl VersionManifest {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::VersionManifest;
     ///
     /// let mut manifest = VersionManifest::new();
     ///
@@ -129,7 +129,7 @@ impl VersionManifest {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::VersionManifest;
     ///
     /// let mut manifest = VersionManifest::new();
     ///
@@ -147,7 +147,7 @@ impl VersionManifest {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::VersionManifest;
     ///
     /// let manifest = VersionManifest::new();
     ///
@@ -166,7 +166,7 @@ impl VersionManifest {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version_manifest::VersionManifest;
+    /// use version_compare::VersionManifest;
     ///
     /// let mut manifest = VersionManifest::new();
     ///
