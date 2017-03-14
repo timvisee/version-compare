@@ -48,9 +48,7 @@ version-compare = "0.0.3"
 ```rust
 extern crate version_compare;
 
-use version_compare::CompOp;
-use version_compare::Version;
-use version_compare::VersionCompare;
+use version_compare::{CompOp, Version, VersionCompare};
 
 fn main() {
     // Define some version numbers

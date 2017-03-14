@@ -36,8 +36,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::CompOp;
-    /// use version_compare::Version;
+    /// use version_compare::{CompOp, Version};
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
@@ -67,9 +66,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::CompOp;
-    /// use version_compare::Version;
-    /// use version_compare::VersionManifest;
+    /// use version_compare::{CompOp, Version, VersionManifest};
     ///
     /// let manifest = VersionManifest::new();
     /// let ver = Version::from_manifest("1.2.3", &manifest).unwrap();
@@ -139,8 +136,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::Version;
-    /// use version_compare::VersionManifest;
+    /// use version_compare::{Version, VersionManifest};
     ///
     /// let manifest = VersionManifest::new();
     /// let mut version = Version::from("1.2.3").unwrap();
@@ -230,8 +226,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::Version;
-    /// use version_compare::VersionPart;
+    /// use version_compare::{Version, VersionPart};
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
@@ -254,8 +249,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::Version;
-    /// use version_compare::VersionPart;
+    /// use version_compare::{Version, VersionPart};
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
@@ -299,8 +293,7 @@ impl<'a> Version<'a> {
     /// # Examples:
     ///
     /// ```
-    /// use version_compare::CompOp;
-    /// use version_compare::Version;
+    /// use version_compare::{CompOp, Version};
     ///
     /// assert_eq!(Version::from("1.2").unwrap().compare(&Version::from("1.3.2").unwrap()), CompOp::Lt);
     /// assert_eq!(Version::from("1.9").unwrap().compare(&Version::from("1.9").unwrap()), CompOp::Eq);
@@ -323,8 +316,7 @@ impl<'a> Version<'a> {
     /// # Examples:
     ///
     /// ```
-    /// use version_compare::CompOp;
-    /// use version_compare::Version;
+    /// use version_compare::{CompOp, Version};
     ///
     /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::Lt));
     /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::Le));
