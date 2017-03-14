@@ -334,8 +334,7 @@ impl<'a> Version<'a> {
                     _ => false
                 },
 
-            // This should never be reached
-            _ => panic!()
+            _ => unreachable!()
         }
     }
 
@@ -403,12 +402,10 @@ impl<'a> Version<'a> {
                                     }
                                 },
 
-                                // This part can't be reached
-                                _ => panic!()
+                                _ => unreachable!()
                             },
 
-                        // This part can't be reached
-                        _ => panic!()
+                        _ => unreachable!()
                     }
                 },
                 None => break
