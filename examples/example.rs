@@ -1,8 +1,6 @@
 extern crate version_compare;
 
-use version_compare::VersionCompare;
-use version_compare::version::Version;
-use version_compare::comp_op::CompOp;
+use version_compare::{CompOp, Version, VersionCompare};
 
 fn main() {
     // Define some version numbers
@@ -18,15 +16,19 @@ fn main() {
     // - CompOp::Gt -> Greater than
 
     // Easily compare
-    VersionCompare::compare(&a, &b); // -> CompOp::Lt
-    VersionCompare::compare_to(&a, &b, &CompOp::Le); // -> true
-    VersionCompare::compare_to(&a, &b, &CompOp::Gt); // -> false
+    let _ = VersionCompare::compare(&a, &b); // -> CompOp::Lt
+    let _ = VersionCompare::compare_to(&a, &b, &CompOp::Le); // -> true
+    let _ = VersionCompare::compare_to(&a, &b, &CompOp::Gt); // -> false
 
     // Version string parsing
     let a_ver = Version::from(a).unwrap();
     let b_ver = Version::from(b).unwrap();
 
     // Directly compare versions
+    let _ = a_ver < b_ver; // -> true
+    let _ = a_ver <= b_ver; // -> true
+    let _ = a_ver > b_ver; // -> false
+    let _ = a_ver != b_ver; // -> false
     a_ver.compare(&b_ver); // -> CompOp::Lt
     b_ver.compare(&a_ver); // -> CompOp::Gt
     a_ver.compare_to(&b_ver, &CompOp::Lt); // -> true
@@ -36,6 +38,6 @@ fn main() {
         CompOp::Lt => println!("Version a is less than b"),
         CompOp::Eq => println!("Version a is equal to b"),
         CompOp::Gt => println!("Version a is greater than b"),
-        _ => panic!("This is never reached")
+        _ => unreachable!()
     }
 }

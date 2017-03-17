@@ -2,6 +2,7 @@
 [![Library on crates.io](https://img.shields.io/crates/v/version-compare.svg)](https://crates.io/crates/version-compare)
 [![Download statistics on crates.io](https://img.shields.io/crates/d/version-compare.svg)](https://crates.io/crates/version-compare)
 [![Coverage Status](https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master)](https://coveralls.io/github/timvisee/version-compare?branch=master)
+[![Dependencies on libraries.io](https://img.shields.io/librariesio/github/timvisee/version-compare.svg)](https://libraries.io/github/timvisee/version-compare)
 [![Library on crates.io](https://img.shields.io/crates/l/version-compare.svg)](https://crates.io/crates/version-compare)
 
 # Rust library: version-compare
@@ -17,9 +18,9 @@ Two version numbers can be compared to each other, to get a relevant comparison 
 or version numbers can be tested against any given comparison operator.
 
 Along with version comparison, the library also features other useful tools.  
-For example: version numbers can also be parsed to inspect a version number by it's bare _parts_ if desired.
+For example: version numbers can be parsed to inspect a version number by it's bare numeric or text based parts.
 
-Inspired by PHP's [version_compare()](http://php.net/manual/en/function.version-compare.php).
+Inspired by PHPs [version_compare()](http://php.net/manual/en/function.version-compare.php).
 
 Note: This library is still a work in progress.
 See the list below for a list of currently available and future features.
@@ -40,16 +41,14 @@ This library is very easy to use. Here's a basic usage example:
 Cargo.toml:
 ```toml
 [dependencies]
-version-compare = "0.0.3"
+version-compare = "0.0.4"
 ```
 
 [main.rs:](examples/example.rs)
 ```rust
 extern crate version_compare;
 
-use version_compare::VersionCompare;
-use version_compare::version::Version;
-use version_compare::comp_op::CompOp;
+use version_compare::{CompOp, Version, VersionCompare};
 
 fn main() {
     // Define some version numbers
@@ -74,6 +73,10 @@ fn main() {
     let b_ver = Version::from(b).unwrap();
 
     // Directly compare versions
+    let _ = a_ver < b_ver; // -> true
+    let _ = a_ver <= b_ver; // -> true
+    let _ = a_ver > b_ver; // -> false
+    let _ = a_ver != b_ver; // -> false
     a_ver.compare(&b_ver); // -> CompOp::Lt
     b_ver.compare(&a_ver); // -> CompOp::Gt
     a_ver.compare_to(&b_ver, &CompOp::Lt); // -> true
@@ -87,6 +90,8 @@ fn main() {
     }
 }
 ```
+
+Check out the [examples](examples) directory for more complete examples.
 
 ## Builds
 This library is automatically build and tested for each commit using CI services.

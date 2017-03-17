@@ -1,22 +1,38 @@
-/// Comparison operators.
+//! Module with all supported comparison operators.
+//!
+//! This module provides an enum with all comparison operators that can be used with this library.
+//! The enum provides various useful helper functions to inverse or flip an operator.
+//!
+//! Methods like `CompOp::from_sign(">");` can be used to get a comparison operator by it's logical
+//! sign from a string.
+
+use std::cmp::Ordering;
+
+/// Enum of supported comparison operators.
 #[derive(Debug, Clone, PartialEq)]
 pub enum CompOp {
-    /// Equal to. (==)
+    /// Equal (`==`).
+    /// When version `A` is equal to `B`.
     Eq,
 
-    /// Not equal to. (!=)
+    /// Not equal (`!=`).
+    /// When version `A` is not equal to `B`.
     Ne,
 
-    /// Less than. (<)
+    /// Less than (`<`).
+    /// When version `A` is less than `B` but not equal.
     Lt,
 
-    /// Less than or equal to. (<=)
+    /// Less or equal (`<=`).
+    /// When version `A` is less than or equal to `B`.
     Le,
 
-    /// Greater than or equal to. (>=)
+    /// Greater or equal (`>=`).
+    /// When version `A` is greater than or equal to `B`.
     Ge,
 
-    /// Greater than. (>)
+    /// Greater than (`>`).
+    /// When version `A` is greater than `B` but not equal.
     Gt
 }
 
@@ -27,17 +43,18 @@ impl CompOp {
     /// An error is returned if the sign isn't recognized.
     ///
     /// The following signs are supported:
-    /// - ==: `Eq`
-    /// - !=: `Ne`
-    /// - <:  `Lt`
-    /// - <=: `Le`
-    /// - >=: `Ge`
-    /// - >:  `Gt`
+    ///
+    /// * `==` -> `Eq`
+    /// * `!=` -> `Ne`
+    /// * `< ` -> `Lt`
+    /// * `<=` -> `Le`
+    /// * `>=` -> `Ge`
+    /// * `> ` -> `Gt`
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::from_sign("=="), Ok(CompOp::Eq));
     /// assert_eq!(CompOp::from_sign("<"), Ok(CompOp::Lt));
@@ -63,7 +80,7 @@ impl CompOp {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::from_name("eq"), Ok(CompOp::Eq));
     /// assert_eq!(CompOp::from_name("lt"), Ok(CompOp::Lt));
@@ -82,12 +99,27 @@ impl CompOp {
         }
     }
 
+    /// Get the comparison operator from Rusts `Ordering` enum.
+    ///
+    /// The following comparison operators are returned:
+    ///
+    /// * `Ordering::Less` -> `Lt`
+    /// * `Ordering::Equal` -> `Eq`
+    /// * `Ordering::Greater` -> `Gt`
+    pub fn from_ord(ord: Ordering) -> CompOp {
+        match ord {
+            Ordering::Less => CompOp::Lt,
+            Ordering::Equal => CompOp::Eq,
+            Ordering::Greater => CompOp::Gt
+        }
+    }
+
     /// Get the name of this comparison operator.
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::Eq.name(), "eq");
     /// assert_eq!(CompOp::Lt.name(), "lt");
@@ -107,14 +139,15 @@ impl CompOp {
     /// Covert to the inverted comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Eq <-> Ne
-    /// - Lt <-> Ge
-    /// - Le <-> Gt
+    ///
+    /// * `Eq` <-> `Ne`
+    /// * `Lt` <-> `Ge`
+    /// * `Le` <-> `Gt`
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::Eq.as_inverted(), CompOp::Ne);
     /// assert_eq!(CompOp::Lt.as_inverted(), CompOp::Ge);
@@ -127,14 +160,15 @@ impl CompOp {
     /// Get the inverted comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Eq <-> Ne
-    /// - Lt <-> Ge
-    /// - Le <-> Gt
+    ///
+    /// * `Eq` <-> `Ne`
+    /// * `Lt` <-> `Ge`
+    /// * `Le` <-> `Gt`
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::Eq.invert(), CompOp::Ne);
     /// assert_eq!(CompOp::Lt.invert(), CompOp::Ge);
@@ -154,14 +188,15 @@ impl CompOp {
     /// Convert to the opposite comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Eq <-> Ne
-    /// - Lt <-> Gt
-    /// - Le <-> Ge
+    ///
+    /// * `Eq` <-> `Ne`
+    /// * `Lt` <-> `Gt`
+    /// * `Le` <-> `Ge`
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::Eq.as_opposite(), CompOp::Ne);
     /// assert_eq!(CompOp::Lt.as_opposite(), CompOp::Gt);
@@ -174,14 +209,15 @@ impl CompOp {
     /// Get the opposite comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Eq <-> Ne
-    /// - Lt <-> Gt
-    /// - Le <-> Ge
+    ///
+    /// * `Eq` <-> `Ne`
+    /// * `Lt` <-> `Gt`
+    /// * `Le` <-> `Ge`
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::Eq.opposite(), CompOp::Ne);
     /// assert_eq!(CompOp::Lt.opposite(), CompOp::Gt);
@@ -201,14 +237,15 @@ impl CompOp {
     /// Convert to the flipped comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Lt <-> Gt
-    /// - Le <-> Ge
-    /// - Other operators are returned as is.
+    ///
+    /// * `Lt` <-> `Gt`
+    /// * `Le` <-> `Ge`
+    /// * Other operators are returned as is.
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::Eq.as_flipped(), CompOp::Eq);
     /// assert_eq!(CompOp::Lt.as_flipped(), CompOp::Gt);
@@ -221,14 +258,15 @@ impl CompOp {
     /// Get the flipped comparison operator.
     ///
     /// This uses the following bidirectional rules:
-    /// - Lt <-> Gt
-    /// - Le <-> Ge
-    /// - Other operators are returned as is.
+    ///
+    /// * `Lt` <-> `Gt`
+    /// * `Le` <-> `Ge`
+    /// * Other operators are returned as is.
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::Eq.flip(), CompOp::Eq);
     /// assert_eq!(CompOp::Lt.flip(), CompOp::Gt);
@@ -247,17 +285,18 @@ impl CompOp {
     /// Get the sign for this comparison operator.
     ///
     /// The following signs are returned:
-    /// - Eq: `==`
-    /// - Ne: `!=`
-    /// - Lt: `<`
-    /// - Le: `<=`
-    /// - Ge: `>=`
-    /// - Gt: `>`
+    ///
+    /// * `Eq` -> `==`
+    /// * `Ne` -> `!=`
+    /// * `Lt` -> `< `
+    /// * `Le` -> `<=`
+    /// * `Ge` -> `>=`
+    /// * `Gt` -> `> `
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::comp_op::CompOp;
+    /// use version_compare::CompOp;
     ///
     /// assert_eq!(CompOp::Eq.sign(), "==");
     /// assert_eq!(CompOp::Lt.sign(), "<");
@@ -278,14 +317,15 @@ impl CompOp {
     /// These factors can be useful for quick calculations.
     ///
     /// The following factor numbers are returned:
-    /// - Eq | Ne: `0`
-    /// - Lt | Le: `-1`
-    /// - Gt | Ge: `1`
+    ///
+    /// * `Eq` or `Ne` -> ` 0 `
+    /// * `Lt` or `Le` -> `-1`
+    /// * `Gt` or `Ge` -> ` 1`
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::version::Version;
+    /// use version_compare::Version;
     ///
     /// let ver_a = Version::from("1.2.3").unwrap();
     /// let ver_b = Version::from("1.3").unwrap();
@@ -300,11 +340,42 @@ impl CompOp {
             &CompOp::Gt | &CompOp::Ge => 1
         }
     }
+
+    /// Get Rust's ordering for this comparison operator.
+    ///
+    /// The following comparison operators are supported:
+    ///
+    /// * `Eq` -> `Ordering::Equal`
+    /// * `Lt` -> `Ordering::Less`
+    /// * `Gt` -> `Ordering::Greater`
+    ///
+    /// For other comparison operators `None` is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::cmp::Ordering;
+    /// use version_compare::Version;
+    ///
+    /// let ver_a = Version::from("1.2.3").unwrap();
+    /// let ver_b = Version::from("1.3").unwrap();
+    ///
+    /// assert_eq!(ver_a.compare(&ver_b).ord().unwrap(), Ordering::Less);
+    /// ```
+    pub fn ord(&self) -> Option<Ordering> {
+        match self {
+            &CompOp::Eq => Some(Ordering::Equal),
+            &CompOp::Lt => Some(Ordering::Less),
+            &CompOp::Gt => Some(Ordering::Greater),
+            _ => None
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use comp_op::CompOp;
+    use std::cmp::Ordering;
+    use super::CompOp;
 
     #[test]
     fn from_sign() {
@@ -334,6 +405,13 @@ mod tests {
         // Exceptional cases
         assert_eq!(CompOp::from_name("  Le  ").unwrap(), CompOp::Le);
         assert!(CompOp::from_name("abc").is_err());
+    }
+
+    #[test]
+    fn from_ord() {
+        assert_eq!(CompOp::from_ord(Ordering::Less), CompOp::Lt);
+        assert_eq!(CompOp::from_ord(Ordering::Equal), CompOp::Eq);
+        assert_eq!(CompOp::from_ord(Ordering::Greater), CompOp::Gt);
     }
 
     #[test]
@@ -424,5 +502,15 @@ mod tests {
         assert_eq!(CompOp::Le.factor(), -1);
         assert_eq!(CompOp::Ge.factor(), 1);
         assert_eq!(CompOp::Gt.factor(), 1);
+    }
+
+    #[test]
+    fn ord() {
+        assert_eq!(CompOp::Eq.ord(), Some(Ordering::Equal));
+        assert_eq!(CompOp::Ne.ord(), None);
+        assert_eq!(CompOp::Lt.ord(), Some(Ordering::Less));
+        assert_eq!(CompOp::Le.ord(), None);
+        assert_eq!(CompOp::Ge.ord(), None);
+        assert_eq!(CompOp::Gt.ord(), Some(Ordering::Greater));
     }
 }
