@@ -73,6 +73,10 @@ fn main() {
     let b_ver = Version::from(b).unwrap();
 
     // Directly compare versions
+    let _ = a_ver < b_ver; // -> true
+    let _ = a_ver <= b_ver; // -> true
+    let _ = a_ver > b_ver; // -> false
+    let _ = a_ver != b_ver; // -> false
     a_ver.compare(&b_ver); // -> CompOp::Lt
     b_ver.compare(&a_ver); // -> CompOp::Gt
     a_ver.compare_to(&b_ver, &CompOp::Lt); // -> true
