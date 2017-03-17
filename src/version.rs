@@ -4,6 +4,7 @@
 //! is made. This struct provides many methods and features for easy comparison, probing and other
 //! things.
 
+use std::cmp::Ordering;
 use std::iter::Peekable;
 use std::slice::Iter;
 
@@ -437,6 +438,20 @@ impl<'a> Version<'a> {
     }
 }
 
+/// Implement the partial ordering trait for the version struct, to easily allow version comparison.
+impl<'a> PartialOrd for Version<'a> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.compare(other).ord().unwrap())
+    }
+}
+
+/// Implement the partial equality trait for the version struct, to easily allow version comparison.
+impl<'a> PartialEq for Version<'a> {
+    fn eq(&self, other: &Self) -> bool {
+        self.compare_to(other, &CompOp::Eq)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::cmp;
@@ -674,5 +689,53 @@ mod tests {
                 &Version::from("1.2.3").unwrap(),
                 &CompOp::Ne
             ));
+    }
+
+    #[test]
+    fn partial_cmp() {
+        // Compare each version in the version set
+        for entry in TEST_VERSION_SETS {
+            // Get both versions
+            let version_a = Version::from(&entry.0).unwrap();
+            let version_b = Version::from(&entry.1).unwrap();
+
+            // Compare and assert
+            match entry.2 {
+                CompOp::Eq => assert!(version_a == version_b),
+                CompOp::Ne => assert!(version_a != version_b),
+                CompOp::Lt => assert!(version_a < version_b),
+                CompOp::Le => assert!(version_a <= version_b),
+                CompOp::Ge => assert!(version_a >= version_b),
+                CompOp::Gt => assert!(version_a > version_b)
+            }
+        }
+    }
+
+    #[test]
+    fn partial_eq() {
+        // Compare each version in the version set
+        for entry in TEST_VERSION_SETS {
+            // Skip entries that are less or equal, or greater or equal
+            match entry.2 {
+                CompOp::Le | CompOp::Ge => continue,
+                _ => {}
+            }
+
+            // Get both versions
+            let version_a = Version::from(&entry.0).unwrap();
+            let version_b = Version::from(&entry.1).unwrap();
+
+            // Determine what the result should be
+            let result = match entry.2 {
+                CompOp::Eq => true,
+                _ => false
+            };
+
+            // Test
+            assert_eq!(version_a == version_b, result);
+        }
+
+        // Assert an exceptional case, compare to not equal
+        assert!(Version::from("1.2").unwrap() != Version::from("1.2.3").unwrap());
     }
 }
