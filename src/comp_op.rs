@@ -6,6 +6,8 @@
 //! Methods like `CompOp::from_sign(">");` can be used to get a comparison operator by it's logical
 //! sign from a string.
 
+use std::cmp::Ordering;
+
 /// Enum of supported comparison operators.
 #[derive(Debug, Clone, PartialEq)]
 pub enum CompOp {
@@ -94,6 +96,21 @@ impl CompOp {
             "ge" => Ok(CompOp::Ge),
             "gt" => Ok(CompOp::Gt),
             _ => Err(())
+        }
+    }
+
+    /// Get the comparison operator from Rusts `Ordering` enum.
+    ///
+    /// The following comparison operators are returned:
+    ///
+    /// * `Ordering::Less` -> `Lt`
+    /// * `Ordering::Equal` -> `Eq`
+    /// * `Ordering::Greater` -> `Gt`
+    pub fn from_ord(ord: Ordering) -> CompOp {
+        match ord {
+            Ordering::Less => CompOp::Lt,
+            Ordering::Equal => CompOp::Eq,
+            Ordering::Greater => CompOp::Gt
         }
     }
 
@@ -323,10 +340,41 @@ impl CompOp {
             &CompOp::Gt | &CompOp::Ge => 1
         }
     }
+
+    /// Get Rust's ordering for this comparison operator.
+    ///
+    /// The following comparison operators are supported:
+    ///
+    /// * `Eq` -> `Ordering::Equal`
+    /// * `Lt` -> `Ordering::Less`
+    /// * `Gt` -> `Ordering::Greater`
+    ///
+    /// For other comparison operators `None` is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::cmp::Ordering;
+    /// use version_compare::Version;
+    ///
+    /// let ver_a = Version::from("1.2.3").unwrap();
+    /// let ver_b = Version::from("1.3").unwrap();
+    ///
+    /// assert_eq!(ver_a.compare(&ver_b).ord().unwrap(), Ordering::Less);
+    /// ```
+    pub fn ord(&self) -> Option<Ordering> {
+        match self {
+            &CompOp::Eq => Some(Ordering::Equal),
+            &CompOp::Lt => Some(Ordering::Less),
+            &CompOp::Gt => Some(Ordering::Greater),
+            _ => None
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::cmp::Ordering;
     use super::CompOp;
 
     #[test]
@@ -357,6 +405,13 @@ mod tests {
         // Exceptional cases
         assert_eq!(CompOp::from_name("  Le  ").unwrap(), CompOp::Le);
         assert!(CompOp::from_name("abc").is_err());
+    }
+
+    #[test]
+    fn from_ord() {
+        assert_eq!(CompOp::from_ord(Ordering::Less), CompOp::Lt);
+        assert_eq!(CompOp::from_ord(Ordering::Equal), CompOp::Eq);
+        assert_eq!(CompOp::from_ord(Ordering::Greater), CompOp::Gt);
     }
 
     #[test]
@@ -447,5 +502,15 @@ mod tests {
         assert_eq!(CompOp::Le.factor(), -1);
         assert_eq!(CompOp::Ge.factor(), 1);
         assert_eq!(CompOp::Gt.factor(), 1);
+    }
+
+    #[test]
+    fn ord() {
+        assert_eq!(CompOp::Eq.ord(), Some(Ordering::Equal));
+        assert_eq!(CompOp::Ne.ord(), None);
+        assert_eq!(CompOp::Lt.ord(), Some(Ordering::Less));
+        assert_eq!(CompOp::Le.ord(), None);
+        assert_eq!(CompOp::Ge.ord(), None);
+        assert_eq!(CompOp::Gt.ord(), Some(Ordering::Greater));
     }
 }
