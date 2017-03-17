@@ -1,8 +1,7 @@
 [![Build Status on Travis CI](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)
 [![Library on crates.io](https://img.shields.io/crates/v/version-compare.svg)](https://crates.io/crates/version-compare)
 [![Download statistics on crates.io](https://img.shields.io/crates/d/version-compare.svg)](https://crates.io/crates/version-compare)
-[![Coverage Status](https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master)](https://coveralls.io/github/timvisee/version-compare?branch=master)
-[![Dependencies on libraries.io](https://img.shields.io/librariesio/github/timvisee/version-compare.svg)](https://libraries.io/github/timvisee/version-compare)
+[![Dependencies on libraries.io](https://img.shields.io/badge/dependencies-none!-brightgreen.svg)](https://libraries.io/github/timvisee/version-compare)
 [![Library on crates.io](https://img.shields.io/crates/l/version-compare.svg)](https://crates.io/crates/version-compare)
 
 # Rust library: version-compare
@@ -32,6 +31,7 @@ See the list below for a list of currently available and future features.
 * Static, single-statement methods available.
 
 The following features will be added in a later version:
+* Support for text parts in version strings.
 * Version manifest, to specify detailed version number constraints.
 * Batch comparisons.
 
@@ -63,30 +63,30 @@ fn main() {
     // - CompOp::Ge -> Greater than or equal
     // - CompOp::Gt -> Greater than
 
-    // Easily compare
-    VersionCompare::compare(&a, &b); // -> CompOp::Lt
-    VersionCompare::compare_to(&a, &b, &CompOp::Le); // -> true
-    VersionCompare::compare_to(&a, &b, &CompOp::Gt); // -> false
+    // Easily compare version strings
+    assert_eq!(VersionCompare::compare(&a, &b).unwrap(), CompOp::Lt);
+    assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Le).unwrap(), true);
+    assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Gt).unwrap(), false);
 
     // Version string parsing
     let a_ver = Version::from(a).unwrap();
     let b_ver = Version::from(b).unwrap();
 
-    // Directly compare versions
-    let _ = a_ver < b_ver; // -> true
-    let _ = a_ver <= b_ver; // -> true
-    let _ = a_ver > b_ver; // -> false
-    let _ = a_ver != b_ver; // -> false
-    a_ver.compare(&b_ver); // -> CompOp::Lt
-    b_ver.compare(&a_ver); // -> CompOp::Gt
-    a_ver.compare_to(&b_ver, &CompOp::Lt); // -> true
+    // Directly compare parsed versions
+    assert_eq!(a_ver < b_ver, true);
+    assert_eq!(a_ver <= b_ver, true);
+    assert_eq!(a_ver > b_ver, false);
+    assert_eq!(a_ver != b_ver, false);
+    assert_eq!(a_ver.compare(&b_ver), CompOp::Lt);
+    assert_eq!(b_ver.compare(&a_ver), CompOp::Gt);
+    assert_eq!(a_ver.compare_to(&b_ver, &CompOp::Lt), true);
 
     // Match
     match a_ver.compare(&b_ver) {
         CompOp::Lt => println!("Version a is less than b"),
         CompOp::Eq => println!("Version a is equal to b"),
         CompOp::Gt => println!("Version a is greater than b"),
-        _ => panic!("This is never reached")
+        _ => unreachable!()
     }
 }
 ```
