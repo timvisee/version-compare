@@ -32,6 +32,7 @@ See the list below for a list of currently available and future features.
 * Static, single-statement methods available.
 
 The following features will be added in a later version:
+* Support for text parts in version strings.
 * Version manifest, to specify detailed version number constraints.
 * Batch comparisons.
 
@@ -63,7 +64,7 @@ fn main() {
     // - CompOp::Ge -> Greater than or equal
     // - CompOp::Gt -> Greater than
 
-    // Easily compare
+    // Easily compare version strings
     assert_eq!(VersionCompare::compare(&a, &b).unwrap(), CompOp::Lt);
     assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Le).unwrap(), true);
     assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Gt).unwrap(), false);
@@ -72,7 +73,7 @@ fn main() {
     let a_ver = Version::from(a).unwrap();
     let b_ver = Version::from(b).unwrap();
 
-    // Directly compare versions
+    // Directly compare parsed versions
     assert_eq!(a_ver < b_ver, true);
     assert_eq!(a_ver <= b_ver, true);
     assert_eq!(a_ver > b_ver, false);
@@ -86,7 +87,7 @@ fn main() {
         CompOp::Lt => println!("Version a is less than b"),
         CompOp::Eq => println!("Version a is equal to b"),
         CompOp::Gt => println!("Version a is greater than b"),
-        _ => panic!("This is never reached")
+        _ => unreachable!()
     }
 }
 ```

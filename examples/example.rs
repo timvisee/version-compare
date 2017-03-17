@@ -15,7 +15,7 @@ fn main() {
     // - CompOp::Ge -> Greater than or equal
     // - CompOp::Gt -> Greater than
 
-    // Easily compare
+    // Easily compare version strings
     assert_eq!(VersionCompare::compare(&a, &b).unwrap(), CompOp::Lt);
     assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Le).unwrap(), true);
     assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Gt).unwrap(), false);
@@ -24,7 +24,7 @@ fn main() {
     let a_ver = Version::from(a).unwrap();
     let b_ver = Version::from(b).unwrap();
 
-    // Directly compare versions
+    // Directly compare parsed versions
     assert_eq!(a_ver < b_ver, true);
     assert_eq!(a_ver <= b_ver, true);
     assert_eq!(a_ver > b_ver, false);
