@@ -1,13 +1,14 @@
 [![Build Status on Travis CI](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)
 [![Library on crates.io](https://img.shields.io/crates/v/version-compare.svg)](https://crates.io/crates/version-compare)
 [![Download statistics on crates.io](https://img.shields.io/crates/d/version-compare.svg)](https://crates.io/crates/version-compare)
+[![Coverage Status](https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master)](https://coveralls.io/github/timvisee/version-compare?branch=master)
 [![Dependencies on libraries.io](https://img.shields.io/badge/dependencies-none!-brightgreen.svg)](https://libraries.io/github/timvisee/version-compare)
 [![Library on crates.io](https://img.shields.io/crates/l/version-compare.svg)](https://crates.io/crates/version-compare)
 
 # Rust library: version-compare
 > A Rust library to easily compare version numbers, and test them against various comparison operators.
 
-[Documentation](https://timvisee.github.io/version-compare)
+[Documentation](https://docs.rs/version-compare)
 
 Comparing version numbers is hard. Especially when version numbers get really complex,
 or when their formatting differs. 
