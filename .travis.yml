@@ -40,7 +40,7 @@ after_success:
   cd build &&
   cmake .. &&
   make &&
-  sudo make install &&
+  make install &&
   cd ../.. &&
   rm -rf kcov-master &&
   kcov --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo,/usr/lib --verify target/cov target/debug/version*compare-*
