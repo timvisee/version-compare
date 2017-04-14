@@ -11,23 +11,36 @@ before_script:
 - |
   pip install 'travis-cargo<0.2' --user &&
   export PATH=$HOME/.local/bin:$PATH
+
 script:
 - |
   travis-cargo build &&
   travis-cargo test &&
   travis-cargo bench &&
   travis-cargo --only stable doc
+
 addons:
   apt:
     packages:
     - libcurl4-openssl-dev
     - libelf-dev
     - libdw-dev
+    - cmake
+    - gcc
     - binutils-dev
+
+# Upload test coverage
+# TODO: Update documentation
 after_success:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo --only stable doc-upload; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo coveralls --verify --no-sudo; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./kcov/build/src/kcov --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov target/debug/deps/version*compare-*; fi
-env:
-  global:
-  - TRAVIS_CARGO_NIGHTLY_FEATURE=dev
+- |
+  wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
+  tar xzf master.tar.gz &&
+  cd kcov-master &&
+  mkdir build &&
+  cd build &&
+  cmake .. &&
+  make &&
+  sudo make install &&
+  cd ../.. &&
+  rm -rf kcov-master &&
+  kcov --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo,/usr/lib --verify target/cov target/debug/version*compare-*
