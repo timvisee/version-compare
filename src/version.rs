@@ -25,7 +25,7 @@ use version_part::VersionPart;
 pub struct Version<'a> {
     version: &'a str,
     parts: Vec<VersionPart<'a>>,
-    manifest: Option<&'a VersionManifest>
+    manifest: Option<&'a VersionManifest>,
 }
 
 impl<'a> Version<'a> {
@@ -56,7 +56,7 @@ impl<'a> Version<'a> {
         Some(Version {
             version: version,
             parts: parts.unwrap(),
-            manifest: None
+            manifest: None,
         })
     }
 
@@ -87,7 +87,7 @@ impl<'a> Version<'a> {
         Some(Version {
             version: version,
             parts: parts.unwrap(),
-            manifest: Some(&manifest)
+            manifest: Some(&manifest),
         })
     }
 
@@ -193,7 +193,7 @@ impl<'a> Version<'a> {
 
                     // Push the text part to the vector
                     parts.push(VersionPart::Text(part))
-                }
+                },
             }
         }
 
@@ -305,7 +305,7 @@ impl<'a> Version<'a> {
         // Compare the versions with their peekable iterators
         Self::compare_iter(
             self.parts.iter().peekable(),
-            other.parts.iter().peekable()
+            other.parts.iter().peekable(),
         )
     }
 
@@ -333,20 +333,20 @@ impl<'a> Version<'a> {
             CompOp::Eq =>
                 match operator {
                     &CompOp::Eq | &CompOp::Le | &CompOp::Ge => true,
-                    _ => false
+                    _ => false,
                 },
             CompOp::Lt =>
                 match operator {
                     &CompOp::Ne | &CompOp::Lt | &CompOp::Le => true,
-                    _ => false
+                    _ => false,
                 },
             CompOp::Gt =>
                 match operator {
                     &CompOp::Ne | &CompOp::Gt | &CompOp::Ge => true,
-                    _ => false
+                    _ => false,
                 },
 
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 
@@ -370,7 +370,7 @@ impl<'a> Version<'a> {
                     // Skip this part if it's non-numeric
                     match part {
                         &VersionPart::Number(_) => {},
-                        _ => continue
+                        _ => continue,
                     }
 
                     // Get the next numerical part for the other version
@@ -383,9 +383,9 @@ impl<'a> Version<'a> {
                             Some(val) =>
                                 match val {
                                     &VersionPart::Number(_) => break,
-                                    _ => {}
+                                    _ => {},
                                 },
-                            None => break
+                            None => break,
                         }
                     }
 
@@ -397,7 +397,7 @@ impl<'a> Version<'a> {
                                 if num == 0 {
                                     continue;
                                 },
-                            _ => {}
+                            _ => {},
                         }
 
                         // The main version is greater
@@ -413,17 +413,17 @@ impl<'a> Version<'a> {
                                     match num {
                                         n if n < other_num => return CompOp::Lt,
                                         n if n > other_num => return CompOp::Gt,
-                                        _ => continue
+                                        _ => continue,
                                     }
                                 },
 
-                                _ => unreachable!()
+                                _ => unreachable!(),
                             },
 
-                        _ => unreachable!()
+                        _ => unreachable!(),
                     }
                 },
-                None => break
+                None => break,
             }
         }
 
@@ -433,7 +433,7 @@ impl<'a> Version<'a> {
             Some(_) => Self::compare_iter(other_iter, iter).as_flipped(),
 
             // Nothing more to iterate over, the versions should be equal
-            None => CompOp::Eq
+            None => CompOp::Eq,
         }
     }
 }
@@ -629,11 +629,8 @@ mod tests {
                             // Break the loop if we already reached text when not ignored
                             if !ignore {
                                 break;
-                            } else {
-                                panic!("Found text when it should have been ignored");
-                            }
-                        },
-                        _ => {}
+                            }                        },
+                        _ => {},
                     }
                 }
             }
@@ -687,7 +684,7 @@ mod tests {
         assert!(
             Version::from("1.2").unwrap().compare_to(
                 &Version::from("1.2.3").unwrap(),
-                &CompOp::Ne
+                &CompOp::Ne,
             ));
     }
 
@@ -702,11 +699,9 @@ mod tests {
             // Compare and assert
             match entry.2 {
                 CompOp::Eq => assert!(version_a == version_b),
-                CompOp::Ne => assert!(version_a != version_b),
                 CompOp::Lt => assert!(version_a < version_b),
-                CompOp::Le => assert!(version_a <= version_b),
-                CompOp::Ge => assert!(version_a >= version_b),
-                CompOp::Gt => assert!(version_a > version_b)
+                CompOp::Gt => assert!(version_a > version_b),
+                _ => unreachable!(),
             }
         }
     }
@@ -728,7 +723,7 @@ mod tests {
             // Determine what the result should be
             let result = match entry.2 {
                 CompOp::Eq => true,
-                _ => false
+                _ => false,
             };
 
             // Test
