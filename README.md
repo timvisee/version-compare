@@ -7,7 +7,7 @@
 # Rust library: version-compare
 > A Rust library to easily compare version numbers, and test them against various comparison operators.
 
-[Documentation](https://timvisee.github.io/version-compare)
+[Documentation](https://docs.rs/version-compare)
 
 Comparing version numbers is hard. Especially when version numbers get really complex,
 or when their formatting differs. 
