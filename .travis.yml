@@ -26,8 +26,8 @@ addons:
     - binutils-dev
 after_success:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo --only stable doc-upload; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo coveralls --no-sudo; fi
-#- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./kcov/build/src/kcov --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov target/debug/version*compare-*; fi
+# - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then travis-cargo coveralls --verify --no-sudo; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./kcov/build/src/kcov --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov target/debug/deps/version*compare-*; fi
 env:
   global:
   - TRAVIS_CARGO_NIGHTLY_FEATURE=dev
