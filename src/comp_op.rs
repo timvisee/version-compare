@@ -44,8 +44,8 @@ impl CompOp {
     ///
     /// The following signs are supported:
     ///
-    /// * `==` -> `Eq`
-    /// * `!=` -> `Ne`
+    /// * `==` _or_ `=` -> `Eq`
+    /// * `!=` _or_ `!` -> `Ne`
     /// * `< ` -> `Lt`
     /// * `<=` -> `Le`
     /// * `>=` -> `Ge`
@@ -63,8 +63,8 @@ impl CompOp {
     /// ```
     pub fn from_sign(sign: &str) -> Result<CompOp, ()> {
         match sign.trim().as_ref() {
-            "==" => Ok(CompOp::Eq),
-            "!=" => Ok(CompOp::Ne),
+            "==" | "=" => Ok(CompOp::Eq),
+            "!=" | "!" => Ok(CompOp::Ne),
             "<" => Ok(CompOp::Lt),
             "<=" => Ok(CompOp::Le),
             ">=" => Ok(CompOp::Ge),
@@ -293,6 +293,10 @@ impl CompOp {
     /// * `Ge` -> `>=`
     /// * `Gt` -> `> `
     ///
+    /// Note: Some comparison operators also support other signs,
+    /// such as `=` for `Eq` and `!` for `Ne`,
+    /// these are never returned by this method however as the table above is used.
+    ///
     /// # Examples
     ///
     /// ```
@@ -381,7 +385,9 @@ mod tests {
     fn from_sign() {
         // Normal signs
         assert_eq!(CompOp::from_sign("==").unwrap(), CompOp::Eq);
+        assert_eq!(CompOp::from_sign("=").unwrap(), CompOp::Eq);
         assert_eq!(CompOp::from_sign("!=").unwrap(), CompOp::Ne);
+        assert_eq!(CompOp::from_sign("!").unwrap(), CompOp::Ne);
         assert_eq!(CompOp::from_sign("<").unwrap(), CompOp::Lt);
         assert_eq!(CompOp::from_sign("<=").unwrap(), CompOp::Le);
         assert_eq!(CompOp::from_sign(">=").unwrap(), CompOp::Ge);
