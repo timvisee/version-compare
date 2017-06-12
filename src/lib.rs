@@ -35,7 +35,7 @@ pub mod version_part;
 #[cfg(test)]
 mod test;
 
-// Publicly implement all library modules
+// Reexports
 pub use comp_op::CompOp;
 pub use version::Version;
 pub use version_compare::VersionCompare;
