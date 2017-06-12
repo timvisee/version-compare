@@ -629,7 +629,8 @@ mod tests {
                             // Break the loop if we already reached text when not ignored
                             if !ignore {
                                 break;
-                            }                        },
+                            }
+                        },
                         _ => {},
                     }
                 }
