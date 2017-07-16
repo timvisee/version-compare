@@ -11,11 +11,11 @@ use std::cmp::Ordering;
 /// Enum of supported comparison operators.
 #[derive(Debug, Clone, PartialEq)]
 pub enum CompOp {
-    /// Equal (`==`).
+    /// Equal (`==`, `=`).
     /// When version `A` is equal to `B`.
     Eq,
 
-    /// Not equal (`!=`).
+    /// Not equal (`!=`, `!`, `<>`).
     /// When version `A` is not equal to `B`.
     Ne,
 
@@ -45,7 +45,7 @@ impl CompOp {
     /// The following signs are supported:
     ///
     /// * `==` _or_ `=` -> `Eq`
-    /// * `!=` _or_ `!` -> `Ne`
+    /// * `!=` _or_ `!` _or_ `<>` -> `Ne`
     /// * `< ` -> `Lt`
     /// * `<=` -> `Le`
     /// * `>=` -> `Ge`
@@ -64,7 +64,7 @@ impl CompOp {
     pub fn from_sign(sign: &str) -> Result<CompOp, ()> {
         match sign.trim().as_ref() {
             "==" | "=" => Ok(CompOp::Eq),
-            "!=" | "!" => Ok(CompOp::Ne),
+            "!=" | "!" | "<>" => Ok(CompOp::Ne),
             "<" => Ok(CompOp::Lt),
             "<=" => Ok(CompOp::Le),
             ">=" => Ok(CompOp::Ge),
@@ -388,6 +388,7 @@ mod tests {
         assert_eq!(CompOp::from_sign("=").unwrap(), CompOp::Eq);
         assert_eq!(CompOp::from_sign("!=").unwrap(), CompOp::Ne);
         assert_eq!(CompOp::from_sign("!").unwrap(), CompOp::Ne);
+        assert_eq!(CompOp::from_sign("<>").unwrap(), CompOp::Ne);
         assert_eq!(CompOp::from_sign("<").unwrap(), CompOp::Lt);
         assert_eq!(CompOp::from_sign("<=").unwrap(), CompOp::Le);
         assert_eq!(CompOp::from_sign(">=").unwrap(), CompOp::Ge);
