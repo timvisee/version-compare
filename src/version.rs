@@ -454,7 +454,11 @@ impl<'a> PartialEq for Version<'a> {
 
 #[cfg(test)]
 mod tests {
+    extern crate test;
+
     use std::cmp;
+
+    use self::test::test::Bencher;
 
     use comp_op::CompOp;
     use test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
@@ -664,6 +668,19 @@ mod tests {
                 entry.2.clone()
             );
         }
+    }
+
+    #[bench]
+    fn bench_compare(b: &mut Bencher) {
+        // Pick two version numbers
+        let version_a = Version::from("1.2.3").unwrap();
+        let version_b = Version::from("1.3").unwrap();
+
+        // Benchmark
+        b.iter(|| {
+            // Compare the version number
+            version_a.compare(&version_b);
+        });
     }
 
     #[test]
