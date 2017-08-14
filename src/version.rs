@@ -482,6 +482,12 @@ mod tests {
         }
     }
 
+    #[bench]
+    fn bench_from(b: &mut Bencher) {
+        // Benchmark parsing a version number
+        b.iter(|| Version::from("1.2.3"));
+    }
+
     #[test]
     // TODO: This doesn't really test whether this method fully works
     fn from_manifest() {
@@ -676,11 +682,8 @@ mod tests {
         let version_a = Version::from("1.2.3").unwrap();
         let version_b = Version::from("1.3").unwrap();
 
-        // Benchmark
-        b.iter(|| {
-            // Compare the version number
-            version_a.compare(&version_b);
-        });
+        // Benchmark comparing version numbers
+        b.iter(||version_a.compare(&version_b));
     }
 
     #[test]
@@ -704,6 +707,16 @@ mod tests {
                 &Version::from("1.2.3").unwrap(),
                 &CompOp::Ne,
             ));
+    }
+
+    #[bench]
+    fn bench_compare_to(b: &mut Bencher) {
+        // Pick two version numbers
+        let version_a = Version::from("1.2.3").unwrap();
+        let version_b = Version::from("1.3").unwrap();
+
+        // Benchmark comparing version numbers to an operator
+        b.iter(||version_a.compare_to(&version_b, &CompOp::Lt));
     }
 
     #[test]
