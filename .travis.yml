@@ -25,7 +25,7 @@ addons:
 # TODO: Update documentation
 after_success:
 - |
-  wget https://github.com/SimonKagstrom/kcov/archive/59e7390bb0c2f342ef75610a13acfe01e030e526.tar.gz &&
+  wget https://github.com/SimonKagstrom/kcov/archive/59e7390bb0c2f342ef75610a13acfe01e030e526.tar.gz -O master.tar.gz &&
   tar xzf master.tar.gz &&
   cd kcov-master &&
   mkdir build &&
