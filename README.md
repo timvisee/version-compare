@@ -97,6 +97,8 @@ Check out the [examples](examples) directory for more complete examples.
 ## Builds
 This library is automatically build and tested for each commit using CI services.
 
+An additional build is invoked each 24 hours to ensure the project is still building correctly.
+
 |Service|Branch|Build Status| |
 |---:|:---|:---:|:---|
 |Travis CI|master|[![Build status on Travis CI on master](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
