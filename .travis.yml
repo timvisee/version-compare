@@ -1,6 +1,6 @@
 # Configuration for Travis CI
 language: rust
-sudo: true
+sudo: false
 rust:
   - stable
   - beta
@@ -10,35 +10,32 @@ matrix:
     - os: osx
       rust: stable
 
-script:
-- |
-  cargo build &&
-  cargo test
-
+# Dependencies for kcov, used by coverage
 addons:
   apt:
     packages:
-    - libcurl4-openssl-dev
-    - libelf-dev
-    - libdw-dev
-    - cmake
-    - gcc
-    - binutils-dev
+      - libcurl4-openssl-dev
+      - libelf-dev
+      - libdw-dev
+      - binutils-dev
+      - cmake
+    sources:
+      - kalakris-cmake
 
-# Upload test coverage
-# TODO: Update documentation
-after_success:
+# Install coverage tool
+before_script:
 - |
-  wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-  tar xzf master.tar.gz &&
-  cd kcov-master &&
-  mkdir build &&
-  cd build &&
-  cmake .. &&
-  make &&
-  sudo make install &&
-  cd ../.. &&
-  rm -rf kcov-master &&
-  cargo clean &&
-  cargo test --no-run &&
-  for file in target/debug/version_compare-*; do mkdir -p "target/cov/$(basename $file)"; kcov --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; break; done
+  cargo install cargo-travis &&
+  export PATH=$HOME/.cargo/bin:$PATH
+
+# Main build
+script:
+- |
+  cargo build &&
+  cargo test &&
+  cargo bench &&
+  cargo doc
+
+# Measure coverage, and upload to coveralls
+after_success:
+- cargo coveralls
