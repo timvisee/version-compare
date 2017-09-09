@@ -9,6 +9,8 @@ matrix:
   include:
     - os: osx
       rust: stable
+    - os: osx
+      rust: nightly
 
 # Dependencies for kcov, used by coverage
 addons:
