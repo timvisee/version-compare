@@ -1,4 +1,5 @@
 [![Build Status on Travis CI](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)
+[![Build Status on AppVeyor](https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6/branch/master?svg=true)](https://ci.appveyor.com/project/timvisee/version-compare)
 [![Library on crates.io](https://img.shields.io/crates/v/version-compare.svg)](https://crates.io/crates/version-compare)
 [![Download statistics on crates.io](https://img.shields.io/crates/d/version-compare.svg)](https://crates.io/crates/version-compare)
 [![Coverage Status](https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master)](https://coveralls.io/github/timvisee/version-compare?branch=master)
@@ -97,10 +98,12 @@ Check out the [examples](examples) directory for more complete examples.
 ## Builds
 This library is automatically build and tested for each commit using CI services.
 
-|Service|Branch|Build Status| |
-|---:|:---|:---:|:---|
-|Travis CI|master|[![Build status on Travis CI on master](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
-|Travis CI|last commit|[![Build status on Travis CI for last commit](https://travis-ci.org/timvisee/version-compare.svg)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
+|Service|Platforms|Branch|Build Status| |
+|---:|:---|:---|:---:|:---|
+|Travis CI|Linux, macOS|master|[![Build status on Travis CI on master](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
+|Travis CI|Linux, macOS|last commit|[![Build status on Travis CI for last commit](https://travis-ci.org/timvisee/version-compare.svg)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
+|AppVeyor|Windows|master|[![Build status on AppVeyor on master](https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6/branch/master?svg=true)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://ci.appveyor.com/project/timvisee/version-compare)|
+|AppVeyor|Windows|last commit|[![Build status on AppVeyor for last commit](https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6?svg=true)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://ci.appveyor.com/project/timvisee/version-compare)|
 
 ## License
 This project is released under the GNU GPL-3.0 license. Check out the [LICENSE](LICENSE) file for more information.
