@@ -27,7 +27,7 @@ addons:
 # Install coverage tool
 before_script:
 - |
-  if [[ $TRAVIS_OS_NAME == "linux") ]]; then
+  if [[ $TRAVIS_OS_NAME == "linux" ]]; then
   cargo install cargo-travis &&
   export PATH=$HOME/.cargo/bin:$PATH;
   fi
@@ -42,4 +42,4 @@ script:
 
 # Measure coverage, and upload to coveralls
 after_success:
-- if [[ $TRAVIS_OS_NAME == "linux") ]]; then cargo coveralls; fi
+- if [[ $TRAVIS_OS_NAME == "linux" ]]; then cargo coveralls; fi
