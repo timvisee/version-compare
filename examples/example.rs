@@ -28,7 +28,7 @@ fn main() {
     assert_eq!(a_ver < b_ver, true);
     assert_eq!(a_ver <= b_ver, true);
     assert_eq!(a_ver > b_ver, false);
-    assert_eq!(a_ver != b_ver, false);
+    assert_eq!(a_ver != b_ver, true);
     assert_eq!(a_ver.compare(&b_ver), CompOp::Lt);
     assert_eq!(b_ver.compare(&a_ver), CompOp::Gt);
     assert_eq!(a_ver.compare_to(&b_ver, &CompOp::Lt), true);
