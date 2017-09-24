@@ -2,7 +2,7 @@
 name = "version-compare"
 version = "0.0.5"
 authors = ["timvisee <timvisee@gmail.com>"]
-license = "GPL-3.0"
+license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/timvisee/version-compare"
 repository = "https://github.com/timvisee/version-compare"

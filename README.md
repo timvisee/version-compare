@@ -106,4 +106,4 @@ This library is automatically build and tested for each commit using CI services
 |AppVeyor|Windows|last commit|[![Build status on AppVeyor for last commit](https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6?svg=true)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://ci.appveyor.com/project/timvisee/version-compare)|
 
 ## License
-This project is released under the GNU GPL-3.0 license. Check out the [LICENSE](LICENSE) file for more information.
+This project is released under the MIT license. Check out the [LICENSE](LICENSE) file for more information.
