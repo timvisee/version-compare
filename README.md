@@ -34,7 +34,7 @@ A list of version number examples that are parsed successfully:
 - `1.2.dev.4` 
 - ` ` _(empty)_
 - ` .   -32 . 1` _(undefined formats)_
-- `MyApp 3.2.0 / build 0932` _(supported, not fully functional yet)_
+- `MyApp 3.2.0 / build 0932` _(complex formats, not fully functional yet)_
 - _Many more and support for custom formats to come..._
 
 ### Semver
@@ -121,8 +121,8 @@ This library is automatically build and tested for each commit using CI services
 |---:|:---|:---|:---:|:---|
 |Travis CI|Linux, macOS|master|[![Build status on Travis CI on master](https://travis-ci.org/timvisee/version-compare.svg?branch=master)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
 |Travis CI|Linux, macOS|last commit|[![Build status on Travis CI for last commit](https://travis-ci.org/timvisee/version-compare.svg)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://travis-ci.org/timvisee/version-compare)|
-|AppVeyor|Windows|master|[![Build status on AppVeyor on master](https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6/branch/master?svg=true)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://ci.appveyor.com/project/timvisee/version-compare)|
-|AppVeyor|Windows|last commit|[![Build status on AppVeyor for last commit](https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6?svg=true)](https://travis-ci.org/timvisee/version-compare)|[View Status](https://ci.appveyor.com/project/timvisee/version-compare)|
+|AppVeyor|Windows|master|[![Build status on AppVeyor on master](https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6/branch/master?svg=true)](https://ci.appveyor.com/project/timvisee/version-compare)|[View Status](https://ci.appveyor.com/project/timvisee/version-compare)|
+|AppVeyor|Windows|last commit|[![Build status on AppVeyor for last commit](https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6?svg=true)](https://ci.appveyor.com/project/timvisee/version-compare)|[View Status](https://ci.appveyor.com/project/timvisee/version-compare)|
 
 ## License
 This project is released under the MIT license. Check out the [LICENSE](LICENSE) file for more information.
