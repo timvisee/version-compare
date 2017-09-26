@@ -26,9 +26,6 @@
 //!
 //! _[View complete README](https://github.com/timvisee/version-compare/blob/master/README.md)_
 
-// We're using the test crate for benchmarking
-#![feature(test)]
-
 pub mod comp_op;
 pub mod version;
 pub mod version_compare;

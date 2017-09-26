@@ -454,11 +454,7 @@ impl<'a> PartialEq for Version<'a> {
 
 #[cfg(test)]
 mod tests {
-    extern crate test;
-
     use std::cmp;
-
-    use self::test::test::Bencher;
 
     use comp_op::CompOp;
     use test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
@@ -480,12 +476,6 @@ mod tests {
         for version in TEST_VERSIONS_ERROR {
             assert!(Version::from(&version.0).is_none());
         }
-    }
-
-    #[bench]
-    fn bench_from(b: &mut Bencher) {
-        // Benchmark parsing a version number
-        b.iter(|| Version::from("1.2.3"));
     }
 
     #[test]
@@ -676,16 +666,6 @@ mod tests {
         }
     }
 
-    #[bench]
-    fn bench_compare(b: &mut Bencher) {
-        // Pick two version numbers
-        let version_a = Version::from("1.2.3").unwrap();
-        let version_b = Version::from("1.3").unwrap();
-
-        // Benchmark comparing version numbers
-        b.iter(||version_a.compare(&version_b));
-    }
-
     #[test]
     fn compare_to() {
         // Compare each version in the version set
@@ -707,16 +687,6 @@ mod tests {
                 &Version::from("1.2.3").unwrap(),
                 &CompOp::Ne,
             ));
-    }
-
-    #[bench]
-    fn bench_compare_to(b: &mut Bencher) {
-        // Pick two version numbers
-        let version_a = Version::from("1.2.3").unwrap();
-        let version_b = Version::from("1.3").unwrap();
-
-        // Benchmark comparing version numbers to an operator
-        b.iter(||version_a.compare_to(&version_b, &CompOp::Lt));
     }
 
     #[test]
