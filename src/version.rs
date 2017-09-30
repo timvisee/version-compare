@@ -345,7 +345,6 @@ impl<'a> Version<'a> {
                     &CompOp::Ne | &CompOp::Gt | &CompOp::Ge => true,
                     _ => false,
                 },
-
             _ => unreachable!(),
         }
     }
@@ -416,11 +415,9 @@ impl<'a> Version<'a> {
                                         _ => continue,
                                     }
                                 },
-
-                                _ => unreachable!(),
+                                _ => {},
                             },
-
-                        _ => unreachable!(),
+                        _ => {},
                     }
                 },
                 None => break,
@@ -702,7 +699,7 @@ mod tests {
                 CompOp::Eq => assert!(version_a == version_b),
                 CompOp::Lt => assert!(version_a < version_b),
                 CompOp::Gt => assert!(version_a > version_b),
-                _ => unreachable!(),
+                _ => {},
             }
         }
     }
