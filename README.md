@@ -1,5 +1,5 @@
 [![Build status on Travis CI][travis-master-badge]][travis-link]
-[![Built status on AppVeyor][appveyor-master-badge]][appveyor-link]
+[![Built status on AppVeyor][appveyor-master-badge]][appveyor-master-link]
 [![Crate version][crate-version-badge]][crate-link]
 [![Download statistics][crate-download-badge]][crate-link]
 [![Coverage status][coverage-badge]][coverage-link]
@@ -127,19 +127,20 @@ Check out the [examples](examples) directory for more complete examples.
 ## Builds
 This library is automatically build and tested for each commit using CI services.
 
-| Service   | Platforms    | Branch      | Build Status                                            |                              |
-| --------: | :----------- | :---------- | :-----------------------------------------------------: | :--------------------------- |
-| Travis CI | Linux, macOS | master      | [![Build status][travis-master-badge]][travis-link]     | [View Status][travis-link]   |
-| Travis CI | Linux, macOS | last commit | [![Build status][travis-last-badge]][travis-link]       | [View Status][travis-link]   |
-| AppVeyor  | Windows      | master      | [![Build status][appveyor-master-badge]][appveyor-link] | [View Status][appveyor-link] |
-| AppVeyor  | Windows      | last commit | [![Build status][appveyor-last-badge]][appveyor-link]   | [View Status][appveyor-link] |
+| Service   | Platforms    | Branch      | Build Status                                                   |                                     |
+| --------: | :----------- | :---------- | :------------------------------------------------------------: | :---------------------------------- |
+| Travis CI | Linux, macOS | master      | [![Build status][travis-master-badge]][travis-link]            | [View Status][travis-link]          |
+| Travis CI | Linux, macOS | last commit | [![Build status][travis-last-badge]][travis-link]              | [View Status][travis-link]          |
+| AppVeyor  | Windows      | master      | [![Build status][appveyor-master-badge]][appveyor-master-link] | [View Status][appveyor-master-link] |
+| AppVeyor  | Windows      | last commit | [![Build status][appveyor-last-badge]][appveyor-last-link]     | [View Status][appveyor-last-link]   |
 
 [travis-master-badge]:   https://travis-ci.org/timvisee/version-compare.svg?branch=master
 [travis-last-badge]:     https://travis-ci.org/timvisee/version-compare.svg
 [travis-link]:           https://travis-ci.org/timvisee/version-compare
 [appveyor-master-badge]: https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6/branch/master?svg=true
 [appveyor-last-badge]:   https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6?svg=true
-[appveyor-link]:         https://ci.appveyor.com/project/timvisee/version-compare
+[appveyor-master-link]:  https://ci.appveyor.com/project/timvisee/version-compare/branch/master
+[appveyor-last-link]:    https://ci.appveyor.com/project/timvisee/version-compare
 
 ## License
 This project is released under the MIT license. Check out the [LICENSE](LICENSE) file for more information.
