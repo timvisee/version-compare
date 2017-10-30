@@ -23,4 +23,6 @@ build: false
 test_script:
   - cargo build
   - cargo test
+  - cargo run --example example
+  - cargo run --example minimal
   - cargo bench

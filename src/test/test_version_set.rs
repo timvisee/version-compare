@@ -11,7 +11,7 @@ use comp_op::CompOp;
 pub struct TestVersionSet(
     pub &'static str,
     pub &'static str,
-    pub CompOp
+    pub CompOp,
 );
 
 /// List of version sets for dynamic tests
@@ -41,7 +41,11 @@ pub const TEST_VERSION_SETS: &'static [TestVersionSet] = &[
     TestVersionSet("1.2.3", "1.2.3.alpha", CompOp::Eq),
     TestVersionSet("1.2.3.dev", "1.2.3.alpha", CompOp::Eq),
     TestVersionSet("1.2.3.dev.1", "1.2.3.alpha", CompOp::Gt),
-    TestVersionSet("snapshot.1.2.3", "1.2.3.alpha", CompOp::Eq)
+    TestVersionSet("snapshot.1.2.3", "1.2.3.alpha", CompOp::Eq),
+    TestVersionSet("version-compare 3.2.0 / build 0932", "3.2.5", CompOp::Lt),
+    // TODO: TestVersionSet("version-compare 3.2.0 / build 0932", "3.1.1", CompOp::Gt),
+    TestVersionSet("version-compare 1.4.1 / build 0043", "version-compare 1.4.1 / build 0043", CompOp::Eq),
+    // TODO: TestVersionSet("version-compare 1.4.1 / build 0042", "version-compare 1.4.1 / build 0043", CompOp::Lt),
 ];
 
 /// List of invalid version sets for dynamic tests
@@ -49,5 +53,5 @@ pub const TEST_VERSION_SETS_ERROR: &'static [TestVersionSet] = &[
     TestVersionSet("1.2.3", "1.2.3", CompOp::Lt),
     TestVersionSet("1.2", "1.2.0.0", CompOp::Ne),
     TestVersionSet("1.2.3.dev", "dev", CompOp::Eq),
-    TestVersionSet("snapshot", "1", CompOp::Lt)
+    TestVersionSet("snapshot", "1", CompOp::Lt),
 ];

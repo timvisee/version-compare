@@ -1,3 +1,12 @@
+//! Usage examples of the version-compare library.
+//!
+//! This file shows various ways this library supports for comparing version numbers,
+//! and it shows various ways of implementing it in code logic such as with a `match` statement.
+//!
+//! The `assert_eq!(...)` macros are used to assert the returned value by a given statement.
+//!
+//! You can run this example file by using the command `cargo run --example example`.
+
 extern crate version_compare;
 
 use version_compare::{CompOp, Version, VersionCompare};
