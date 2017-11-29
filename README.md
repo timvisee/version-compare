@@ -38,10 +38,11 @@ See the list below for a list of currently available and future features.
 
 ### Version formats
 A list of version number examples that are parsed successfully:
+
 - `1`
 - `3.10.4.1`
-- `1.2.alpha` 
-- `1.2.dev.4` 
+- `1.2.alpha`
+- `1.2.dev.4`
 - ` ` _(empty)_
 - ` .   -32 . 1` _(undefined formats)_
 - `MyApp 3.2.0 / build 0932` _(complex formats, not fully functional yet)_
@@ -60,6 +61,7 @@ Version-compare makes working with them easy and supports semver formats out of 
 * Static, single-statement methods available.
 
 The following features will be added in a later version:
+
 * Support for text parts in version strings.
 * Version manifest, to specify detailed version number constraints.
 * Version ranges, and tests against them.
