@@ -15,6 +15,7 @@
 //!
 //! ### Version formats
 //! A list of version number examples that are parsed successfully:
+//!
 //! - `1`
 //! - `3.10.4.1`
 //! - `1.2.alpha`
@@ -37,6 +38,7 @@
 //! * Static, single-statement methods available.
 //!
 //! The following features will be added in a later version:
+//!
 //! * Support for text parts in version strings.
 //! * Version manifest, to specify detailed version number constraints.
 //! * Version ranges, and tests against them.
