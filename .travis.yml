@@ -11,6 +11,8 @@ matrix:
       rust: stable
     - os: osx
       rust: nightly
+  allow_failures:
+    - os: osx
 
 # Dependencies for kcov, used by coverage
 addons:
