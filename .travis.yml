@@ -1,41 +1,28 @@
 # Configuration for Travis CI
 language: rust
-sudo: false
+sudo: required
 rust:
   - stable
   - beta
   - nightly
 
-# Dependencies for kcov, used by coverage
+# Dependencies for coverage
 addons:
   apt:
     packages:
-      - libcurl4-openssl-dev
-      - libelf-dev
-      - libdw-dev
-      - binutils-dev
-      - cmake
-    sources:
-      - kalakris-cmake
-
-# Install coverage tool
-before_script:
-- |
-  if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-  cargo install cargo-travis &&
-  export PATH=$HOME/.cargo/bin:$PATH;
-  fi
+      - libssl-dev
 
 # Main build
 script:
-- |
-  cargo build &&
-  cargo test &&
-  cargo run --example example &&
-  cargo run --example minimal &&
-  cargo bench &&
-  cargo doc
+  - cargo clean
+  - cargo build
+  - cargo test
+  - cargo run --example example
+  - cargo run --example minimal
+  - cargo bench
+  - cargo doc
 
 # Measure coverage, and upload to coveralls
-after_success:
-- if [[ $TRAVIS_OS_NAME == "linux" ]]; then cargo coveralls; fi
+after_success: |
+  bash <(curl https://raw.githubusercontent.com/xd009642/tarpaulin/master/travis-install.sh)
+  cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
