@@ -8,11 +8,7 @@ use comp_op::CompOp;
 /// - `0`: The main version.
 /// - `1`: The other version.
 /// - `2`: The comparison operator.
-pub struct TestVersionSet(
-    pub &'static str,
-    pub &'static str,
-    pub CompOp,
-);
+pub struct TestVersionSet(pub &'static str, pub &'static str, pub CompOp);
 
 /// List of version sets for dynamic tests
 pub const TEST_VERSION_SETS: &'static [TestVersionSet] = &[
@@ -44,7 +40,11 @@ pub const TEST_VERSION_SETS: &'static [TestVersionSet] = &[
     TestVersionSet("snapshot.1.2.3", "1.2.3.alpha", CompOp::Eq),
     TestVersionSet("version-compare 3.2.0 / build 0932", "3.2.5", CompOp::Lt),
     // TODO: TestVersionSet("version-compare 3.2.0 / build 0932", "3.1.1", CompOp::Gt),
-    TestVersionSet("version-compare 1.4.1 / build 0043", "version-compare 1.4.1 / build 0043", CompOp::Eq),
+    TestVersionSet(
+        "version-compare 1.4.1 / build 0043",
+        "version-compare 1.4.1 / build 0043",
+        CompOp::Eq,
+    ),
     // TODO: TestVersionSet("version-compare 1.4.1 / build 0042", "version-compare 1.4.1 / build 0043", CompOp::Lt),
 ];
 

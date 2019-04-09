@@ -18,6 +18,6 @@ fn main() {
         CompOp::Lt => println!("Version a is less than b"),
         CompOp::Eq => println!("Version a is equal to b"),
         CompOp::Gt => println!("Version a is greater than b"),
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }

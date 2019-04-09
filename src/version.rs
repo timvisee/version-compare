@@ -30,7 +30,6 @@ pub struct Version<'a> {
 }
 
 impl<'a> Version<'a> {
-
     /// Create a `Version` instance from a version string.
     ///
     /// The version string should be passed to the `version` parameter.
@@ -153,7 +152,10 @@ impl<'a> Version<'a> {
 
     /// Split the given version string, in it's version parts.
     /// TODO: Move this method to some sort of helper class, maybe as part of `VersionPart`.
-    fn split_version_str(version: &'a str, manifest: Option<&'a VersionManifest>) -> Option<Vec<VersionPart<'a>>> {
+    fn split_version_str(
+        version: &'a str,
+        manifest: Option<&'a VersionManifest>,
+    ) -> Option<Vec<VersionPart<'a>>> {
         // Split the version string, and create a vector to put the parts in
         let split = version.split('.');
         let mut parts = Vec::new();
@@ -170,7 +172,9 @@ impl<'a> Version<'a> {
         // Loop over the parts, and parse them
         for part in split {
             // We may not go over the maximum depth
-            if used_manifest.max_depth().is_some() && parts.len() >= used_manifest.max_depth_number() {
+            if used_manifest.max_depth().is_some()
+                && parts.len() >= used_manifest.max_depth_number()
+            {
                 break;
             }
 
@@ -185,7 +189,7 @@ impl<'a> Version<'a> {
                     // Push the number part to the vector, and set the has number flag
                     parts.push(VersionPart::Number(number));
                     has_number = true;
-                },
+                }
                 Err(_) => {
                     // Ignore text parts if specified
                     if used_manifest.ignore_text() {
@@ -194,13 +198,13 @@ impl<'a> Version<'a> {
 
                     // Push the text part to the vector
                     parts.push(VersionPart::Text(part))
-                },
+                }
             }
         }
 
         // The version must contain a number part, if any part was parsed
         if !has_number && !parts.is_empty() {
-            return None
+            return None;
         }
 
         // Return the list of parts
@@ -304,10 +308,7 @@ impl<'a> Version<'a> {
     /// ```
     pub fn compare(&self, other: &Version) -> CompOp {
         // Compare the versions with their peekable iterators
-        Self::compare_iter(
-            self.parts.iter().peekable(),
-            other.parts.iter().peekable(),
-        )
+        Self::compare_iter(self.parts.iter().peekable(), other.parts.iter().peekable())
     }
 
     /// Compare this version to the given `other` version,
@@ -331,21 +332,18 @@ impl<'a> Version<'a> {
 
         // Match the result against the given operator
         match result {
-            CompOp::Eq =>
-                match operator {
-                    &CompOp::Eq | &CompOp::Le | &CompOp::Ge => true,
-                    _ => false,
-                },
-            CompOp::Lt =>
-                match operator {
-                    &CompOp::Ne | &CompOp::Lt | &CompOp::Le => true,
-                    _ => false,
-                },
-            CompOp::Gt =>
-                match operator {
-                    &CompOp::Ne | &CompOp::Gt | &CompOp::Ge => true,
-                    _ => false,
-                },
+            CompOp::Eq => match operator {
+                &CompOp::Eq | &CompOp::Le | &CompOp::Ge => true,
+                _ => false,
+            },
+            CompOp::Lt => match operator {
+                &CompOp::Ne | &CompOp::Lt | &CompOp::Le => true,
+                _ => false,
+            },
+            CompOp::Gt => match operator {
+                &CompOp::Ne | &CompOp::Gt | &CompOp::Ge => true,
+                _ => false,
+            },
             _ => unreachable!(),
         }
     }
@@ -359,7 +357,10 @@ impl<'a> Version<'a> {
     /// * `Gt`
     ///
     /// Other comparison operators can be used when comparing, but aren't returned by this method.
-    fn compare_iter(mut iter: Peekable<Iter<VersionPart<'a>>>, mut other_iter: Peekable<Iter<VersionPart<'a>>>) -> CompOp {
+    fn compare_iter(
+        mut iter: Peekable<Iter<VersionPart<'a>>>,
+        mut other_iter: Peekable<Iter<VersionPart<'a>>>,
+    ) -> CompOp {
         // Iterate through the parts of this version
         let mut other_part: Option<&VersionPart>;
 
@@ -369,7 +370,7 @@ impl<'a> Version<'a> {
                 Some(part) => {
                     // Skip this part if it's non-numeric
                     match part {
-                        &VersionPart::Number(_) => {},
+                        &VersionPart::Number(_) => {}
                         _ => continue,
                     }
 
@@ -380,11 +381,10 @@ impl<'a> Version<'a> {
 
                         // Make sure it's a number or none
                         match other_part {
-                            Some(val) =>
-                                match val {
-                                    &VersionPart::Number(_) => break,
-                                    _ => {},
-                                },
+                            Some(val) => match val {
+                                &VersionPart::Number(_) => break,
+                                _ => {}
+                            },
                             None => break,
                         }
                     }
@@ -393,11 +393,12 @@ impl<'a> Version<'a> {
                     if other_part.is_none() {
                         // In the main version: if the current part is zero, continue to the next one
                         match part {
-                            &VersionPart::Number(num) =>
+                            &VersionPart::Number(num) => {
                                 if num == 0 {
                                     continue;
-                                },
-                            _ => {},
+                                }
+                            }
+                            _ => {}
                         }
 
                         // The main version is greater
@@ -406,21 +407,20 @@ impl<'a> Version<'a> {
 
                     // Match both part as numbers to destruct their numerical values
                     match part {
-                        &VersionPart::Number(num) =>
-                            match other_part.unwrap() {
-                                &VersionPart::Number(other_num) => {
-                                    // Compare the numbers
-                                    match num {
-                                        n if n < other_num => return CompOp::Lt,
-                                        n if n > other_num => return CompOp::Gt,
-                                        _ => continue,
-                                    }
-                                },
-                                _ => {},
-                            },
-                        _ => {},
+                        &VersionPart::Number(num) => match other_part.unwrap() {
+                            &VersionPart::Number(other_num) => {
+                                // Compare the numbers
+                                match num {
+                                    n if n < other_num => return CompOp::Lt,
+                                    n if n > other_num => return CompOp::Gt,
+                                    _ => continue,
+                                }
+                            }
+                            _ => {}
+                        },
+                        _ => {}
                     }
-                },
+                }
                 None => break,
             }
         }
@@ -496,7 +496,12 @@ mod tests {
 
         // Test whether parsing works for each test version
         for version in TEST_VERSIONS {
-            assert_eq!(Version::from_manifest(&version.0, &manifest).unwrap().manifest, Some(&manifest));
+            assert_eq!(
+                Version::from_manifest(&version.0, &manifest)
+                    .unwrap()
+                    .manifest,
+                Some(&manifest)
+            );
         }
 
         // Test whether parsing works for each test invalid version
@@ -640,8 +645,8 @@ mod tests {
                             if !ignore {
                                 break;
                             }
-                        },
-                        _ => {},
+                        }
+                        _ => {}
                     }
                 }
             }
@@ -669,10 +674,7 @@ mod tests {
             let version_b = Version::from(&entry.1).unwrap();
 
             // Compare them
-            assert_eq!(
-                version_a.compare(&version_b),
-                entry.2.clone()
-            );
+            assert_eq!(version_a.compare(&version_b), entry.2.clone());
         }
     }
 
@@ -692,11 +694,9 @@ mod tests {
         }
 
         // Assert an exceptional case, compare to not equal
-        assert!(
-            Version::from("1.2").unwrap().compare_to(
-                &Version::from("1.2.3").unwrap(),
-                &CompOp::Ne,
-            ));
+        assert!(Version::from("1.2")
+            .unwrap()
+            .compare_to(&Version::from("1.2.3").unwrap(), &CompOp::Ne,));
     }
 
     #[test]
@@ -712,7 +712,7 @@ mod tests {
                 CompOp::Eq => assert!(version_a == version_b),
                 CompOp::Lt => assert!(version_a < version_b),
                 CompOp::Gt => assert!(version_a > version_b),
-                _ => {},
+                _ => {}
             }
         }
     }

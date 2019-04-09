@@ -9,10 +9,9 @@ use version::Version;
 /// The main library structure, which provides various static methods for easy version comparison.
 ///
 /// This structure uses static methods only, and doesn't need to be constructed.
-pub struct VersionCompare { }
+pub struct VersionCompare {}
 
 impl VersionCompare {
-
     /// Compare two version number strings to each other.
     /// This compares version `a` to version `b`, and returns whether version `a` is greater, less
     /// or equal to version `b`.
@@ -93,7 +92,7 @@ mod tests {
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             assert_eq!(
-            VersionCompare::compare(&entry.0, &entry.1),
+                VersionCompare::compare(&entry.0, &entry.1),
                 Ok(entry.2.clone())
             );
         }
@@ -116,7 +115,10 @@ mod tests {
             assert!(VersionCompare::compare_to(&entry.0, &entry.1, &entry.2).unwrap());
 
             // Make sure the inverse operator is not correct
-            assert_eq!(VersionCompare::compare_to(&entry.0, &entry.1, &entry.2.invert()).unwrap(), false);
+            assert_eq!(
+                VersionCompare::compare_to(&entry.0, &entry.1, &entry.2.invert()).unwrap(),
+                false
+            );
         }
 
         // Compare each error version in the version set

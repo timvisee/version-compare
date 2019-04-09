@@ -5,10 +5,7 @@
 ///
 /// - `0`: The version string.
 /// - `1`: Number of version parts.
-pub struct TestVersion(
-    pub &'static str,
-    pub usize,
-);
+pub struct TestVersion(pub &'static str, pub usize);
 
 /// List of version numbers with metadata for dynamic tests
 pub const TEST_VERSIONS: &'static [TestVersion] = &[

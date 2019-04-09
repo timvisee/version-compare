@@ -13,12 +13,11 @@ pub struct VersionManifest {
     max_depth: Option<usize>,
 
     /// True to ignore text parts in version strings.
-    ignore_text: bool
+    ignore_text: bool,
 }
 
 /// Version manifest implementation.
 impl VersionManifest {
-
     /// Constructor.
     ///
     /// # Examples
