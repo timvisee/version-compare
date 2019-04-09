@@ -21,8 +21,11 @@ pub const TEST_VERSIONS: &'static [TestVersion] = &[
     TestVersion(".", 0),
     TestVersion("...", 0),
     TestVersion("1.2.dev", 3),
+    TestVersion("1.2-dev", 3),
     TestVersion("1.2.alpha.4", 4),
+    TestVersion("1.2-alpha-4", 4),
     TestVersion("snapshot.1.2", 3),
+    TestVersion("snapshot-1.2", 3),
     // TODO: inspect and fix this case
     // TestVersion("version-compare 2.1.8.1 / build 209", 4),
 ];
