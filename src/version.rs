@@ -157,7 +157,8 @@ impl<'a> Version<'a> {
         manifest: Option<&'a VersionManifest>,
     ) -> Option<Vec<VersionPart<'a>>> {
         // Split the version string, and create a vector to put the parts in
-        let split = version.split('.');
+        // TODO: split at specific separators instead
+        let split = version.split(|c| !char::is_alphanumeric(c));
         let mut parts = Vec::new();
 
         // Get the manifest to follow
