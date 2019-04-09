@@ -369,26 +369,8 @@ impl<'a> Version<'a> {
         loop {
             match iter.next() {
                 Some(part) => {
-                    // Skip this part if it's non-numeric
-                    match part {
-                        &VersionPart::Number(_) => {}
-                        _ => continue,
-                    }
-
-                    // Get the next numerical part for the other version
-                    loop {
-                        // Get the next other part
-                        other_part = other_iter.next();
-
-                        // Make sure it's a number or none
-                        match other_part {
-                            Some(val) => match val {
-                                &VersionPart::Number(_) => break,
-                                _ => {}
-                            },
-                            None => break,
-                        }
-                    }
+                    // Get the part for the other version
+                    other_part = other_iter.next();
 
                     // If there are no parts left in the other version, try to determine the result
                     if other_part.is_none() {
@@ -399,7 +381,7 @@ impl<'a> Version<'a> {
                                     continue;
                                 }
                             }
-                            _ => {}
+                            &VersionPart::Text(_) => return CompOp::Lt,
                         }
 
                         // The main version is greater
