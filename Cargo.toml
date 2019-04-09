@@ -1,6 +1,6 @@
 [package]
 name = "version-compare"
-version = "0.0.6"
+version = "0.0.7"
 authors = ["timvisee <timvisee@gmail.com>"]
 license = "MIT"
 readme = "README.md"
