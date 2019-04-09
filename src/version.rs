@@ -442,9 +442,14 @@ impl<'a> fmt::Display for Version<'a> {
     }
 }
 
+// Show just the version component parts as debug output
 impl<'a> fmt::Debug for Version<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self)
+        if f.alternate() {
+            write!(f, "{:#?}", self.parts)
+        } else {
+            write!(f, "{:?}", self.parts)
+        }
     }
 }
 
