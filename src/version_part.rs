@@ -17,5 +17,14 @@ pub enum VersionPart<'a> {
     /// A text part.
     /// These parts usually hold text with an yet unknown definition.
     /// Holds the string slice.
-    Text(&'a str)
+    Text(&'a str),
+}
+
+impl<'a> fmt::Display for VersionPart<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            VersionPart::Number(n) => write!(f, "{}", n),
+            VersionPart::Text(t) => write!(f, "{}", t),
+        }
+    }
 }

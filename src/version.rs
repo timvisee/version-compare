@@ -5,6 +5,7 @@
 //! things.
 
 use std::cmp::Ordering;
+use std::fmt;
 use std::iter::Peekable;
 use std::slice::Iter;
 
@@ -432,6 +433,18 @@ impl<'a> Version<'a> {
             // Nothing more to iterate over, the versions should be equal
             None => CompOp::Eq,
         }
+    }
+}
+
+impl<'a> fmt::Display for Version<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.version)
+    }
+}
+
+impl<'a> fmt::Debug for Version<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }
 
