@@ -307,7 +307,7 @@ impl<'a> Version<'a> {
     /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(&Version::from("0.3").unwrap()), CompOp::Eq);
     /// assert_eq!(Version::from("2").unwrap().compare(&Version::from("1.7.3").unwrap()), CompOp::Gt);
     /// ```
-    pub fn compare(&self, other: &Version) -> CompOp {
+    pub fn compare(&self, other: &'a Version) -> CompOp {
         // Compare the versions with their peekable iterators
         Self::compare_iter(self.parts.iter().peekable(), other.parts.iter().peekable())
     }
