@@ -30,6 +30,7 @@ impl<'a> fmt::Display for VersionPart<'a> {
     }
 }
 
+#[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
     use crate::version_part::VersionPart;
