@@ -11,6 +11,9 @@ addons:
   apt:
     packages:
       - libssl-dev
+      - pkg-config
+      - cmake
+      - zlib1g-dev
 
 # Main build
 script:
@@ -24,5 +27,5 @@ script:
 
 # Measure coverage, and upload to coveralls
 after_success: |
-  bash <(curl https://raw.githubusercontent.com/xd009642/tarpaulin/master/travis-install.sh)
+  cargo install cargo-tarpaulin -f
   cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
