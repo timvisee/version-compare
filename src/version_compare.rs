@@ -93,7 +93,8 @@ mod tests {
         for entry in TEST_VERSION_SETS {
             assert_eq!(
                 VersionCompare::compare(&entry.0, &entry.1),
-                Ok(entry.2.clone())
+                Ok(entry.2.clone()),
+                "Testing that {} is {} {}", &entry.0, &entry.2.sign(), &entry.1
             );
         }
 

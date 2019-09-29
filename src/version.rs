@@ -662,7 +662,9 @@ mod tests {
             let version_b = Version::from(&entry.1).unwrap();
 
             // Compare them
-            assert_eq!(version_a.compare(&version_b), entry.2.clone());
+            assert_eq!(version_a.compare(&version_b), entry.2.clone(),
+                       "Testing that {} is {} {}", &entry.0, &entry.2.sign(), &entry.1
+            );
         }
     }
 
