@@ -450,6 +450,7 @@ impl<'a> PartialEq for Version<'a> {
     }
 }
 
+#[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
     use std::cmp;

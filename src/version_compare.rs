@@ -80,6 +80,7 @@ impl VersionCompare {
     }
 }
 
+#[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
     use comp_op::CompOp;
