@@ -3,8 +3,8 @@
 //! This module provides the `VersionCompare` struct, which provides many static functions, that are
 //! useful for version comparison.
 
-use comp_op::CompOp;
-use version::Version;
+use crate::comp_op::CompOp;
+use crate::version::Version;
 
 /// The main library structure, which provides various static methods for easy version comparison.
 ///
@@ -82,8 +82,8 @@ impl VersionCompare {
 
 #[cfg(test)]
 mod tests {
-    use comp_op::CompOp;
-    use test::test_version_set::{TEST_VERSION_SETS, TEST_VERSION_SETS_ERROR};
+    use crate::comp_op::CompOp;
+    use crate::test::test_version_set::{TEST_VERSION_SETS, TEST_VERSION_SETS_ERROR};
 
     use super::VersionCompare;
 

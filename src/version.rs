@@ -9,9 +9,9 @@ use std::fmt;
 use std::iter::Peekable;
 use std::slice::Iter;
 
-use comp_op::CompOp;
-use version_manifest::VersionManifest;
-use version_part::VersionPart;
+use crate::comp_op::CompOp;
+use crate::version_manifest::VersionManifest;
+use crate::version_part::VersionPart;
 
 /// Version struct, which is a representation for a parsed version string.
 ///
@@ -454,11 +454,11 @@ impl<'a> PartialEq for Version<'a> {
 mod tests {
     use std::cmp;
 
-    use comp_op::CompOp;
-    use test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
-    use test::test_version_set::TEST_VERSION_SETS;
-    use version_manifest::VersionManifest;
-    use version_part::VersionPart;
+    use crate::comp_op::CompOp;
+    use crate::test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
+    use crate::test::test_version_set::TEST_VERSION_SETS;
+    use crate::version_manifest::VersionManifest;
+    use crate::version_part::VersionPart;
 
     use super::Version;
 

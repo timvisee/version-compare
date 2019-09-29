@@ -32,7 +32,7 @@ impl<'a> fmt::Display for VersionPart<'a> {
 
 #[cfg(test)]
 mod tests {
-    use version_part::VersionPart;
+    use crate::version_part::VersionPart;
 
     #[test]
     fn display() {

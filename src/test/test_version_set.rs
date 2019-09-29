@@ -1,4 +1,4 @@
-use comp_op::CompOp;
+use crate::comp_op::CompOp;
 
 /// Struct containing two version numbers, and the comparison operator.
 /// Such a set can be used for testing.
