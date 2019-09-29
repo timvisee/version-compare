@@ -375,6 +375,7 @@ impl CompOp {
     }
 }
 
+#[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
     use super::CompOp;

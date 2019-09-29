@@ -180,6 +180,7 @@ impl VersionManifest {
     }
 }
 
+#[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
     use version_manifest::VersionManifest;
