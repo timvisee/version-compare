@@ -378,8 +378,9 @@ impl CompOp {
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use super::CompOp;
     use std::cmp::Ordering;
+
+    use super::CompOp;
 
     #[test]
     fn from_sign() {

@@ -61,8 +61,8 @@ pub mod version_part;
 mod test;
 
 // Reexports
-pub use comp_op::CompOp;
-pub use version::Version;
-pub use version_compare::VersionCompare;
-pub use version_manifest::VersionManifest;
-pub use version_part::VersionPart;
+pub use crate::comp_op::CompOp;
+pub use crate::version::Version;
+pub use crate::version_compare::VersionCompare;
+pub use crate::version_manifest::VersionManifest;
+pub use crate::version_part::VersionPart;
