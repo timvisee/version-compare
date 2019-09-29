@@ -662,8 +662,13 @@ mod tests {
             let version_b = Version::from(&entry.1).unwrap();
 
             // Compare them
-            assert_eq!(version_a.compare(&version_b), entry.2.clone(),
-                       "Testing that {} is {} {}", &entry.0, &entry.2.sign(), &entry.1
+            assert_eq!(
+                version_a.compare(&version_b),
+                entry.2.clone(),
+                "Testing that {} is {} {}",
+                &entry.0,
+                &entry.2.sign(),
+                &entry.1
             );
         }
     }
@@ -687,6 +692,23 @@ mod tests {
         assert!(Version::from("1.2")
             .unwrap()
             .compare_to(&Version::from("1.2.3").unwrap(), &CompOp::Ne,));
+    }
+
+    #[test]
+    fn display() {
+        assert_eq!(format!("{}", Version::from("1.2.3").unwrap()), "1.2.3");
+    }
+
+    #[test]
+    fn debug() {
+        assert_eq!(
+            format!("{:?}", Version::from("1.2.3").unwrap()),
+            "[Number(1), Number(2), Number(3)]",
+        );
+        assert_eq!(
+            format!("{:#?}", Version::from("1.2.3").unwrap()),
+            "[\n    Number(\n        1,\n    ),\n    Number(\n        2,\n    ),\n    Number(\n        3,\n    ),\n]",
+        );
     }
 
     #[test]

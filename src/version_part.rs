@@ -29,3 +29,14 @@ impl<'a> fmt::Display for VersionPart<'a> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use version_part::VersionPart;
+
+    #[test]
+    fn display() {
+        assert_eq!(format!("{}", VersionPart::Number(123)), "123");
+        assert_eq!(format!("{}", VersionPart::Text("123")), "123");
+    }
+}
