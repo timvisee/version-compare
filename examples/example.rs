@@ -26,8 +26,14 @@ fn main() {
 
     // Easily compare version strings
     assert_eq!(VersionCompare::compare(&a, &b).unwrap(), CompOp::Lt);
-    assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Le).unwrap(), true);
-    assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Gt).unwrap(), false);
+    assert_eq!(
+        VersionCompare::compare_to(&a, &b, &CompOp::Le).unwrap(),
+        true
+    );
+    assert_eq!(
+        VersionCompare::compare_to(&a, &b, &CompOp::Gt).unwrap(),
+        false
+    );
 
     // Version string parsing
     let a_ver = Version::from(a).unwrap();
@@ -47,6 +53,6 @@ fn main() {
         CompOp::Lt => println!("Version a is less than b"),
         CompOp::Eq => println!("Version a is equal to b"),
         CompOp::Gt => println!("Version a is greater than b"),
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name = "version-compare"
-version = "0.0.6"
+version = "0.0.9"
 authors = ["timvisee <timvisee@gmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -9,7 +9,7 @@ repository = "https://github.com/timvisee/version-compare"
 documentation = "https://docs.rs/version-compare"
 description = "A Rust library to easily compare version numbers, and test them against various comparison operators."
 keywords = ["version", "compare", "comparison", "comparing"]
-categories = ["parsing"]
+categories = ["parser-implementations"]
 
 [badges]
 travis-ci = { repository = "timvisee/version-compare" }

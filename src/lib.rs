@@ -66,4 +66,3 @@ pub use version::Version;
 pub use version_compare::VersionCompare;
 pub use version_manifest::VersionManifest;
 pub use version_part::VersionPart;
-

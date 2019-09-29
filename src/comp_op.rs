@@ -33,11 +33,10 @@ pub enum CompOp {
 
     /// Greater than (`>`).
     /// When version `A` is greater than `B` but not equal.
-    Gt
+    Gt,
 }
 
 impl CompOp {
-
     /// Get a comparison operator by it's sign.
     /// Whitespaces are stripped from the sign string.
     /// An error is returned if the sign isn't recognized.
@@ -69,7 +68,7 @@ impl CompOp {
             "<=" => Ok(CompOp::Le),
             ">=" => Ok(CompOp::Ge),
             ">" => Ok(CompOp::Gt),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 
@@ -95,7 +94,7 @@ impl CompOp {
             "le" => Ok(CompOp::Le),
             "ge" => Ok(CompOp::Ge),
             "gt" => Ok(CompOp::Gt),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 
@@ -110,7 +109,7 @@ impl CompOp {
         match ord {
             Ordering::Less => CompOp::Lt,
             Ordering::Equal => CompOp::Eq,
-            Ordering::Greater => CompOp::Gt
+            Ordering::Greater => CompOp::Gt,
         }
     }
 
@@ -132,7 +131,7 @@ impl CompOp {
             &CompOp::Lt => "lt",
             &CompOp::Le => "le",
             &CompOp::Ge => "ge",
-            &CompOp::Gt => "gt"
+            &CompOp::Gt => "gt",
         }
     }
 
@@ -181,7 +180,7 @@ impl CompOp {
             &CompOp::Lt => CompOp::Ge,
             &CompOp::Le => CompOp::Gt,
             &CompOp::Ge => CompOp::Lt,
-            &CompOp::Gt => CompOp::Le
+            &CompOp::Gt => CompOp::Le,
         }
     }
 
@@ -230,7 +229,7 @@ impl CompOp {
             &CompOp::Lt => CompOp::Gt,
             &CompOp::Le => CompOp::Ge,
             &CompOp::Ge => CompOp::Le,
-            &CompOp::Gt => CompOp::Lt
+            &CompOp::Gt => CompOp::Lt,
         }
     }
 
@@ -278,7 +277,7 @@ impl CompOp {
             &CompOp::Le => CompOp::Ge,
             &CompOp::Ge => CompOp::Le,
             &CompOp::Gt => CompOp::Lt,
-            _ => self.clone()
+            _ => self.clone(),
         }
     }
 
@@ -313,7 +312,7 @@ impl CompOp {
             &CompOp::Lt => "<",
             &CompOp::Le => "<=",
             &CompOp::Ge => ">=",
-            &CompOp::Gt => ">"
+            &CompOp::Gt => ">",
         }
     }
 
@@ -341,7 +340,7 @@ impl CompOp {
         match self {
             &CompOp::Eq | &CompOp::Ne => 0,
             &CompOp::Lt | &CompOp::Le => -1,
-            &CompOp::Gt | &CompOp::Ge => 1
+            &CompOp::Gt | &CompOp::Ge => 1,
         }
     }
 
@@ -371,15 +370,16 @@ impl CompOp {
             &CompOp::Eq => Some(Ordering::Equal),
             &CompOp::Lt => Some(Ordering::Less),
             &CompOp::Gt => Some(Ordering::Greater),
-            _ => None
+            _ => None,
         }
     }
 }
 
+#[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use std::cmp::Ordering;
     use super::CompOp;
+    use std::cmp::Ordering;
 
     #[test]
     fn from_sign() {

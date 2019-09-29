@@ -1,22 +1,22 @@
 [![Build status on Travis CI][travis-master-badge]][travis-link]
 [![Built status on AppVeyor][appveyor-master-badge]][appveyor-master-link]
 [![Crate version][crate-version-badge]][crate-link]
+[![Documentation][docs-badge]][docs]
 [![Download statistics][crate-download-badge]][crate-link]
 [![Coverage status][coverage-badge]][coverage-link]
 [![Dependencies][dependency-badge]][dependency-link]
 [![License][crate-license-badge]][crate-link]
 
-[Documentation][docs]
-
-[crate-version-badge]:  https://img.shields.io/crates/v/version-compare.svg
+[crate-version-badge]: https://img.shields.io/crates/v/version-compare.svg
 [crate-download-badge]: https://img.shields.io/crates/d/version-compare.svg
-[crate-license-badge]:  https://img.shields.io/crates/l/version-compare.svg
-[crate-link]:           https://crates.io/crates/version-compare
-[coverage-badge]:       https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master
-[coverage-link]:        https://coveralls.io/github/timvisee/version-compare?branch=master
-[dependency-badge]:     https://img.shields.io/badge/dependencies-none!-green.svg
-[dependency-link]:      https://libraries.io/github/timvisee/version-compare
-[docs]:                 https://docs.rs/version-compare
+[crate-license-badge]: https://img.shields.io/crates/l/version-compare.svg
+[crate-link]: https://crates.io/crates/version-compare
+[coverage-badge]: https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master
+[coverage-link]: https://coveralls.io/github/timvisee/version-compare?branch=master
+[dependency-badge]: https://img.shields.io/badge/dependencies-none!-green.svg
+[dependency-link]: https://libraries.io/github/timvisee/version-compare
+[docs]: https://docs.rs/version-compare
+[docs-badge]: https://docs.rs/version-compare/badge.svg
 
 # Rust library: version-compare
 > A Rust library to easily compare version numbers in any format, and test them against various comparison operators.
@@ -74,7 +74,7 @@ This library is very easy to use. Here's a basic usage example:
 Cargo.toml:
 ```toml
 [dependencies]
-version-compare = "0.0.6"
+version-compare = "0.0.9"
 ```
 
 [example.rs:](examples/example.rs)

@@ -13,12 +13,11 @@ pub struct VersionManifest {
     max_depth: Option<usize>,
 
     /// True to ignore text parts in version strings.
-    ignore_text: bool
+    ignore_text: bool,
 }
 
 /// Version manifest implementation.
 impl VersionManifest {
-
     /// Constructor.
     ///
     /// # Examples
@@ -181,6 +180,7 @@ impl VersionManifest {
     }
 }
 
+#[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
     use version_manifest::VersionManifest;
