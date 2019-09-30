@@ -183,7 +183,7 @@ impl VersionManifest {
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use crate::version_manifest::VersionManifest;
+    use super::VersionManifest;
 
     #[test]
     fn max_depth() {
