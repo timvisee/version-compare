@@ -25,7 +25,7 @@ use crate::version_part::VersionPart;
 /// The struct provides many methods for comparison and probing.
 pub struct Version<'a> {
     version: &'a str,
-    parts: Vec<VersionPart<'a>>,
+    parts: Vec<&'a dyn VersionPart<'a>>,
     manifest: Option<&'a VersionManifest>,
 }
 
@@ -155,7 +155,7 @@ impl<'a> Version<'a> {
     fn split_version_str(
         version: &'a str,
         manifest: Option<&'a VersionManifest>,
-    ) -> Option<Vec<VersionPart<'a>>> {
+    ) -> Option<Vec<dyn VersionPart<'a>>> {
         // Split the version string, and create a vector to put the parts in
         // TODO: split at specific separators instead
         let split = version.split(|c| !char::is_alphanumeric(c));
@@ -241,7 +241,7 @@ impl<'a> Version<'a> {
     /// assert_eq!(ver.part(1), Ok(&VersionPart::Number(2)));
     /// assert_eq!(ver.part(2), Ok(&VersionPart::Number(3)));
     /// ```
-    pub fn part(&self, index: usize) -> Result<&VersionPart<'a>, ()> {
+    pub fn part(&self, index: usize) -> Result<&dyn VersionPart<'a>, ()> {
         // Make sure the index is in-bound
         if index >= self.parts.len() {
             return Err(());
@@ -266,7 +266,7 @@ impl<'a> Version<'a> {
     ///     VersionPart::Number(3)
     /// ]);
     /// ```
-    pub fn parts(&self) -> &Vec<VersionPart<'a>> {
+    pub fn parts(&self) -> &Vec<&dyn VersionPart<'a>> {
         &self.parts
     }
 
@@ -359,11 +359,11 @@ impl<'a> Version<'a> {
     ///
     /// Other comparison operators can be used when comparing, but aren't returned by this method.
     fn compare_iter(
-        mut iter: Peekable<Iter<VersionPart<'a>>>,
-        mut other_iter: Peekable<Iter<VersionPart<'a>>>,
+        mut iter: Peekable<Iter<dyn VersionPart<'a>>>,
+        mut other_iter: Peekable<Iter<dyn VersionPart<'a>>>,
     ) -> CompOp {
         // Iterate through the parts of this version
-        let mut other_part: Option<&VersionPart>;
+        let mut other_part: Option<&dyn VersionPart<'a>>;
 
         // Iterate over the iterator, without consuming it
         loop {
@@ -459,7 +459,7 @@ mod tests {
     use crate::test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use crate::test::test_version_set::TEST_VERSION_SETS;
     use crate::version_manifest::VersionManifest;
-    use crate::version_part::VersionPart;
+    // use crate::version_part::VersionPart;
 
     use super::Version;
 
@@ -624,20 +624,20 @@ mod tests {
                 let ver = Version::from_manifest(&version.0, &manifest).unwrap();
 
                 // Loop through all version parts
-                for part in ver.parts() {
-                    match part {
-                        &VersionPart::Text(_) => {
-                            // Set the flag
-                            had_text = true;
-
-                            // Break the loop if we already reached text when not ignored
-                            if !ignore {
-                                break;
-                            }
-                        }
-                        _ => {}
-                    }
-                }
+//                for part in ver.parts() {
+//                    match part {
+//                        &VersionPart::Text(_) => {
+//                            // Set the flag
+//                            had_text = true;
+//
+//                            // Break the loop if we already reached text when not ignored
+//                            if !ignore {
+//                                break;
+//                            }
+//                        }
+//                        _ => {}
+//                    }
+//                }
             }
 
             // Assert had text
