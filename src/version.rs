@@ -25,7 +25,7 @@ use crate::version_part::VersionPart;
 /// The struct provides many methods for comparison and probing.
 pub struct Version<'a> {
     version: &'a str,
-    parts: Vec<&'a dyn VersionPart<'a>>,
+    parts: Vec<Box<dyn VersionPart>>,
     manifest: Option<&'a VersionManifest>,
 }
 
@@ -188,7 +188,7 @@ impl<'a> Version<'a> {
             match part.parse::<i32>() {
                 Ok(number) => {
                     // Push the number part to the vector, and set the has number flag
-                    parts.push(VersionPart::Number(number));
+                    parts.push(get_integer_part(number));
                     has_number = true;
                 }
                 Err(_) => {
@@ -198,7 +198,7 @@ impl<'a> Version<'a> {
                     }
 
                     // Push the text part to the vector
-                    parts.push(VersionPart::Text(part))
+                    parts.push(get_lexicographic_string_part(part));
                 }
             }
         }
@@ -266,7 +266,7 @@ impl<'a> Version<'a> {
     ///     VersionPart::Number(3)
     /// ]);
     /// ```
-    pub fn parts(&self) -> &Vec<&dyn VersionPart<'a>> {
+    pub fn parts(&self) -> &Vec<Box<dyn VersionPart>> {
         &self.parts
     }
 

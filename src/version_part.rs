@@ -5,134 +5,96 @@
 //! `Version`.
 
 use std::cmp::Ordering;
-// use std::fmt;
-use regex::Regex;
+// use regex::Regex;
 
-pub trait VersionPart<'a>{
-    fn part(&self);
+pub trait VersionPart<T> {
+    // separate comparison of priority from value because priority will always match type,
+    //    but value will not
+    fn compare_priority(&self, other: i8) -> Option<Ordering>;
+    fn compare_value(&self, other: T) -> Option<Ordering>;
 }
 
-struct EpochPart<'a>(i32);
-struct NumberPart<'a>(i32);
-struct StringPart<'a>(&'a str);
-struct PEP440StringPart<'a>(&'a str);
-
-struct NumberComparator<'a> {
-    priority: i8,
-    value: i32
+// cover most types that Rust knows how to compare already
+#[derive(Debug, Clone, Copy)]
+pub struct DefaultPart<T: Clone> {
+    pub priority: i8,
+    pub value: T,
 }
 
-struct StringComparator<'a> {
-    priority: i8,
-    value: &'a str
-}
-
-struct PEP440StringComparator<'a> {
-    priority: i8,
-    value: &'a str,
-}
-
-impl<'a> PEP440StringComparator<'a> {
-    fn pep440_order(&self, other: &'a str) -> Ordering {
-        lazy_static! {
-            static ref dev_re: Regex = Regex::new("(\\d*)(dev)(\\d*)").unwrap();
-        }
-        lazy_static! {
-            static ref post_re: Regex = Regex::new("(\\d*)(post)(\\d*)").unwrap();
-        }
-
-        dev_re.is_match(self.value);
-        Ordering::Equal
+impl<T: PartialOrd + Clone> VersionPart<T> for DefaultPart<T>
+{
+    fn compare_priority(&self, other: i8) -> Option<Ordering> {
+        self.priority.partial_cmp(&other)
+    }
+    fn compare_value(&self, other: T) -> Option<Ordering> {
+        self.value.partial_cmp(&other)
     }
 }
 
-impl<'a> PartialEq for NumberComparator<'a> {
-    fn eq(&self, other: impl VersionPart<'a>) -> bool {
-        self.priority.eq(other.priority) && self.value.eq(other.value)
+impl<T, U> PartialEq<DefaultPart<U>> for DefaultPart<T>
+    where
+        T: From<U>,
+        T: PartialOrd + Clone,
+        U: PartialOrd + Clone,
+{
+    fn eq(&self, other: &DefaultPart<U>) -> bool {
+        (self.compare_priority(other.priority) == Some(Ordering::Equal)) &&
+            (self.compare_value(other.value.clone().into()) == Some(Ordering::Equal))
     }
 }
 
-impl<'a> PartialEq for StringComparator<'a> {
-    fn eq(&self, other: impl VersionPart<'a>) -> bool {
-        self.priority.eq(other.priority) && self.value.eq(other.value)
-    }
-}
-
-impl<'a> PartialEq for PEP440StringComparator<'a> {
-    fn eq(&self, other: impl VersionPart<'a>) -> bool {
-        self.priority.eq(other.priority) && self.value.eq(other.value)
-    }
-}
-
-impl<'a> PartialOrd for NumberComparator<'a> {
-    fn partial_cmp(&self, other: impl VersionPart<'a>) -> Option<Ordering> {
-        match self.priority.partial_cmp(other.priority) {
-            // Priority of self is lower (more important) that priority of other
+// Provide default implementation for comparison -
+impl<T, U> PartialOrd<DefaultPart<U>> for DefaultPart<T>
+    where
+        T: From<U>,
+        T: PartialOrd + Clone,
+        U: PartialOrd + Clone,
+{
+    fn partial_cmp(&self, other: &DefaultPart<U>) -> Option<Ordering> {
+        match self.compare_priority(other.priority) {
             Some(Ordering::Less) => Some(Ordering::Greater),
             Some(Ordering::Greater) => Some(Ordering::Less),
-            Some(Ordering::Equal) => self.value.partial_cmp(other.value),
-            _ => panic!()
+            Some(Ordering::Equal) => self.compare_value(other.value.clone().into()),
+            _ => panic!(),
         }
     }
 }
 
-impl<'a> PartialOrd for StringComparator<'a> {
-    fn partial_cmp(&self, other: impl VersionPart<'a>) -> Option<Ordering> {
-        match self.priority.partial_cmp(other.priority) {
-            // Priority of self is lower (more important) that priority of other
-            Some(Ordering::Less) => Some(Ordering::Greater),
-            Some(Ordering::Greater) => Some(Ordering::Less),
-            Some(Ordering::Equal) => self.value.partial_cmp(other.value),
-            _ => panic!()
-        }
-    }
+pub struct LexicographicStringType {
+    pub value: &str
 }
 
-impl<'a> PartialOrd for PEP440StringComparator<'a> {
-    fn partial_cmp(&self, other: impl VersionPart<'a>) -> Option<Ordering> {
-        match self.priority.partial_cmp(other.priority) {
-            // Priority of self is lower (more important) that priority of other
-            Some(Ordering::Less) => Some(Ordering::Greater),
-            Some(Ordering::Greater) => Some(Ordering::Less),
-            Some(Ordering::Equal) => PEP440StringComparator::pep440_order(self, other.value),
-            _ => panic!()
-        }
-    }
+impl PartialOrd for LexicographicStringType {
+    
 }
 
-impl<'a> VersionPart<'a> for EpochPart<'a> {
-    fn part(&self) -> NumberComparator {NumberComparator{priority: 0, value: self.0}}
-}
+// // Name handles just to make it easier to instantiate things with default priority
+pub fn get_epoch_part(v: i32) -> DefaultPart<i32> {DefaultPart{priority: 0, value: v }}
+pub fn get_integer_part(v: i32) -> DefaultPart<i32> {DefaultPart{priority: 1, value: v }}
+pub fn get_unsigned_integer_part(v: u32) -> DefaultPart<u32> {DefaultPart{priority: 1, value: v }}
+pub fn get_lexicographic_string_part(v: &str) -> DefaultPart<&str> {DefaultPart{priority: 2, value: v }}
 
-impl<'a> VersionPart<'a> for NumberPart<'a> {
-    fn part(&self) -> NumberComparator {NumberComparator{priority: 1, value: self.0}}
-}
+// struct PEP440StringComparator<'a> {
+//     priority: i8,
+//     value: &'a str,
+// }
 
-impl<'a> VersionPart<'a> for StringPart<'a> {
-    fn part(&self) -> StringComparator {StringComparator{ priority: 2, value: self.0 }}
-}
+// impl<'a> PEP440StringComparator<'a> {
+//     fn pep440_order(&self, other: &'a str) -> Ordering {
+//         lazy_static! {
+//             static ref dev_re: Regex = Regex::new("(\\d*)(dev)(\\d*)").unwrap();
+//         }
+//         lazy_static! {
+//             static ref post_re: Regex = Regex::new("(\\d*)(post)(\\d*)").unwrap();
+//         }
 
-impl<'a> VersionPart<'a> for PEP440StringPart<'a> {
-    fn part(&self) -> PEP440StringComparator {PEP440StringComparator{priority: 2, value: self.0}}
-}
+//         dev_re.is_match(self.value);
+//         Ordering::Equal
+//     }
+// }
 
 // Simplified comparison idea from
 // https://internals.rust-lang.org/t/simplifying-custom-comparison-and-hashing/5108
-impl<'a, T> PartialEq for T
-    where
-        T: VersionPart<'a>
-{
-    fn eq(&self, other: &T) -> bool { self.part().eq(&other.part()) }
-}
-
-impl<'a, T> PartialOrd for T
-    where
-        T: VersionPart<'a>
-{
-    fn partial_cmp(&self, other: &T) -> Option<Ordering> {
-        self.part().partial_cmp(&other.part())
-    }
-}
 
 
 //impl<'a> fmt::Display for VersionPart<'a> {
@@ -147,13 +109,16 @@ impl<'a, T> PartialOrd for T
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use crate::version_part::{EpochPart, StringPart, NumberPart};
+    use crate::version_part::{get_epoch_part,
+                              get_integer_part,
+                              get_lexicographic_string_part};
 
     #[test]
-    fn test_epoch_compare() {
-        assert_eq!(EpochPart(0), EpochPart(0));
-        assert!(EpochPart(0) < EpochPart(1));
-        assert!(EpochPart(0) > NumberPart(1));
-        assert!(EpochPart(0) > StringPart("abc"));
+    fn epoch_compare() {
+        assert_eq!(get_epoch_part(0), get_epoch_part(0));
+        assert!(get_epoch_part(0) < get_epoch_part(1));
+        // epoch of any value trumps integer (priority)
+        assert!(get_epoch_part(0) > get_integer_part(1));
+        assert!(get_epoch_part(0) > get_lexicographic_string_part("abc"));
     }
 }

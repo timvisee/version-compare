@@ -54,7 +54,7 @@
 #[macro_use] extern crate lazy_static;
 
 pub mod comp_op;
-pub mod version;
+//pub mod version;
 pub mod version_manifest;
 pub mod version_part;
 
@@ -63,6 +63,6 @@ mod test;
 
 // Reexports
 pub use crate::comp_op::CompOp;
-pub use crate::version::Version;
+//pub use crate::version::Version;
 pub use crate::version_manifest::VersionManifest;
 pub use crate::version_part::VersionPart;
