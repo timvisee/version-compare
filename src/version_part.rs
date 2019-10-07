@@ -7,72 +7,41 @@
 use std::cmp::Ordering;
 // use regex::Regex;
 
-pub trait VersionPart<T> {
+// unifying trait so that they can be used together in the enum
+#[enum_dispatch]
+pub trait VersionTrait<T: PartialOrd + PartialEq> {
     // separate comparison of priority from value because priority will always match type,
     //    but value will not
-    fn compare_priority(&self, other: i8) -> Option<Ordering>;
-    fn compare_value(&self, other: T) -> Option<Ordering>;
 }
 
-// cover most types that Rust knows how to compare already
 #[derive(Debug, Clone, Copy)]
-pub struct DefaultPart<T: Clone> {
-    pub priority: i8,
-    pub value: T,
+pub struct Epoch<T: PartialOrd + PartialEq> {
+    pub value: T
 }
 
-impl<T: PartialOrd + Clone> VersionPart<T> for DefaultPart<T>
-{
-    fn compare_priority(&self, other: i8) -> Option<Ordering> {
-        self.priority.partial_cmp(&other)
-    }
-    fn compare_value(&self, other: T) -> Option<Ordering> {
-        self.value.partial_cmp(&other)
-    }
+impl<T: PartialOrd + PartialEq> VersionTrait<T> for Epoch<T> {
+}
+impl<T: PartialOrd + PartialEq> PartialOrd for Epoch<T> {
+    fn partial_cmp(&self, other: &Epoch<T>) -> Option<Ordering> {self.value.partial_cmp(&other.value)}
+}
+impl<T: PartialOrd + PartialEq> PartialEq for Epoch<T> {
+    fn eq(&self, other: &Epoch<T>) -> bool {self.partial_cmp(&other) == Some(Ordering::Equal)}
 }
 
-impl<T, U> PartialEq<DefaultPart<U>> for DefaultPart<T>
-    where
-        T: From<U>,
-        T: PartialOrd + Clone,
-        U: PartialOrd + Clone,
-{
-    fn eq(&self, other: &DefaultPart<U>) -> bool {
-        (self.compare_priority(other.priority) == Some(Ordering::Equal)) &&
-            (self.compare_value(other.value.clone().into()) == Some(Ordering::Equal))
-    }
-}
-
-// Provide default implementation for comparison -
-impl<T, U> PartialOrd<DefaultPart<U>> for DefaultPart<T>
-    where
-        T: From<U>,
-        T: PartialOrd + Clone,
-        U: PartialOrd + Clone,
-{
-    fn partial_cmp(&self, other: &DefaultPart<U>) -> Option<Ordering> {
-        match self.compare_priority(other.priority) {
-            Some(Ordering::Less) => Some(Ordering::Greater),
-            Some(Ordering::Greater) => Some(Ordering::Less),
-            Some(Ordering::Equal) => self.compare_value(other.value.clone().into()),
-            _ => panic!(),
-        }
-    }
-}
-
-pub struct LexicographicStringType {
-    pub value: &str
-}
-
-impl PartialOrd for LexicographicStringType {
+macro_rules! stratum {
     
 }
 
-// // Name handles just to make it easier to instantiate things with default priority
-pub fn get_epoch_part(v: i32) -> DefaultPart<i32> {DefaultPart{priority: 0, value: v }}
-pub fn get_integer_part(v: i32) -> DefaultPart<i32> {DefaultPart{priority: 1, value: v }}
-pub fn get_unsigned_integer_part(v: u32) -> DefaultPart<u32> {DefaultPart{priority: 1, value: v }}
-pub fn get_lexicographic_string_part(v: &str) -> DefaultPart<&str> {DefaultPart{priority: 2, value: v }}
+#[enum_dispatch(VersionTrait)]
+#[derive(Debug, PartialOrd, PartialEq)]
+pub enum VersionPart<T: PartialOrd + PartialEq> {
+    Epoch(i32),
+    Integer(i32),
+    // LexicographicString(LexicographicString<T>)
+}
+
+// impl PartialOrd<Enum> for VersionPart
+
 
 // struct PEP440StringComparator<'a> {
 //     priority: i8,
@@ -109,16 +78,19 @@ pub fn get_lexicographic_string_part(v: &str) -> DefaultPart<&str> {DefaultPart{
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use crate::version_part::{get_epoch_part,
-                              get_integer_part,
-                              get_lexicographic_string_part};
+    use crate::version_part::{VersionPart, Epoch};
 
     #[test]
     fn epoch_compare() {
-        assert_eq!(get_epoch_part(0), get_epoch_part(0));
-        assert!(get_epoch_part(0) < get_epoch_part(1));
+        assert_eq!(Epoch{value: 0}, Epoch{value: 0});
+        assert_eq!(Epoch{value: 0} < Epoch{value: 1});
         // epoch of any value trumps integer (priority)
-        assert!(get_epoch_part(0) > get_integer_part(1));
-        assert!(get_epoch_part(0) > get_lexicographic_string_part("abc"));
+        // assert!(VersionPart::Epoch(value: 0) > VersionPart::Integer(value: 1);
+        // assert!(Version::Epoch{0} > Version::String{"abc"});
+    }
+
+    #[test]
+    fn cross_type_compare() {
+        assert!(VersionPart::Epoch(Epoch{value: 0}) > VersionPart::Integer(Epoch{value: 1}));
     }
 }
