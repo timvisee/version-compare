@@ -52,7 +52,6 @@
 //! _[View complete README](https://github.com/timvisee/version-compare/blob/master/README.md)_
 //!
 #[macro_use] extern crate lazy_static;
-#[macro_use] extern crate enum_dispatch;
 
 pub mod comp_op;
 //pub mod version;

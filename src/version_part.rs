@@ -7,46 +7,53 @@
 use std::cmp::Ordering;
 // use regex::Regex;
 
-// unifying trait so that they can be used together in the enum
-#[enum_dispatch]
-pub trait VersionTrait<T: PartialOrd + PartialEq> {
-    // separate comparison of priority from value because priority will always match type,
-    //    but value will not
-}
+#[derive(Debug, Copy, Clone)]
+pub struct PEP440String {}
 
-#[derive(Debug, Clone, Copy)]
-pub struct Epoch<T: PartialOrd + PartialEq> {
-    pub value: T
-}
-
-impl<T: PartialOrd + PartialEq> VersionTrait<T> for Epoch<T> {
-}
-impl<T: PartialOrd + PartialEq> PartialOrd for Epoch<T> {
-    fn partial_cmp(&self, other: &Epoch<T>) -> Option<Ordering> {self.value.partial_cmp(&other.value)}
-}
-impl<T: PartialOrd + PartialEq> PartialEq for Epoch<T> {
-    fn eq(&self, other: &Epoch<T>) -> bool {self.partial_cmp(&other) == Some(Ordering::Equal)}
-}
-
-macro_rules! stratum {
-    
-}
-
-#[enum_dispatch(VersionTrait)]
-#[derive(Debug, PartialOrd, PartialEq)]
-pub enum VersionPart<T: PartialOrd + PartialEq> {
-    Epoch(i32),
+#[derive(Debug, Copy, Clone)]
+pub enum VersionPart<'a> {
+    Epoch(i16),
     Integer(i32),
-    // LexicographicString(LexicographicString<T>)
+    LexicographicString(&'a str),
+    PEP440String(PEP440String),
+    Bool(bool),
 }
 
-// impl PartialOrd<Enum> for VersionPart
+impl<'a> PartialOrd for VersionPart<'a> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        match (self, other) {
+            (VersionPart::Epoch(a), VersionPart::Epoch(b)) => a.partial_cmp(b),
+            (VersionPart::Integer(a), VersionPart::Integer(b)) => a.partial_cmp(b),
+            (VersionPart::LexicographicString(a), VersionPart::LexicographicString(b)) => a.partial_cmp(b),
+            (VersionPart::Bool(a), VersionPart::Bool(b)) => a.partial_cmp(b),
+            // Match simple position in the list, but reverse it because things at the top are higher
+            _ => Some(match self {
+                &VersionPart::Epoch(a) => 0,
+                &VersionPart::Integer(a) => 1,
+                &VersionPart::LexicographicString(a) => 2,
+                &VersionPart::PEP440String(a) => 3,
+                &VersionPart::Bool(a) => 4,
+                _ => panic!()
+            }.partial_cmp(
+                match other {
+                    &VersionPart::Epoch(a) => &0,
+                    &VersionPart::Integer(a) => &1,
+                    &VersionPart::LexicographicString(a) => &2,
+                    &VersionPart::PEP440String(a) => &2,
+                    &VersionPart::Bool(a) => &4,
+                    _ => panic!()
+                }
+            ).unwrap().reverse())
+        }
+    }
+}
 
+impl<'a> PartialEq for VersionPart<'a> {
+    fn eq(&self, other: &Self) -> bool {
+        self.partial_cmp(other) == Some(Ordering::Equal)
+    }
+}
 
-// struct PEP440StringComparator<'a> {
-//     priority: i8,
-//     value: &'a str,
-// }
 
 // impl<'a> PEP440StringComparator<'a> {
 //     fn pep440_order(&self, other: &'a str) -> Ordering {
@@ -78,12 +85,12 @@ pub enum VersionPart<T: PartialOrd + PartialEq> {
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use crate::version_part::{VersionPart, Epoch};
+    use crate::version_part::{VersionPart};
 
     #[test]
     fn epoch_compare() {
-        assert_eq!(Epoch{value: 0}, Epoch{value: 0});
-        assert_eq!(Epoch{value: 0} < Epoch{value: 1});
+        assert_eq!(VersionPart::Epoch(0), VersionPart::Epoch(0));
+        assert!(VersionPart::Epoch(0) < VersionPart::Epoch(1));
         // epoch of any value trumps integer (priority)
         // assert!(VersionPart::Epoch(value: 0) > VersionPart::Integer(value: 1);
         // assert!(Version::Epoch{0} > Version::String{"abc"});
@@ -91,6 +98,6 @@ mod tests {
 
     #[test]
     fn cross_type_compare() {
-        assert!(VersionPart::Epoch(Epoch{value: 0}) > VersionPart::Integer(Epoch{value: 1}));
+        assert!(VersionPart::Epoch(0) > VersionPart::Integer(1));
     }
 }
