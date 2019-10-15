@@ -10,8 +10,8 @@ use std::iter::Peekable;
 use std::slice::Iter;
 
 use crate::comp_op::CompOp;
-use crate::version_manifest::VersionManifest;
-use crate::version_part::VersionPart;
+use crate::version_part::{VersionPart, ProvideEmptyImpl};
+use crate::parsers::default::default_parser;
 
 /// Version struct, which is a representation for a parsed version string.
 ///
@@ -25,8 +25,7 @@ use crate::version_part::VersionPart;
 /// The struct provides many methods for comparison and probing.
 pub struct Version<'a> {
     version: &'a str,
-    parts: Vec<Box<dyn VersionPart>>,
-    manifest: Option<&'a VersionManifest>,
+    parts: Vec<VersionPart<'a>>,
 }
 
 impl<'a> Version<'a> {
@@ -43,173 +42,35 @@ impl<'a> Version<'a> {
     ///
     /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), CompOp::Eq);
     /// ```
-    pub fn from(version: &'a str) -> Option<Self> {
-        // Split the version string
-        let parts = Self::split_version_str(version, None);
-
-        // Return nothing if the parts are none
-        if parts.is_none() {
-            return None;
-        }
-
-        // Create and return the object
-        Some(Version {
-            version: version,
-            parts: parts.unwrap(),
-            manifest: None,
-        })
+    pub fn from(version: &'a str) -> Option<Version> {
+        Version::parse(version, &default_parser)
     }
 
-    /// Create a `Version` instance from a version string with the given `manifest`.
+    /// Create a `Version` instance from a version string with the given `parser` function.
     ///
-    /// The version string should be passed to the `version` parameter.
+    /// The version string should be passed to the `version` parameter.  Additional parsers
+    /// are in the "parsers" module.  This is the primary means of customizing behavior.
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{CompOp, Version, VersionManifest};
+    /// use version_compare::{CompOp, Version, default_parser};
     ///
-    /// let manifest = VersionManifest::new();
-    /// let ver = Version::from_manifest("1.2.3", &manifest).unwrap();
+    /// let ver = Version::parse("1.2.3", &default_parser).unwrap();
     ///
     /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), CompOp::Eq);
     /// ```
-    pub fn from_manifest(version: &'a str, manifest: &'a VersionManifest) -> Option<Self> {
-        // Split the version string
-        let parts = Self::split_version_str(version, Some(&manifest));
+    pub fn parse(version: &'a str, parser: &dyn Fn(&'a str) -> Option<Vec<VersionPart<'a>>>) -> Option<Self> {
+        let parts: Option<Vec<VersionPart<'a>>> = parser(version);
 
-        // Return nothing if the parts are none
         if parts.is_none() {
             return None;
         }
 
-        // Create and return the object
-        Some(Version {
-            version: version,
+        Some(Self {
+            version,
             parts: parts.unwrap(),
-            manifest: Some(&manifest),
         })
-    }
-
-    /// Get the version manifest, if available.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use version_compare::Version;
-    ///
-    /// let version = Version::from("1.2.3").unwrap();
-    ///
-    /// if version.has_manifest() {
-    ///     println!(
-    ///         "Maximum version part depth is {} for this version",
-    ///         version.manifest().unwrap().max_depth_number()
-    ///     );
-    /// } else {
-    ///     println!("Version has no manifest");
-    /// }
-    /// ```
-    pub fn manifest(&self) -> Option<&VersionManifest> {
-        self.manifest
-    }
-
-    /// Check whether this version has a manifest.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use version_compare::Version;
-    ///
-    /// let version = Version::from("1.2.3").unwrap();
-    ///
-    /// if version.has_manifest() {
-    ///     println!("This version does have a manifest");
-    /// } else {
-    ///     println!("This version does not have a manifest");
-    /// }
-    /// ```
-    pub fn has_manifest(&self) -> bool {
-        self.manifest().is_some()
-    }
-
-    /// Set the version manifest.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use version_compare::{Version, VersionManifest};
-    ///
-    /// let manifest = VersionManifest::new();
-    /// let mut version = Version::from("1.2.3").unwrap();
-    ///
-    /// version.set_manifest(Some(&manifest));
-    /// ```
-    pub fn set_manifest(&mut self, manifest: Option<&'a VersionManifest>) {
-        self.manifest = manifest;
-
-        // TODO: Re-parse the version string, because the manifest might have changed.
-    }
-
-    /// Split the given version string, in it's version parts.
-    /// TODO: Move this method to some sort of helper class, maybe as part of `VersionPart`.
-    fn split_version_str(
-        version: &'a str,
-        manifest: Option<&'a VersionManifest>,
-    ) -> Option<Vec<dyn VersionPart<'a>>> {
-        // Split the version string, and create a vector to put the parts in
-        // TODO: split at specific separators instead
-        let split = version.split(|c| !char::is_alphanumeric(c));
-        let mut parts = Vec::new();
-
-        // Get the manifest to follow
-        let mut used_manifest = &VersionManifest::new();
-        if manifest.is_some() {
-            used_manifest = manifest.unwrap();
-        }
-
-        // Flag to determine whether this version number contains any number part
-        let mut has_number = false;
-
-        // Loop over the parts, and parse them
-        for part in split {
-            // We may not go over the maximum depth
-            if used_manifest.max_depth().is_some()
-                && parts.len() >= used_manifest.max_depth_number()
-            {
-                break;
-            }
-
-            // Skip empty parts
-            if part.is_empty() {
-                continue;
-            }
-
-            // Try to parse the value as an number
-            match part.parse::<i32>() {
-                Ok(number) => {
-                    // Push the number part to the vector, and set the has number flag
-                    parts.push(get_integer_part(number));
-                    has_number = true;
-                }
-                Err(_) => {
-                    // Ignore text parts if specified
-                    if used_manifest.ignore_text() {
-                        continue;
-                    }
-
-                    // Push the text part to the vector
-                    parts.push(get_lexicographic_string_part(part));
-                }
-            }
-        }
-
-        // The version must contain a number part, if any part was parsed
-        if !has_number && !parts.is_empty() {
-            return None;
-        }
-
-        // Return the list of parts
-        Some(parts)
     }
 
     /// Get the original version string.
@@ -237,11 +98,11 @@ impl<'a> Version<'a> {
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
-    /// assert_eq!(ver.part(0), Ok(&VersionPart::Number(1)));
-    /// assert_eq!(ver.part(1), Ok(&VersionPart::Number(2)));
-    /// assert_eq!(ver.part(2), Ok(&VersionPart::Number(3)));
+    /// assert_eq!(ver.part(0), Ok(&VersionPart::Integer(1)));
+    /// assert_eq!(ver.part(1), Ok(&VersionPart::Integer(2)));
+    /// assert_eq!(ver.part(2), Ok(&VersionPart::Integer(3)));
     /// ```
-    pub fn part(&self, index: usize) -> Result<&dyn VersionPart<'a>, ()> {
+    pub fn part(&self, index: usize) -> Result<&VersionPart<'a>, ()> {
         // Make sure the index is in-bound
         if index >= self.parts.len() {
             return Err(());
@@ -261,12 +122,12 @@ impl<'a> Version<'a> {
     /// let ver = Version::from("1.2.3").unwrap();
     ///
     /// assert_eq!(ver.parts(), &vec![
-    ///     VersionPart::Number(1),
-    ///     VersionPart::Number(2),
-    ///     VersionPart::Number(3)
+    ///     VersionPart::Integer(1),
+    ///     VersionPart::Integer(2),
+    ///     VersionPart::Integer(3)
     /// ]);
     /// ```
-    pub fn parts(&self) -> &Vec<Box<dyn VersionPart>> {
+    pub fn parts(&self) -> &Vec<VersionPart> {
         &self.parts
     }
 
@@ -359,65 +220,40 @@ impl<'a> Version<'a> {
     ///
     /// Other comparison operators can be used when comparing, but aren't returned by this method.
     fn compare_iter(
-        mut iter: Peekable<Iter<dyn VersionPart<'a>>>,
-        mut other_iter: Peekable<Iter<dyn VersionPart<'a>>>,
+        mut iter: Peekable<Iter<VersionPart>>,
+        mut other_iter: Peekable<Iter<VersionPart>>,
     ) -> CompOp {
-        // Iterate through the parts of this version
-        let mut other_part: Option<&dyn VersionPart<'a>>;
-
         // Iterate over the iterator, without consuming it
         loop {
-            match iter.next() {
-                Some(part) => {
-                    // Get the part for the other version
-                    other_part = other_iter.next();
-
-                    // If there are no parts left in the other version, try to determine the result
-                    if other_part.is_none() {
-                        // In the main version: if the current part is zero, continue to the next one
-                        match part {
-                            &VersionPart::Number(num) => {
-                                if num == 0 {
-                                    continue;
-                                }
-                            }
-                            &VersionPart::Text(_) => return CompOp::Lt,
-                        }
-
-                        // The main version is greater
-                        return CompOp::Gt;
-                    }
-
-                    // Match both part as numbers to destruct their numerical values
-                    match part {
-                        &VersionPart::Number(num) => match other_part.unwrap() {
-                            &VersionPart::Number(other_num) => {
-                                // Compare the numbers
-                                match num {
-                                    n if n < other_num => return CompOp::Lt,
-                                    n if n > other_num => return CompOp::Gt,
-                                    _ => continue,
-                                }
-                            }
-                            _ => {}
-                        },
-                        _ => {}
-                    }
-                }
-                None => break,
-            }
-        }
-
-        // Check whether we should iterate over the other iterator, if it has any items left
-        match other_iter.peek() {
-            // Compare based on the other iterator
-            Some(_) => Self::compare_iter(other_iter, iter).as_flipped(),
-
-            // Nothing more to iterate over, the versions should be equal
-            None => CompOp::Eq,
+            let i1 = iter.next();
+            let i2 = other_iter.next();
+            let _cmp = match (i1, i2) {
+                (Some(i), None) => match i.partial_cmp(&i.get_empty()) {
+                    Some(Ordering::Less) => return CompOp::Lt,
+                    Some(Ordering::Greater) => return CompOp::Gt,
+                    Some(Ordering::Equal) => return CompOp::Eq,
+                    _ => panic!()
+                },
+                (None, Some(j)) => match j.get_empty().partial_cmp(j) {
+                    Some(Ordering::Less) => return CompOp::Lt,
+                    Some(Ordering::Greater) => return CompOp::Gt,
+                    Some(Ordering::Equal) => return CompOp::Eq,
+                    _ => panic!()
+                },
+                (Some(i), Some(j)) => match i.partial_cmp(j) {
+                    Some(Ordering::Greater) => return CompOp::Gt,
+                    Some(Ordering::Less) => return CompOp::Lt,
+                    // This is the only loop branch that continues
+                    Some(Ordering::Equal) => Ordering::Equal,
+                    _ => panic!()
+                },
+                // both versions are the same length and are equal for all values
+                (None, None) => return CompOp::Eq
+            };
         }
     }
 }
+
 
 impl<'a> fmt::Display for Version<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -439,7 +275,7 @@ impl<'a> fmt::Debug for Version<'a> {
 /// Implement the partial ordering trait for the version struct, to easily allow version comparison.
 impl<'a> PartialOrd for Version<'a> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.compare(other).ord().unwrap())
+        self.compare(other).ord()
     }
 }
 
@@ -453,12 +289,9 @@ impl<'a> PartialEq for Version<'a> {
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use std::cmp;
-
     use crate::comp_op::CompOp;
     use crate::test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use crate::test::test_version_set::TEST_VERSION_SETS;
-    use crate::version_manifest::VersionManifest;
     // use crate::version_part::VersionPart;
 
     use super::Version;
@@ -475,64 +308,6 @@ mod tests {
         for version in TEST_VERSIONS_ERROR {
             assert!(Version::from(&version.0).is_none());
         }
-    }
-
-    #[test]
-    // TODO: This doesn't really test whether this method fully works
-    fn from_manifest() {
-        // Create a manifest
-        let manifest = VersionManifest::new();
-
-        // Test whether parsing works for each test version
-        for version in TEST_VERSIONS {
-            assert_eq!(
-                Version::from_manifest(&version.0, &manifest)
-                    .unwrap()
-                    .manifest,
-                Some(&manifest)
-            );
-        }
-
-        // Test whether parsing works for each test invalid version
-        for version in TEST_VERSIONS_ERROR {
-            assert!(Version::from_manifest(&version.0, &manifest).is_none());
-        }
-    }
-
-    #[test]
-    fn manifest() {
-        let manifest = VersionManifest::new();
-        let mut version = Version::from("1.2.3").unwrap();
-
-        version.manifest = Some(&manifest);
-        assert_eq!(version.manifest(), Some(&manifest));
-
-        version.manifest = None;
-        assert_eq!(version.manifest(), None);
-    }
-
-    #[test]
-    fn has_manifest() {
-        let manifest = VersionManifest::new();
-        let mut version = Version::from("1.2.3").unwrap();
-
-        version.manifest = Some(&manifest);
-        assert!(version.has_manifest());
-
-        version.manifest = None;
-        assert!(!version.has_manifest());
-    }
-
-    #[test]
-    fn set_manifest() {
-        let manifest = VersionManifest::new();
-        let mut version = Version::from("1.2.3").unwrap();
-
-        version.set_manifest(Some(&manifest));
-        assert_eq!(version.manifest, Some(&manifest));
-
-        version.set_manifest(None);
-        assert_eq!(version.manifest, None);
     }
 
     #[test]
@@ -567,81 +342,6 @@ mod tests {
         for version in TEST_VERSIONS {
             // The number of parts must match
             assert_eq!(Version::from(&version.0).unwrap().parts().len(), version.1);
-        }
-    }
-
-    #[test]
-    fn parts_max_depth() {
-        // Create a manifest
-        let mut manifest = VersionManifest::new();
-
-        // Loop through a range of numbers
-        for depth in 0..5 {
-            // Set the maximum depth
-            manifest.set_max_depth_number(depth);
-
-            // Test for each test version with the manifest
-            for version in TEST_VERSIONS {
-                // Create a version object, and count it's parts
-                let ver = Version::from_manifest(&version.0, &manifest);
-
-                // Some versions might be none, because not all of the start with a number when the
-                // maximum depth is 1. A version string with only text isn't allowed,
-                // resulting in none.
-                if ver.is_none() {
-                    continue;
-                }
-
-                // Get the part count
-                let count = ver.unwrap().parts().len();
-
-                // The number of parts must match
-                if depth == 0 {
-                    assert_eq!(count, version.1);
-                } else {
-                    assert_eq!(count, cmp::min(version.1, depth));
-                }
-            }
-        }
-    }
-
-    #[test]
-    fn parts_ignore_text() {
-        // Create a manifest
-        let mut manifest = VersionManifest::new();
-
-        // Try this for true and false
-        for ignore in vec![true, false] {
-            // Set to ignore text
-            manifest.set_ignore_text(ignore);
-
-            // Keep track whether any version passed with text
-            let mut had_text = false;
-
-            // Test each test version
-            for version in TEST_VERSIONS {
-                // Create a version instance, and get it's parts
-                let ver = Version::from_manifest(&version.0, &manifest).unwrap();
-
-                // Loop through all version parts
-//                for part in ver.parts() {
-//                    match part {
-//                        &VersionPart::Text(_) => {
-//                            // Set the flag
-//                            had_text = true;
-//
-//                            // Break the loop if we already reached text when not ignored
-//                            if !ignore {
-//                                break;
-//                            }
-//                        }
-//                        _ => {}
-//                    }
-//                }
-            }
-
-            // Assert had text
-            assert_eq!(had_text, !ignore);
         }
     }
 
@@ -704,11 +404,11 @@ mod tests {
     fn debug() {
         assert_eq!(
             format!("{:?}", Version::from("1.2.3").unwrap()),
-            "[Number(1), Number(2), Number(3)]",
+            "[Integer(1), Integer(2), Integer(3)]",
         );
         assert_eq!(
             format!("{:#?}", Version::from("1.2.3").unwrap()),
-            "[\n    Number(\n        1,\n    ),\n    Number(\n        2,\n    ),\n    Number(\n        3,\n    ),\n]",
+            "[\n    Integer(\n        1,\n    ),\n    Integer(\n        2,\n    ),\n    Integer(\n        3,\n    ),\n]",
         );
     }
 
