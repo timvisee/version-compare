@@ -8,13 +8,15 @@ use std::cmp::Ordering;
 use std::fmt;
 
 use crate::custom_parts::pep440::PEP440String;
+use std::fmt::Debug;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 pub enum VersionPart<'a> {
     Epoch(i16),
     Integer(i32),
     LexicographicString(&'a str),
     PEP440String(PEP440String<'a>),
+    Empty,
 }
 
 pub trait ProvideEmptyImpl{
@@ -28,6 +30,19 @@ impl<'a> ProvideEmptyImpl for VersionPart<'a> {
             VersionPart::Integer(_i) => VersionPart::Integer(0),
             VersionPart::LexicographicString(_i) => VersionPart::LexicographicString(""),
             VersionPart::PEP440String(_i) => VersionPart::PEP440String(PEP440String::empty()),
+            VersionPart::Empty => VersionPart::Empty
+        }
+    }
+}
+
+impl<'a> Debug for VersionPart<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            VersionPart::Epoch(_i) => write!(f, "Epoch({})", _i),
+            VersionPart::Integer(_i) => write!(f, "Integer({})", _i),
+            VersionPart::LexicographicString(_i) => write!(f, "LexicographicString({})", _i),
+            VersionPart::PEP440String(_i) => write!(f, "PEP440String({})", _i),
+            VersionPart::Empty => write!(f, "Empty"),
         }
     }
 }
@@ -45,12 +60,14 @@ impl<'a> PartialOrd for VersionPart<'a> {
                 &VersionPart::Integer(_a) => 1,
                 &VersionPart::LexicographicString(_a) => 2,
                 &VersionPart::PEP440String(_a) => 3,
+                &VersionPart::Empty => 4,
             }.partial_cmp(
                 match other {
                     &VersionPart::Epoch(_a) => &0,
                     &VersionPart::Integer(_a) => &1,
                     &VersionPart::LexicographicString(_a) => &2,
                     &VersionPart::PEP440String(_a) => &3,
+                    &VersionPart::Empty => &4,
                 }
             ).unwrap().reverse())
         }

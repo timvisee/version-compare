@@ -19,8 +19,9 @@ pub const TEST_VERSION_SETS: &'static [TestVersionSet] = &[
     TestVersionSet("0.0.0", "0", CompOp::Eq),
     TestVersionSet("0", "0.0.0", CompOp::Eq),
     TestVersionSet("", "", CompOp::Eq),
-    TestVersionSet("", "0.0", CompOp::Eq),
-    TestVersionSet("0.0", "", CompOp::Eq),
+    // Empty is lower than anything
+    TestVersionSet("", "0.0", CompOp::Lt),
+    TestVersionSet("0.0", "", CompOp::Gt),
     TestVersionSet("", "0.1", CompOp::Lt),
     TestVersionSet("0.1", "", CompOp::Gt),
     TestVersionSet("1.2.3", "1.2.3", CompOp::Eq),

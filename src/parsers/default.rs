@@ -10,9 +10,6 @@ pub fn default_parser(
     let split = version.split(|c| !char::is_alphanumeric(c));
     let mut parts = Vec::new();
 
-    // Flag to determine whether this version number contains any number part
-    let mut has_number = false;
-
     // Loop over the parts, and parse them
     for part in split {
         // Skip empty parts
@@ -25,7 +22,6 @@ pub fn default_parser(
             Ok(number) => {
                 // Push the number part to the vector, and set the has number flag
                 parts.push(VersionPart::Integer(number));
-                has_number = true;
             }
             Err(_) => {
                 // Push the text part to the vector
@@ -34,9 +30,8 @@ pub fn default_parser(
         }
     }
 
-    // The version must contain a number part, if any part was parsed
-    if !has_number && !parts.is_empty() {
-        return None;
+    if parts.is_empty() && version.is_empty() {
+        parts.push(VersionPart::Empty);
     }
 
     // Return the list of parts

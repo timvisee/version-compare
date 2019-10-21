@@ -84,19 +84,33 @@ impl VersionCompare {
 #[cfg(test)]
 mod tests {
     use crate::comp_op::CompOp;
-    use crate::test::test_version_set::{TEST_VERSION_SETS, TEST_VERSION_SETS_ERROR};
+    use crate::test::test_version_set::{TEST_VERSION_SETS, TEST_VERSION_SETS_ERROR, TestVersionSet};
 
     use super::VersionCompare;
+    use crate::Version;
 
     #[test]
     fn compare() {
+        let mut issues: Vec<&TestVersionSet> = Vec::new();
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
-            assert_eq!(
-                VersionCompare::compare(&entry.0, &entry.1),
-                Ok(entry.2.clone()),
-                "Testing that {} is {} {}", &entry.0, &entry.2.sign(), &entry.1
-            );
+            let result = VersionCompare::compare(&entry.0, &entry.1).unwrap();
+            match result == entry.2 {
+                true => {},
+                _ => {
+                    //VersionCompare::compare(&entry.0, &entry.1);
+                    issues.push(entry)
+                }
+            }
+        }
+
+        for &entry in &issues {
+            print!("failed test case: {}, {}, {}\n", entry.0, entry.2.sign(), entry.1);
+            print!("Version A: {}\n", Version::from(entry.0).unwrap());
+            print!("Version B: {}\n", Version::from(entry.1).unwrap());
+        }
+        if issues.len() > 0 {
+            panic!();
         }
 
         // Compare each error version in the version set
