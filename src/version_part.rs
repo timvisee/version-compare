@@ -47,6 +47,12 @@ impl<'a> Debug for VersionPart<'a> {
     }
 }
 
+impl<'a> Display for VersionPart<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
 impl<'a> PartialOrd for VersionPart<'a> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         match (self, other) {
@@ -77,12 +83,6 @@ impl<'a> PartialOrd for VersionPart<'a> {
 impl<'a> PartialEq for VersionPart<'a> {
     fn eq(&self, other: &Self) -> bool {
         self.partial_cmp(other) == Some(Ordering::Equal)
-    }
-}
-
-impl<'a> fmt::Display for VersionPart<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self)
     }
 }
 
