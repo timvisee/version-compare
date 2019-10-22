@@ -224,17 +224,27 @@ impl<'a> Version<'a> {
         mut other_iter: Peekable<Iter<VersionPart>>,
     ) -> CompOp {
         // Iterate over the iterator, without consuming it
+        let _last_i1: &VersionPart = {
+            &iter.peek().unwrap()
+        };
+        let _last_i2: &VersionPart = {
+            &other_iter.peek().unwrap()
+        };
         loop {
-            let i1 = iter.next();
-            let i2 = other_iter.next();
+            let i1 = &iter.next();
+            let i2 = &other_iter.next();
+            // println!("Comparing: {} to {}",
+            //          match i1 {Some(i)=> i, _ => &VersionPart::Empty},
+            //          match i2 {Some(i)=> i, _ => &VersionPart::Empty});
+            // println!("Prospective empties are: {} and {}", &_last_i1.get_empty(), &_last_i2.get_empty());
             let _cmp = match (i1, i2) {
-                (Some(i), None) => match i.partial_cmp(&i.get_empty()) {
+                (Some(i), None) => match i.partial_cmp(&&_last_i2.get_empty()) {
                     Some(Ordering::Less) => return CompOp::Lt,
                     Some(Ordering::Greater) => return CompOp::Gt,
                     Some(Ordering::Equal) => return CompOp::Eq,
                     _ => panic!()
                 },
-                (None, Some(j)) => match j.get_empty().partial_cmp(j) {
+                (None, Some(j)) => match &_last_i1.get_empty().partial_cmp(j) {
                     Some(Ordering::Less) => return CompOp::Lt,
                     Some(Ordering::Greater) => return CompOp::Gt,
                     Some(Ordering::Equal) => return CompOp::Eq,
@@ -250,6 +260,8 @@ impl<'a> Version<'a> {
                 // both versions are the same length and are equal for all values
                 (None, None) => return CompOp::Eq
             };
+            let _last_i1 = i1;
+            let _last_i2 = i2;
         }
     }
 }
@@ -408,7 +420,7 @@ mod tests {
         );
         assert_eq!(
             format!("{:#?}", Version::from("1.2.3").unwrap()),
-            "[\n    Integer(\n        1,\n    ),\n    Integer(\n        2,\n    ),\n    Integer(\n        3,\n    ),\n]",
+            "[\n    Integer(1),\n    Integer(2),\n    Integer(3),\n]",
         );
     }
 

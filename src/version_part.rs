@@ -8,7 +8,7 @@ use std::cmp::Ordering;
 use std::fmt;
 
 use crate::custom_parts::pep440::PEP440String;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 
 #[derive(Copy, Clone)]
 pub enum VersionPart<'a> {
@@ -82,7 +82,7 @@ impl<'a> PartialEq for VersionPart<'a> {
 
 impl<'a> fmt::Display for VersionPart<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:#?}", self)
+        write!(f, "{:?}", self)
     }
 }
 

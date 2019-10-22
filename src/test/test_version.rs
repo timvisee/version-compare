@@ -17,7 +17,8 @@ pub const TEST_VERSIONS: &'static [TestVersion] = &[
     TestVersion("0.0.0", 3),
     TestVersion("1.0.0", 3),
     TestVersion("0.0.1", 3),
-    TestVersion("", 0),
+    // Empty strings still have length 1 - the Empty component
+    TestVersion("", 1),
     TestVersion(".", 0),
     TestVersion("...", 0),
     TestVersion("1.2.dev", 3),
@@ -32,9 +33,11 @@ pub const TEST_VERSIONS: &'static [TestVersion] = &[
 
 /// List of version numbers that contain errors with metadata for dynamic tests
 pub const TEST_VERSIONS_ERROR: &'static [TestVersion] = &[
-    TestVersion("abc", 1),
-    TestVersion("alpha.dev.snapshot", 3),
-    TestVersion("test. .snapshot", 3),
+    // 3 alpha parts - fine
+    // TestVersion("abc", 1),
+    // 3 alpha parts - fine
+    // TestVersion("alpha.dev.snapshot", 3),
+    //TestVersion("test. .snapshot", 3),
     // TODO: broken case, decide what to do here
     // TestVersion("$", 1),
 ];

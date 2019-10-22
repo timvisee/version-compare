@@ -16,11 +16,17 @@ impl<'a> PEP440String<'a> {
         }
 
         let caps = RE.captures(input).unwrap();
-        let pre: i16 = caps.get(1).map_or(0, |m| m.as_str().parse().unwrap());
+        let pre: i16 = caps.get(1).map_or(0, |m| match m.as_str().is_empty() {
+            true => 0,
+            false => m.as_str().parse().unwrap()
+        });
         let alpha = caps.get(2).map_or("", |m| m.as_str());
-        let post: i16 = caps.get(3).map_or(0, |m| m.as_str().parse().unwrap());
+        let post: i16 = caps.get(3).map_or(0, |m| match m.as_str().is_empty() {
+            true => 0,
+            false => m.as_str().parse().unwrap()
+        });
 
-        PEP440String{pre, alpha, post }
+        PEP440String{ pre, alpha, post }
     }
 
     pub fn empty() -> PEP440String<'a> {
