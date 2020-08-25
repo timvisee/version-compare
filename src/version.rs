@@ -60,6 +60,22 @@ impl<'a> Version<'a> {
         })
     }
 
+    /// Create a `Version` instance from already existing parts
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use version_compare::{CompOp, Version, VersionManifest};
+    /// ```
+    pub fn from_parts(version: &'a str, version_parts: Vec<VersionPart<'a>>) -> Self {
+        Version {
+            version: version,
+            parts: version_parts,
+            manifest: None,
+        }
+    }
+
     /// Create a `Version` instance from a version string with the given `manifest`.
     ///
     /// The version string should be passed to the `version` parameter.
