@@ -4,7 +4,7 @@
 [![Documentation][docs-badge]][docs]
 [![Download statistics][crate-download-badge]][crate-link]
 [![Coverage status][coverage-badge]][coverage-link]
-[![Dependencies][dependency-badge]][dependency-link]
+[![Dependencies][dependency-badge]][crate-link]
 [![License][crate-license-badge]][crate-link]
 
 [crate-version-badge]: https://img.shields.io/crates/v/version-compare.svg
@@ -14,7 +14,6 @@
 [coverage-badge]: https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master
 [coverage-link]: https://coveralls.io/github/timvisee/version-compare?branch=master
 [dependency-badge]: https://img.shields.io/badge/dependencies-none!-green.svg
-[dependency-link]: https://libraries.io/github/timvisee/version-compare
 [docs]: https://docs.rs/version-compare
 [docs-badge]: https://docs.rs/version-compare/badge.svg
 
