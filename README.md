@@ -73,7 +73,7 @@ This library is very easy to use. Here's a basic usage example:
 Cargo.toml:
 ```toml
 [dependencies]
-version-compare = "0.0.10"
+version-compare = "0.0.11"
 ```
 
 [example.rs:](examples/example.rs)
