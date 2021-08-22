@@ -61,7 +61,7 @@ impl CompOp {
     /// assert!(CompOp::from_sign("*").is_err());
     /// ```
     pub fn from_sign(sign: &str) -> Result<CompOp, ()> {
-        match sign.trim().as_ref() {
+        match sign.trim() {
             "==" | "=" => Ok(CompOp::Eq),
             "!=" | "!" | "<>" => Ok(CompOp::Ne),
             "<" => Ok(CompOp::Lt),
@@ -126,12 +126,12 @@ impl CompOp {
     /// ```
     pub fn name(&self) -> &str {
         match self {
-            &CompOp::Eq => "eq",
-            &CompOp::Ne => "ne",
-            &CompOp::Lt => "lt",
-            &CompOp::Le => "le",
-            &CompOp::Ge => "ge",
-            &CompOp::Gt => "gt",
+            CompOp::Eq => "eq",
+            CompOp::Ne => "ne",
+            CompOp::Lt => "lt",
+            CompOp::Le => "le",
+            CompOp::Ge => "ge",
+            CompOp::Gt => "gt",
         }
     }
 
@@ -152,7 +152,7 @@ impl CompOp {
     /// assert_eq!(CompOp::Lt.as_inverted(), CompOp::Ge);
     /// assert_eq!(CompOp::Gt.as_inverted(), CompOp::Le);
     /// ```
-    pub fn as_inverted(self) -> Self {
+    pub fn as_inverted(&self) -> Self {
         self.invert()
     }
 
@@ -175,12 +175,12 @@ impl CompOp {
     /// ```
     pub fn invert(&self) -> Self {
         match self {
-            &CompOp::Eq => CompOp::Ne,
-            &CompOp::Ne => CompOp::Eq,
-            &CompOp::Lt => CompOp::Ge,
-            &CompOp::Le => CompOp::Gt,
-            &CompOp::Ge => CompOp::Lt,
-            &CompOp::Gt => CompOp::Le,
+            CompOp::Eq => CompOp::Ne,
+            CompOp::Ne => CompOp::Eq,
+            CompOp::Lt => CompOp::Ge,
+            CompOp::Le => CompOp::Gt,
+            CompOp::Ge => CompOp::Lt,
+            CompOp::Gt => CompOp::Le,
         }
     }
 
@@ -201,7 +201,7 @@ impl CompOp {
     /// assert_eq!(CompOp::Lt.as_opposite(), CompOp::Gt);
     /// assert_eq!(CompOp::Ge.as_opposite(), CompOp::Le);
     /// ```
-    pub fn as_opposite(self) -> Self {
+    pub fn as_opposite(&self) -> Self {
         self.opposite()
     }
 
@@ -224,12 +224,12 @@ impl CompOp {
     /// ```
     pub fn opposite(&self) -> Self {
         match self {
-            &CompOp::Eq => CompOp::Ne,
-            &CompOp::Ne => CompOp::Eq,
-            &CompOp::Lt => CompOp::Gt,
-            &CompOp::Le => CompOp::Ge,
-            &CompOp::Ge => CompOp::Le,
-            &CompOp::Gt => CompOp::Lt,
+            CompOp::Eq => CompOp::Ne,
+            CompOp::Ne => CompOp::Eq,
+            CompOp::Lt => CompOp::Gt,
+            CompOp::Le => CompOp::Ge,
+            CompOp::Ge => CompOp::Le,
+            CompOp::Gt => CompOp::Lt,
         }
     }
 
@@ -250,7 +250,7 @@ impl CompOp {
     /// assert_eq!(CompOp::Lt.as_flipped(), CompOp::Gt);
     /// assert_eq!(CompOp::Ge.as_flipped(), CompOp::Le);
     /// ```
-    pub fn as_flipped(self) -> Self {
+    pub fn as_flipped(&self) -> Self {
         self.flip()
     }
 
@@ -273,10 +273,10 @@ impl CompOp {
     /// ```
     pub fn flip(&self) -> Self {
         match self {
-            &CompOp::Lt => CompOp::Gt,
-            &CompOp::Le => CompOp::Ge,
-            &CompOp::Ge => CompOp::Le,
-            &CompOp::Gt => CompOp::Lt,
+            CompOp::Lt => CompOp::Gt,
+            CompOp::Le => CompOp::Ge,
+            CompOp::Ge => CompOp::Le,
+            CompOp::Gt => CompOp::Lt,
             _ => self.clone(),
         }
     }
@@ -307,12 +307,12 @@ impl CompOp {
     /// ```
     pub fn sign(&self) -> &'static str {
         match self {
-            &CompOp::Eq => "==",
-            &CompOp::Ne => "!=",
-            &CompOp::Lt => "<",
-            &CompOp::Le => "<=",
-            &CompOp::Ge => ">=",
-            &CompOp::Gt => ">",
+            CompOp::Eq => "==",
+            CompOp::Ne => "!=",
+            CompOp::Lt => "<",
+            CompOp::Le => "<=",
+            CompOp::Ge => ">=",
+            CompOp::Gt => ">",
         }
     }
 
@@ -338,9 +338,9 @@ impl CompOp {
     /// ```
     pub fn factor(&self) -> i8 {
         match self {
-            &CompOp::Eq | &CompOp::Ne => 0,
-            &CompOp::Lt | &CompOp::Le => -1,
-            &CompOp::Gt | &CompOp::Ge => 1,
+            CompOp::Eq | &CompOp::Ne => 0,
+            CompOp::Lt | &CompOp::Le => -1,
+            CompOp::Gt | &CompOp::Ge => 1,
         }
     }
 
@@ -367,9 +367,9 @@ impl CompOp {
     /// ```
     pub fn ord(&self) -> Option<Ordering> {
         match self {
-            &CompOp::Eq => Some(Ordering::Equal),
-            &CompOp::Lt => Some(Ordering::Less),
-            &CompOp::Gt => Some(Ordering::Greater),
+            CompOp::Eq => Some(Ordering::Equal),
+            CompOp::Lt => Some(Ordering::Less),
+            CompOp::Gt => Some(Ordering::Greater),
             _ => None,
         }
     }

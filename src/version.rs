@@ -47,15 +47,10 @@ impl<'a> Version<'a> {
         // Split the version string
         let parts = Self::split_version_str(version, None);
 
-        // Return nothing if the parts are none
-        if parts.is_none() {
-            return None;
-        }
-
         // Create and return the object
         Some(Version {
-            version: version,
-            parts: parts.unwrap(),
+            version,
+            parts: parts?,
             manifest: None,
         })
     }
@@ -70,7 +65,7 @@ impl<'a> Version<'a> {
     /// ```
     pub fn from_parts(version: &'a str, version_parts: Vec<VersionPart<'a>>) -> Self {
         Version {
-            version: version,
+            version,
             parts: version_parts,
             manifest: None,
         }
@@ -94,15 +89,10 @@ impl<'a> Version<'a> {
         // Split the version string
         let parts = Self::split_version_str(version, Some(&manifest));
 
-        // Return nothing if the parts are none
-        if parts.is_none() {
-            return None;
-        }
-
         // Create and return the object
         Some(Version {
-            version: version,
-            parts: parts.unwrap(),
+            version,
+            parts: parts?,
             manifest: Some(&manifest),
         })
     }
@@ -349,18 +339,9 @@ impl<'a> Version<'a> {
 
         // Match the result against the given operator
         match result {
-            CompOp::Eq => match operator {
-                &CompOp::Eq | &CompOp::Le | &CompOp::Ge => true,
-                _ => false,
-            },
-            CompOp::Lt => match operator {
-                &CompOp::Ne | &CompOp::Lt | &CompOp::Le => true,
-                _ => false,
-            },
-            CompOp::Gt => match operator {
-                &CompOp::Ne | &CompOp::Gt | &CompOp::Ge => true,
-                _ => false,
-            },
+            CompOp::Eq => matches!(operator, CompOp::Eq | CompOp::Le | CompOp::Ge),
+            CompOp::Lt => matches!(operator, CompOp::Ne | CompOp::Lt | CompOp::Le),
+            CompOp::Gt => matches!(operator, CompOp::Ne | CompOp::Gt | CompOp::Ge),
             _ => unreachable!(),
         }
     }
@@ -382,45 +363,36 @@ impl<'a> Version<'a> {
         let mut other_part: Option<&VersionPart>;
 
         // Iterate over the iterator, without consuming it
-        loop {
-            match iter.next() {
-                Some(part) => {
-                    // Get the part for the other version
-                    other_part = other_iter.next();
+        while let Some(part) = iter.next() {
+            // Get the part for the other version
+            other_part = other_iter.next();
 
-                    // If there are no parts left in the other version, try to determine the result
-                    if other_part.is_none() {
-                        // In the main version: if the current part is zero, continue to the next one
-                        match part {
-                            &VersionPart::Number(num) => {
-                                if num == 0 {
-                                    continue;
-                                }
-                            }
-                            &VersionPart::Text(_) => return CompOp::Lt,
+            // If there are no parts left in the other version, try to determine the result
+            if other_part.is_none() {
+                // In the main version: if the current part is zero, continue to the next one
+                match part {
+                    VersionPart::Number(num) => {
+                        if *num == 0 {
+                            continue;
                         }
-
-                        // The main version is greater
-                        return CompOp::Gt;
                     }
+                    VersionPart::Text(_) => return CompOp::Lt,
+                }
 
-                    // Match both part as numbers to destruct their numerical values
-                    match part {
-                        &VersionPart::Number(num) => match other_part.unwrap() {
-                            &VersionPart::Number(other_num) => {
-                                // Compare the numbers
-                                match num {
-                                    n if n < other_num => return CompOp::Lt,
-                                    n if n > other_num => return CompOp::Gt,
-                                    _ => continue,
-                                }
-                            }
-                            _ => {}
-                        },
-                        _ => {}
+                // The main version is greater
+                return CompOp::Gt;
+            }
+
+            // Match both part as numbers to destruct their numerical values
+            if let VersionPart::Number(num) = part {
+                if let VersionPart::Number(other_num) = other_part.unwrap() {
+                    // Compare the numbers
+                    match num {
+                        n if n < other_num => return CompOp::Lt,
+                        n if n > other_num => return CompOp::Gt,
+                        _ => continue,
                     }
                 }
-                None => break,
             }
         }
 
@@ -642,7 +614,7 @@ mod tests {
                 // Loop through all version parts
                 for part in ver.parts() {
                     match part {
-                        &VersionPart::Text(_) => {
+                        VersionPart::Text(_) => {
                             // Set the flag
                             had_text = true;
 
