@@ -53,6 +53,8 @@ pub const TEST_VERSION_SETS: &'static [TestVersionSet] = &[
         "version-compare 1.4.1 / build 0043",
         CompOp::Lt,
     ),
+    // Issue: https://github.com/timvisee/version-compare/issues/24
+    TestVersionSet("7.2p1", "7.1", CompOp::Gt),
     // TODO: inspect these cases
     TestVersionSet("snapshot.1.2.3", "1.2.3.alpha", CompOp::Lt),
     TestVersionSet("snapshot-1.2.3", "1.2.3-alpha", CompOp::Lt),

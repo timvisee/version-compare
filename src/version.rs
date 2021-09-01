@@ -173,9 +173,6 @@ impl<'a> Version<'a> {
             used_manifest = manifest.unwrap();
         }
 
-        // Flag to determine whether this version number contains any number part
-        let mut has_number = false;
-
         // Loop over the parts, and parse them
         for part in split {
             // We may not go over the maximum depth
@@ -193,13 +190,27 @@ impl<'a> Version<'a> {
             // Try to parse the value as an number
             match part.parse::<i32>() {
                 Ok(number) => {
-                    // Push the number part to the vector, and set the has number flag
+                    // Push the number part to the vector
                     parts.push(VersionPart::Number(number));
-                    has_number = true;
                 }
                 Err(_) => {
                     // Ignore text parts if specified
                     if used_manifest.ignore_text() {
+                        continue;
+                    }
+
+                    // Numbers suffixed by text should be split into a number and text as well
+                    let split_at = part
+                        .char_indices()
+                        .take(part.len() - 1)
+                        .take_while(|(_, c)| c.is_ascii_digit())
+                        .map(|(i, c)| (i, c, part.chars().nth(i + 1).unwrap()))
+                        .filter(|(_, _, b)| b.is_alphabetic())
+                        .map(|(i, _, _)| i)
+                        .next();
+                    if let Some(at) = split_at {
+                        parts.push(VersionPart::Number(part[..=at].parse().unwrap()));
+                        parts.push(VersionPart::Text(&part[at + 1..]));
                         continue;
                     }
 
@@ -209,8 +220,8 @@ impl<'a> Version<'a> {
             }
         }
 
-        // The version must contain a number part, if any part was parsed
-        if !has_number && !parts.is_empty() {
+        // The version must contain a number part if any part was parsed
+        if !parts.is_empty() && !parts.iter().any(|p| matches!(p, VersionPart::Number(_))) {
             return None;
         }
 
