@@ -394,7 +394,7 @@ impl<'a> Version<'a> {
                 return CompOp::Gt;
             }
 
-            // Match both part as numbers to destruct their numerical values
+            // Match both parts as numbers to destruct their numerical values
             if let VersionPart::Number(num) = part {
                 if let VersionPart::Number(other_num) = other_part.unwrap() {
                     // Compare the numbers
@@ -402,6 +402,19 @@ impl<'a> Version<'a> {
                         n if n < other_num => return CompOp::Lt,
                         n if n > other_num => return CompOp::Gt,
                         _ => continue,
+                    }
+                }
+            }
+            // Match both parts as strings
+            else if let VersionPart::Text(val) = part {
+                if let VersionPart::Text(other_val) = other_part.unwrap() {
+                    // normalize case
+                    let (val_lwr, other_val_lwr) = (val.to_lowercase(), other_val.to_lowercase());
+                    // compare text: for instance, "RC1" will be less than "RC2", so this works out.
+                    if val_lwr < other_val_lwr {
+                        return CompOp::Lt;
+                    } else if val_lwr > other_val_lwr {
+                        return CompOp::Gt;
                     }
                 }
             }
