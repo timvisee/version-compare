@@ -64,7 +64,19 @@ test:
   script:
     - cargo test --verbose
 
-# Cargo crate release
+# Gather test coverage
+test-coverage:
+  stage: test
+  needs: []
+  dependencies: []
+  coverage: '/^\d+.\d+% coverage/'
+  script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends pkg-config libssl-dev
+    - cargo install cargo-tarpaulin -f
+    - cargo tarpaulin --coveralls $COVERALLS_TOKEN
+
+# Release crate on crates.io
 release-crate:
   stage: release
   dependencies: []
