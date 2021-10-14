@@ -10,13 +10,3 @@ description = "A Rust library to easily compare version numbers, and test them a
 keywords = ["version", "compare", "comparison", "comparing"]
 categories = ["parser-implementations"]
 edition = "2018"
-
-[badges]
-travis-ci = { repository = "timvisee/version-compare" }
-
-[features]
-default = []
-dev = []
-
-[package.metadata.docs.rs]
-targets = ["x86_64-unknown-linux-gnu"]

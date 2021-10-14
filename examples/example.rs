@@ -7,8 +7,6 @@
 //!
 //! You can run this example file by using the command `cargo run --example example`.
 
-extern crate version_compare;
-
 use version_compare::{Cmp, Version};
 
 fn main() {
@@ -25,25 +23,25 @@ fn main() {
     // - Cmp::Gt -> Greater than
 
     // Easily compare version strings
-    assert_eq!(version_compare::compare(&a, &b).unwrap(), Cmp::Lt);
-    assert_eq!(version_compare::compare_to(&a, &b, Cmp::Le).unwrap(), true);
-    assert_eq!(version_compare::compare_to(&a, &b, Cmp::Gt).unwrap(), false);
+    assert_eq!(version_compare::compare(a, b).unwrap(), Cmp::Lt);
+    assert_eq!(version_compare::compare_to(a, b, Cmp::Le).unwrap(), true);
+    assert_eq!(version_compare::compare_to(a, b, Cmp::Gt).unwrap(), false);
 
     // Version string parsing
-    let a_ver = Version::from(a).unwrap();
-    let b_ver = Version::from(b).unwrap();
+    let a = Version::from(a).unwrap();
+    let b = Version::from(b).unwrap();
 
     // Directly compare parsed versions
-    assert_eq!(a_ver < b_ver, true);
-    assert_eq!(a_ver <= b_ver, true);
-    assert_eq!(a_ver > b_ver, false);
-    assert_eq!(a_ver != b_ver, true);
-    assert_eq!(a_ver.compare(&b_ver), Cmp::Lt);
-    assert_eq!(b_ver.compare(&a_ver), Cmp::Gt);
-    assert_eq!(a_ver.compare_to(&b_ver, Cmp::Lt), true);
+    assert_eq!(a < b, true);
+    assert_eq!(a <= b, true);
+    assert_eq!(a > b, false);
+    assert_eq!(a != b, true);
+    assert_eq!(a.compare(&b), Cmp::Lt);
+    assert_eq!(b.compare(&a), Cmp::Gt);
+    assert_eq!(a.compare_to(&b, Cmp::Lt), true);
 
     // Match
-    match a_ver.compare(&b_ver) {
+    match a.compare(b) {
         Cmp::Lt => println!("Version a is less than b"),
         Cmp::Eq => println!("Version a is equal to b"),
         Cmp::Gt => println!("Version a is greater than b"),

@@ -8,8 +8,8 @@
 
 use std::cmp::Ordering;
 
-/// Enum of supported comparison operators.
-#[derive(Debug, Copy, Clone, PartialEq)]
+/// Comparison operators enum.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Cmp {
     /// Equal (`==`, `=`).
     /// When version `A` is equal to `B`.
@@ -274,7 +274,7 @@ impl Cmp {
     /// let b = Version::from("1.3").unwrap();
     ///
     /// assert_eq!(a.compare(&b).factor(), -1);
-    /// assert_eq!(10 * b.compare(&a).factor(), 10);
+    /// assert_eq!(10 * b.compare(a).factor(), 10);
     /// ```
     pub fn factor(self) -> i8 {
         match self {
@@ -303,7 +303,7 @@ impl Cmp {
     /// let a = Version::from("1.2.3").unwrap();
     /// let b = Version::from("1.3").unwrap();
     ///
-    /// assert_eq!(a.compare(&b).ord().unwrap(), Ordering::Less);
+    /// assert_eq!(a.compare(b).ord().unwrap(), Ordering::Less);
     /// ```
     pub fn ord(self) -> Option<Ordering> {
         match self {

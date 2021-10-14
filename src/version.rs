@@ -12,7 +12,7 @@ use std::slice::Iter;
 
 use crate::{Cmp, Manifest, Part};
 
-/// Version struct, which is a representation for a parsed version string.
+/// Version struct, wrapping a string, providing useful comparison functions.
 ///
 /// A version in string format can be parsed using methods like `Version::from("1.2.3");`.
 /// These methods return a `Result` holding the parsed version or an error on failure.
@@ -22,6 +22,7 @@ use crate::{Cmp, Manifest, Part};
 /// representation, the returned value is generated.
 ///
 /// The struct provides many methods for comparison and probing.
+#[derive(Clone, Eq)]
 pub struct Version<'a> {
     version: &'a str,
     parts: Vec<Part<'a>>,
@@ -441,8 +442,7 @@ fn compare_iter<'a>(
 mod tests {
     use std::cmp;
 
-    use crate::test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
-    use crate::test::test_version_set::TEST_VERSION_SETS;
+    use crate::test::{COMBIS, VERSIONS, VERSIONS_ERROR};
     use crate::{Cmp, Manifest, Part};
 
     use super::Version;
@@ -451,12 +451,12 @@ mod tests {
     // TODO: This doesn't really test whether this method fully works
     fn from() {
         // Test whether parsing works for each test version
-        for version in TEST_VERSIONS {
+        for version in VERSIONS {
             assert!(Version::from(version.0).is_some());
         }
 
         // Test whether parsing works for each test invalid version
-        for version in TEST_VERSIONS_ERROR {
+        for version in VERSIONS_ERROR {
             assert!(Version::from(version.0).is_none());
         }
     }
@@ -468,7 +468,7 @@ mod tests {
         let manifest = Manifest::default();
 
         // Test whether parsing works for each test version
-        for version in TEST_VERSIONS {
+        for version in VERSIONS {
             assert_eq!(
                 Version::from_manifest(version.0, &manifest)
                     .unwrap()
@@ -478,7 +478,7 @@ mod tests {
         }
 
         // Test whether parsing works for each test invalid version
-        for version in TEST_VERSIONS_ERROR {
+        for version in VERSIONS_ERROR {
             assert!(Version::from_manifest(version.0, &manifest).is_none());
         }
     }
@@ -522,7 +522,7 @@ mod tests {
     #[test]
     fn as_str() {
         // Test for each test version
-        for version in TEST_VERSIONS {
+        for version in VERSIONS {
             // The input version string must be the same as the returned string
             assert_eq!(Version::from(version.0).unwrap().as_str(), version.0);
         }
@@ -531,7 +531,7 @@ mod tests {
     #[test]
     fn part() {
         // Test for each test version
-        for version in TEST_VERSIONS {
+        for version in VERSIONS {
             // Create a version object
             let ver = Version::from(version.0).unwrap();
 
@@ -548,7 +548,7 @@ mod tests {
     #[test]
     fn parts() {
         // Test for each test version
-        for version in TEST_VERSIONS {
+        for version in VERSIONS {
             // The number of parts must match
             assert_eq!(Version::from(version.0).unwrap().parts().len(), version.1);
         }
@@ -565,7 +565,7 @@ mod tests {
             manifest.max_depth = if depth > 0 { Some(depth) } else { None };
 
             // Test for each test version with the manifest
-            for version in TEST_VERSIONS {
+            for version in VERSIONS {
                 // Create a version object, and count it's parts
                 let ver = Version::from_manifest(&version.0, &manifest);
 
@@ -603,7 +603,7 @@ mod tests {
             let mut had_text = false;
 
             // Test each test version
-            for version in TEST_VERSIONS {
+            for version in VERSIONS {
                 // Create a version instance, and get it's parts
                 let ver = Version::from_manifest(&version.0, &manifest).unwrap();
 
@@ -632,7 +632,7 @@ mod tests {
     #[test]
     fn compare() {
         // Compare each version in the version set
-        for entry in TEST_VERSION_SETS {
+        for entry in COMBIS {
             // Get both versions
             let a = Version::from(entry.0).unwrap();
             let b = Version::from(entry.1).unwrap();
@@ -652,7 +652,7 @@ mod tests {
     #[test]
     fn compare_to() {
         // Compare each version in the version set
-        for entry in TEST_VERSION_SETS {
+        for entry in COMBIS {
             // Get both versions
             let a = Version::from(entry.0).unwrap();
             let b = Version::from(entry.1).unwrap();
@@ -688,7 +688,7 @@ mod tests {
     #[test]
     fn partial_cmp() {
         // Compare each version in the version set
-        for entry in TEST_VERSION_SETS {
+        for entry in COMBIS {
             // Get both versions
             let a = Version::from(entry.0).unwrap();
             let b = Version::from(entry.1).unwrap();
@@ -706,7 +706,7 @@ mod tests {
     #[test]
     fn partial_eq() {
         // Compare each version in the version set
-        for entry in TEST_VERSION_SETS {
+        for entry in COMBIS {
             // Skip entries that are less or equal, or greater or equal
             match entry.2 {
                 Cmp::Le | Cmp::Ge => continue,

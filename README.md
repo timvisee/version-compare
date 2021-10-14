@@ -19,6 +19,7 @@
 [gitlab-ci-master-badge]: https://gitlab.com/timvisee/version-compare/badges/master/pipeline.svg
 
 # Rust library: version-compare
+
 > A Rust library to easily compare version numbers in any format, and test them against various comparison operators.
 
 Comparing version numbers is hard. Especially when version numbers get really complex,
@@ -36,7 +37,8 @@ Inspired by PHPs [version_compare()](http://php.net/manual/en/function.version-c
 **Note:** This library is still a work in progress.
 See the list below for a list of currently available and future features.
 
-### Version formats
+### Formats
+
 A list of version number examples that are parsed successfully:
 
 - `1`
@@ -49,39 +51,39 @@ A list of version number examples that are parsed successfully:
 - _Many more and support for custom formats to come..._
 
 ### Semver
+
 Version number formats like [_semver_](http://semver.org/) try to make version numbers consistent and manageable,
 there are too many projects however that don't follow such format.
 
-Version-compare makes working with them easy and supports semver formats out of the box with zero configuration.
+`version-compare` makes working with them easy and supports semver formats out of the box with zero configuration.
 
 ## Features
+
 * Compare two version numbers, get: `<`, `==` or `>`.
-* Compare two version numbers against any comparison operator, get: `true` or `false`.
+* Compare two version numbers against a comparison operator
 * Parse complex and undefined version number formats.
-* Static, single-statement methods available.
+* Static, standalone methods to easily compare version strings
 
 The following features will be added in a later version:
 
-* Support for text parts in version strings.
 * Version manifest, to specify detailed version number constraints.
 * Version ranges, and tests against them.
 * Support for operators in version strings, [npm-style](https://docs.npmjs.com/misc/semver), and tests against them.
 * Batch comparisons.
 
 ## Example
+
 This library is very easy to use. Here's a basic usage example:
 
 Cargo.toml:
 ```toml
 [dependencies]
-version-compare = "0.0.11"
+version-compare = "0.0.13"
 ```
 
 [example.rs:](examples/example.rs)
 ```rust
-extern crate version_compare;
-
-use version_compare::{CompOp, Version, VersionCompare};
+use version_compare::{Cmp, Version};
 
 fn main() {
     // Define some version numbers
@@ -89,37 +91,37 @@ fn main() {
     let b = "1.5.1";
 
     // The following comparison operators are used:
-    // - CompOp::Eq -> Equal
-    // - CompOp::Ne -> Not equal
-    // - CompOp::Lt -> Less than
-    // - CompOp::Le -> Less than or equal
-    // - CompOp::Ge -> Greater than or equal
-    // - CompOp::Gt -> Greater than
+    // - Cmp::Eq -> Equal
+    // - Cmp::Ne -> Not equal
+    // - Cmp::Lt -> Less than
+    // - Cmp::Le -> Less than or equal
+    // - Cmp::Ge -> Greater than or equal
+    // - Cmp::Gt -> Greater than
 
     // Easily compare version strings
-    assert_eq!(VersionCompare::compare(&a, &b).unwrap(), CompOp::Lt);
-    assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Le).unwrap(), true);
-    assert_eq!(VersionCompare::compare_to(&a, &b, &CompOp::Gt).unwrap(), false);
+    assert_eq!(version_compare::compare(a, b).unwrap(), Cmp::Lt);
+    assert_eq!(version_compare::compare_to(a, b, Cmp::Le).unwrap(), true);
+    assert_eq!(version_compare::compare_to(a, b, Cmp::Gt).unwrap(), false);
 
     // Version string parsing
-    let a_ver = Version::from(a).unwrap();
-    let b_ver = Version::from(b).unwrap();
+    let a = Version::from(a).unwrap();
+    let b = Version::from(b).unwrap();
 
     // Directly compare parsed versions
-    assert_eq!(a_ver < b_ver, true);
-    assert_eq!(a_ver <= b_ver, true);
-    assert_eq!(a_ver > b_ver, false);
-    assert_eq!(a_ver != b_ver, true);
-    assert_eq!(a_ver.compare(&b_ver), CompOp::Lt);
-    assert_eq!(b_ver.compare(&a_ver), CompOp::Gt);
-    assert_eq!(a_ver.compare_to(&b_ver, &CompOp::Lt), true);
+    assert_eq!(a < b, true);
+    assert_eq!(a <= b, true);
+    assert_eq!(a > b, false);
+    assert_eq!(a != b, true);
+    assert_eq!(a.compare(&b), Cmp::Lt);
+    assert_eq!(b.compare(&a), Cmp::Gt);
+    assert_eq!(a.compare_to(&b, Cmp::Lt), true);
 
     // Match
-    match a_ver.compare(&b_ver) {
-        CompOp::Lt => println!("Version a is less than b"),
-        CompOp::Eq => println!("Version a is equal to b"),
-        CompOp::Gt => println!("Version a is greater than b"),
-        _ => unreachable!()
+    match a.compare(b) {
+        Cmp::Lt => println!("Version a is less than b"),
+        Cmp::Eq => println!("Version a is equal to b"),
+        Cmp::Gt => println!("Version a is greater than b"),
+        _ => unreachable!(),
     }
 }
 ```
@@ -133,4 +135,5 @@ This library is automatically build and tested every day and for each commit usi
 See the current status here: https://gitlab.com/timvisee/version-compare/-/pipelines
 
 ## License
+
 This project is released under the MIT license. Check out the [LICENSE](LICENSE) file for more information.

@@ -4,6 +4,7 @@ use crate::version::Version;
 use crate::Cmp;
 
 /// Compare two version number strings to each other.
+///
 /// This compares version `a` to version `b`, and returns whether version `a` is greater, less
 /// or equal to version `b`.
 ///
@@ -39,11 +40,11 @@ where
     }
 
     // Compare and return the result
-    Ok(a.unwrap().compare(&b.unwrap()))
+    Ok(a.unwrap().compare(b.unwrap()))
 }
 
-/// Compare two version number strings to each other and check whether the given comparison
-/// `operator` is valid.
+/// Compare two version number strings to each other and test against the given comparison
+/// `operator`.
 ///
 /// The two given version numbers must be valid, or an error will be returned.
 ///
@@ -79,13 +80,13 @@ where
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use crate::test::test_version_set::{TEST_VERSION_SETS, TEST_VERSION_SETS_ERROR};
+    use crate::test::{COMBIS, COMBIS_ERROR};
     use crate::Cmp;
 
     #[test]
     fn compare() {
         // Compare each version in the version set
-        for entry in TEST_VERSION_SETS {
+        for entry in COMBIS {
             assert_eq!(
                 super::compare(entry.0, entry.1),
                 Ok(entry.2),
@@ -97,7 +98,7 @@ mod tests {
         }
 
         // Compare each error version in the version set
-        for entry in TEST_VERSION_SETS_ERROR {
+        for entry in COMBIS_ERROR {
             let result = super::compare(entry.0, entry.1);
 
             if result.is_ok() {
@@ -109,7 +110,7 @@ mod tests {
     #[test]
     fn compare_to() {
         // Compare each version in the version set
-        for entry in TEST_VERSION_SETS {
+        for entry in COMBIS {
             // Test
             assert!(super::compare_to(entry.0, entry.1, entry.2).unwrap());
 
@@ -121,7 +122,7 @@ mod tests {
         }
 
         // Compare each error version in the version set
-        for entry in TEST_VERSION_SETS_ERROR {
+        for entry in COMBIS_ERROR {
             let result = super::compare_to(entry.0, entry.1, entry.2);
 
             if result.is_ok() {

@@ -4,13 +4,12 @@
 //! parts. Each version string is broken down into these version parts when being parsed to a
 //! `Version`.
 
-use std::borrow::Cow;
 use std::fmt;
 
-/// Enum of version string parts.
+/// Version string part enum.
 ///
 /// Each version string is broken down into these version parts when being parsed to a `Version`.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Part<'a> {
     /// Numeric part, most common in version strings.
     ///
@@ -20,7 +19,7 @@ pub enum Part<'a> {
     /// A text part.
     ///
     /// These parts usually hold text with an yet unknown definition. Holds the string slice.
-    Text(Cow<'a, str>),
+    Text(&'a str),
 }
 
 impl<'a> fmt::Display for Part<'a> {
@@ -40,6 +39,6 @@ mod tests {
     #[test]
     fn display() {
         assert_eq!(format!("{}", Part::Number(123)), "123");
-        assert_eq!(format!("{}", Part::Text("123".into())), "123");
+        assert_eq!(format!("{}", Part::Text("123")), "123");
     }
 }
