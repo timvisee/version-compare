@@ -53,8 +53,8 @@
 mod cmp;
 mod compare;
 mod manifest;
+mod part;
 pub mod version;
-pub mod version_part;
 
 #[cfg(test)]
 mod test;
@@ -63,5 +63,5 @@ mod test;
 pub use crate::cmp::Cmp;
 pub use crate::compare::{compare, compare_to};
 pub use crate::manifest::Manifest;
+pub use crate::part::Part;
 pub use crate::version::Version;
-pub use crate::version_part::VersionPart;

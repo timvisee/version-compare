@@ -9,9 +9,7 @@ use std::fmt;
 use std::iter::Peekable;
 use std::slice::Iter;
 
-use crate::manifest::Manifest;
-use crate::version_part::VersionPart;
-use crate::Cmp;
+use crate::{Cmp, Manifest, Part};
 
 /// Version struct, which is a representation for a parsed version string.
 ///
@@ -25,7 +23,7 @@ use crate::Cmp;
 /// The struct provides many methods for comparison and probing.
 pub struct Version<'a> {
     version: &'a str,
-    parts: Vec<VersionPart<'a>>,
+    parts: Vec<Part<'a>>,
     manifest: Option<&'a Manifest>,
 }
 
@@ -63,7 +61,7 @@ impl<'a> Version<'a> {
     /// ```
     /// use version_compare::{Cmp, Version, Manifest};
     /// ```
-    pub fn from_parts(version: &'a str, version_parts: Vec<VersionPart<'a>>) -> Self {
+    pub fn from_parts(version: &'a str, version_parts: Vec<Part<'a>>) -> Self {
         Version {
             version,
             parts: version_parts,
@@ -157,11 +155,11 @@ impl<'a> Version<'a> {
     }
 
     /// Split the given version string, in it's version parts.
-    /// TODO: Move this method to some sort of helper class, maybe as part of `VersionPart`.
+    /// TODO: Move this method to some sort of helper class, maybe as part of `Part`.
     fn split_version_str(
         version: &'a str,
         manifest: Option<&'a Manifest>,
-    ) -> Option<Vec<VersionPart<'a>>> {
+    ) -> Option<Vec<Part<'a>>> {
         // Split the version string, and create a vector to put the parts in
         // TODO: split at specific separators instead
         let split = version.split(|c| !char::is_alphanumeric(c));
@@ -191,7 +189,7 @@ impl<'a> Version<'a> {
             match part.parse::<i32>() {
                 Ok(number) => {
                     // Push the number part to the vector
-                    parts.push(VersionPart::Number(number));
+                    parts.push(Part::Number(number));
                 }
                 Err(_) => {
                     // Ignore text parts if specified
@@ -209,19 +207,19 @@ impl<'a> Version<'a> {
                         .map(|(i, _, _)| i)
                         .next();
                     if let Some(at) = split_at {
-                        parts.push(VersionPart::Number(part[..=at].parse().unwrap()));
-                        parts.push(VersionPart::Text(&part[at + 1..]));
+                        parts.push(Part::Number(part[..=at].parse().unwrap()));
+                        parts.push(Part::Text((&part[at + 1..]).into()));
                         continue;
                     }
 
                     // Push the text part to the vector
-                    parts.push(VersionPart::Text(part))
+                    parts.push(Part::Text(part.into()))
                 }
             }
         }
 
         // The version must contain a number part if any part was parsed
-        if !parts.is_empty() && !parts.iter().any(|p| matches!(p, VersionPart::Number(_))) {
+        if !parts.is_empty() && !parts.iter().any(|p| matches!(p, Part::Number(_))) {
             return None;
         }
 
@@ -250,15 +248,15 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{Version, VersionPart};
+    /// use version_compare::{Version, Part};
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
-    /// assert_eq!(ver.part(0), Ok(&VersionPart::Number(1)));
-    /// assert_eq!(ver.part(1), Ok(&VersionPart::Number(2)));
-    /// assert_eq!(ver.part(2), Ok(&VersionPart::Number(3)));
+    /// assert_eq!(ver.part(0), Ok(&Part::Number(1)));
+    /// assert_eq!(ver.part(1), Ok(&Part::Number(2)));
+    /// assert_eq!(ver.part(2), Ok(&Part::Number(3)));
     /// ```
-    pub fn part(&self, index: usize) -> Result<&VersionPart<'a>, ()> {
+    pub fn part(&self, index: usize) -> Result<&Part<'a>, ()> {
         // Make sure the index is in-bound
         if index >= self.parts.len() {
             return Err(());
@@ -273,17 +271,17 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{Version, VersionPart};
+    /// use version_compare::{Version, Part};
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
     /// assert_eq!(ver.parts(), &vec![
-    ///     VersionPart::Number(1),
-    ///     VersionPart::Number(2),
-    ///     VersionPart::Number(3)
+    ///     Part::Number(1),
+    ///     Part::Number(2),
+    ///     Part::Number(3)
     /// ]);
     /// ```
-    pub fn parts(&self) -> &Vec<VersionPart<'a>> {
+    pub fn parts(&self) -> &Vec<Part<'a>> {
         &self.parts
     }
 
@@ -367,11 +365,11 @@ impl<'a> Version<'a> {
     ///
     /// Other comparison operators can be used when comparing, but aren't returned by this method.
     fn compare_iter(
-        mut iter: Peekable<Iter<VersionPart<'a>>>,
-        mut other_iter: Peekable<Iter<VersionPart<'a>>>,
+        mut iter: Peekable<Iter<Part<'a>>>,
+        mut other_iter: Peekable<Iter<Part<'a>>>,
     ) -> Cmp {
         // Iterate through the parts of this version
-        let mut other_part: Option<&VersionPart>;
+        let mut other_part: Option<&Part>;
 
         // Iterate over the iterator, without consuming it
         while let Some(part) = iter.next() {
@@ -382,12 +380,12 @@ impl<'a> Version<'a> {
             if other_part.is_none() {
                 // In the main version: if the current part is zero, continue to the next one
                 match part {
-                    VersionPart::Number(num) => {
+                    Part::Number(num) => {
                         if *num == 0 {
                             continue;
                         }
                     }
-                    VersionPart::Text(_) => return Cmp::Lt,
+                    Part::Text(_) => return Cmp::Lt,
                 }
 
                 // The main version is greater
@@ -395,8 +393,8 @@ impl<'a> Version<'a> {
             }
 
             // Match both parts as numbers to destruct their numerical values
-            if let VersionPart::Number(num) = part {
-                if let VersionPart::Number(other) = other_part.unwrap() {
+            if let Part::Number(num) = part {
+                if let Part::Number(other) = other_part.unwrap() {
                     // Compare the numbers
                     match num {
                         n if n < other => return Cmp::Lt,
@@ -406,8 +404,8 @@ impl<'a> Version<'a> {
                 }
             }
             // Match both parts as strings
-            else if let VersionPart::Text(val) = part {
-                if let VersionPart::Text(other_val) = other_part.unwrap() {
+            else if let Part::Text(val) = part {
+                if let Part::Text(other_val) = other_part.unwrap() {
                     // normalize case
                     let (val_lwr, other_val_lwr) = (val.to_lowercase(), other_val.to_lowercase());
                     // compare text: for instance, "RC1" will be less than "RC2", so this works out.
@@ -469,8 +467,7 @@ mod tests {
 
     use crate::test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use crate::test::test_version_set::TEST_VERSION_SETS;
-    use crate::version_part::VersionPart;
-    use crate::{Cmp, Manifest};
+    use crate::{Cmp, Manifest, Part};
 
     use super::Version;
 
@@ -637,7 +634,7 @@ mod tests {
                 // Loop through all version parts
                 for part in ver.parts() {
                     match part {
-                        VersionPart::Text(_) => {
+                        Part::Text(_) => {
                             // Set the flag
                             had_text = true;
 
