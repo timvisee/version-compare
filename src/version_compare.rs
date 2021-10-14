@@ -3,8 +3,8 @@
 //! This module provides the `VersionCompare` struct, which provides many static functions, that are
 //! useful for version comparison.
 
-use crate::comp_op::CompOp;
 use crate::version::Version;
+use crate::Cmp;
 
 /// The main library structure, which provides various static methods for easy version comparison.
 ///
@@ -20,21 +20,21 @@ impl VersionCompare {
     ///
     /// One of the following ok results may be returned:
     ///
-    /// * `CompOp::Eq`
-    /// * `CompOp::Lt`
-    /// * `CompOp::Gt`
+    /// * `Cmp::Eq`
+    /// * `Cmp::Lt`
+    /// * `Cmp::Gt`
     ///
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{CompOp, VersionCompare};
+    /// use version_compare::{Cmp, VersionCompare};
     ///
     /// // Compare version numbers
-    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.3"), Ok(CompOp::Eq));
-    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.4"), Ok(CompOp::Lt));
-    /// assert_eq!(VersionCompare::compare("1", "0.1"), Ok(CompOp::Gt));
+    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.3"), Ok(Cmp::Eq));
+    /// assert_eq!(VersionCompare::compare("1.2.3", "1.2.4"), Ok(Cmp::Lt));
+    /// assert_eq!(VersionCompare::compare("1", "0.1"), Ok(Cmp::Gt));
     /// ```
-    pub fn compare(a: &str, b: &str) -> Result<CompOp, ()> {
+    pub fn compare(a: &str, b: &str) -> Result<Cmp, ()> {
         // Create version instances
         let a_ver = Version::from(a);
         let b_ver = Version::from(b);
@@ -56,16 +56,16 @@ impl VersionCompare {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{CompOp, VersionCompare};
+    /// use version_compare::{Cmp, VersionCompare};
     ///
     /// // Compare version numbers
-    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::Eq).unwrap());
-    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", &CompOp::Le).unwrap());
-    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.4", &CompOp::Lt).unwrap());
-    /// assert!(VersionCompare::compare_to("1", "0.1", &CompOp::Gt).unwrap());
-    /// assert!(VersionCompare::compare_to("1", "0.1", &CompOp::Ge).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", Cmp::Eq).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.3", Cmp::Le).unwrap());
+    /// assert!(VersionCompare::compare_to("1.2.3", "1.2.4", Cmp::Lt).unwrap());
+    /// assert!(VersionCompare::compare_to("1", "0.1", Cmp::Gt).unwrap());
+    /// assert!(VersionCompare::compare_to("1", "0.1", Cmp::Ge).unwrap());
     /// ```
-    pub fn compare_to(a: &str, b: &str, operator: &CompOp) -> Result<bool, ()> {
+    pub fn compare_to(a: &str, b: &str, operator: Cmp) -> Result<bool, ()> {
         // Create version instances
         let a_ver = Version::from(a);
         let b_ver = Version::from(b);
@@ -76,15 +76,16 @@ impl VersionCompare {
         }
 
         // Compare and return the result
-        Ok(a_ver.unwrap().compare_to(&b_ver.unwrap(), &operator))
+        Ok(a_ver.unwrap().compare_to(&b_ver.unwrap(), operator))
     }
 }
 
+// TODO: keep this cfg check? used in other places as well?
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
-    use crate::comp_op::CompOp;
     use crate::test::test_version_set::{TEST_VERSION_SETS, TEST_VERSION_SETS_ERROR};
+    use crate::Cmp;
 
     use super::VersionCompare;
 
@@ -95,7 +96,10 @@ mod tests {
             assert_eq!(
                 VersionCompare::compare(&entry.0, &entry.1),
                 Ok(entry.2.clone()),
-                "Testing that {} is {} {}", &entry.0, &entry.2.sign(), &entry.1
+                "Testing that {} is {} {}",
+                &entry.0,
+                &entry.2.sign(),
+                &entry.1,
             );
         }
 
@@ -114,18 +118,18 @@ mod tests {
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             // Test
-            assert!(VersionCompare::compare_to(&entry.0, &entry.1, &entry.2).unwrap());
+            assert!(VersionCompare::compare_to(&entry.0, &entry.1, entry.2).unwrap());
 
             // Make sure the inverse operator is not correct
             assert_eq!(
-                VersionCompare::compare_to(&entry.0, &entry.1, &entry.2.invert()).unwrap(),
+                VersionCompare::compare_to(&entry.0, &entry.1, entry.2.invert()).unwrap(),
                 false
             );
         }
 
         // Compare each error version in the version set
         for entry in TEST_VERSION_SETS_ERROR {
-            let result = VersionCompare::compare_to(&entry.0, &entry.1, &entry.2);
+            let result = VersionCompare::compare_to(&entry.0, &entry.1, entry.2);
 
             if result.is_ok() {
                 assert!(!result.unwrap())
@@ -133,6 +137,6 @@ mod tests {
         }
 
         // Assert an exceptional case, compare to not equal
-        assert!(VersionCompare::compare_to("1.2.3", "1.2", &CompOp::Ne).unwrap());
+        assert!(VersionCompare::compare_to("1.2.3", "1.2", Cmp::Ne).unwrap());
     }
 }

@@ -9,9 +9,9 @@ use std::fmt;
 use std::iter::Peekable;
 use std::slice::Iter;
 
-use crate::comp_op::CompOp;
 use crate::version_manifest::VersionManifest;
 use crate::version_part::VersionPart;
+use crate::Cmp;
 
 /// Version struct, which is a representation for a parsed version string.
 ///
@@ -37,11 +37,11 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{CompOp, Version};
+    /// use version_compare::{Cmp, Version};
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
-    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), CompOp::Eq);
+    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), Cmp::Eq);
     /// ```
     pub fn from(version: &'a str) -> Option<Self> {
         // Split the version string
@@ -61,7 +61,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{CompOp, Version, VersionManifest};
+    /// use version_compare::{Cmp, Version, VersionManifest};
     /// ```
     pub fn from_parts(version: &'a str, version_parts: Vec<VersionPart<'a>>) -> Self {
         Version {
@@ -78,12 +78,12 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{CompOp, Version, VersionManifest};
+    /// use version_compare::{Cmp, Version, VersionManifest};
     ///
     /// let manifest = VersionManifest::new();
     /// let ver = Version::from_manifest("1.2.3", &manifest).unwrap();
     ///
-    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), CompOp::Eq);
+    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), Cmp::Eq);
     /// ```
     pub fn from_manifest(version: &'a str, manifest: &'a VersionManifest) -> Option<Self> {
         // Split the version string
@@ -317,14 +317,14 @@ impl<'a> Version<'a> {
     /// # Examples:
     ///
     /// ```
-    /// use version_compare::{CompOp, Version};
+    /// use version_compare::{Cmp, Version};
     ///
-    /// assert_eq!(Version::from("1.2").unwrap().compare(&Version::from("1.3.2").unwrap()), CompOp::Lt);
-    /// assert_eq!(Version::from("1.9").unwrap().compare(&Version::from("1.9").unwrap()), CompOp::Eq);
-    /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(&Version::from("0.3").unwrap()), CompOp::Eq);
-    /// assert_eq!(Version::from("2").unwrap().compare(&Version::from("1.7.3").unwrap()), CompOp::Gt);
+    /// assert_eq!(Version::from("1.2").unwrap().compare(&Version::from("1.3.2").unwrap()), Cmp::Lt);
+    /// assert_eq!(Version::from("1.9").unwrap().compare(&Version::from("1.9").unwrap()), Cmp::Eq);
+    /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(&Version::from("0.3").unwrap()), Cmp::Eq);
+    /// assert_eq!(Version::from("2").unwrap().compare(&Version::from("1.7.3").unwrap()), Cmp::Gt);
     /// ```
-    pub fn compare(&self, other: &'a Version) -> CompOp {
+    pub fn compare(&self, other: &'a Version) -> Cmp {
         // Compare the versions with their peekable iterators
         Self::compare_iter(self.parts.iter().peekable(), other.parts.iter().peekable())
     }
@@ -337,22 +337,22 @@ impl<'a> Version<'a> {
     /// # Examples:
     ///
     /// ```
-    /// use version_compare::{CompOp, Version};
+    /// use version_compare::{Cmp, Version};
     ///
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::Lt));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), &CompOp::Le));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), &CompOp::Eq));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), &CompOp::Le));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), Cmp::Lt));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), Cmp::Le));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), Cmp::Eq));
+    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), Cmp::Le));
     /// ```
-    pub fn compare_to(&self, other: &Version, operator: &CompOp) -> bool {
+    pub fn compare_to(&self, other: &Version, operator: Cmp) -> bool {
         // Get the comparison result
         let result = self.compare(&other);
 
         // Match the result against the given operator
         match result {
-            CompOp::Eq => matches!(operator, CompOp::Eq | CompOp::Le | CompOp::Ge),
-            CompOp::Lt => matches!(operator, CompOp::Ne | CompOp::Lt | CompOp::Le),
-            CompOp::Gt => matches!(operator, CompOp::Ne | CompOp::Gt | CompOp::Ge),
+            Cmp::Eq => matches!(operator, Cmp::Eq | Cmp::Le | Cmp::Ge),
+            Cmp::Lt => matches!(operator, Cmp::Ne | Cmp::Lt | Cmp::Le),
+            Cmp::Gt => matches!(operator, Cmp::Ne | Cmp::Gt | Cmp::Ge),
             _ => unreachable!(),
         }
     }
@@ -369,7 +369,7 @@ impl<'a> Version<'a> {
     fn compare_iter(
         mut iter: Peekable<Iter<VersionPart<'a>>>,
         mut other_iter: Peekable<Iter<VersionPart<'a>>>,
-    ) -> CompOp {
+    ) -> Cmp {
         // Iterate through the parts of this version
         let mut other_part: Option<&VersionPart>;
 
@@ -387,20 +387,20 @@ impl<'a> Version<'a> {
                             continue;
                         }
                     }
-                    VersionPart::Text(_) => return CompOp::Lt,
+                    VersionPart::Text(_) => return Cmp::Lt,
                 }
 
                 // The main version is greater
-                return CompOp::Gt;
+                return Cmp::Gt;
             }
 
             // Match both parts as numbers to destruct their numerical values
             if let VersionPart::Number(num) = part {
-                if let VersionPart::Number(other_num) = other_part.unwrap() {
+                if let VersionPart::Number(other) = other_part.unwrap() {
                     // Compare the numbers
                     match num {
-                        n if n < other_num => return CompOp::Lt,
-                        n if n > other_num => return CompOp::Gt,
+                        n if n < other => return Cmp::Lt,
+                        n if n > other => return Cmp::Gt,
                         _ => continue,
                     }
                 }
@@ -412,9 +412,9 @@ impl<'a> Version<'a> {
                     let (val_lwr, other_val_lwr) = (val.to_lowercase(), other_val.to_lowercase());
                     // compare text: for instance, "RC1" will be less than "RC2", so this works out.
                     if val_lwr < other_val_lwr {
-                        return CompOp::Lt;
+                        return Cmp::Lt;
                     } else if val_lwr > other_val_lwr {
-                        return CompOp::Gt;
+                        return Cmp::Gt;
                     }
                 }
             }
@@ -423,10 +423,10 @@ impl<'a> Version<'a> {
         // Check whether we should iterate over the other iterator, if it has any items left
         match other_iter.peek() {
             // Compare based on the other iterator
-            Some(_) => Self::compare_iter(other_iter, iter).as_flipped(),
+            Some(_) => Self::compare_iter(other_iter, iter).flip(),
 
             // Nothing more to iterate over, the versions should be equal
-            None => CompOp::Eq,
+            None => Cmp::Eq,
         }
     }
 }
@@ -458,7 +458,7 @@ impl<'a> PartialOrd for Version<'a> {
 /// Implement the partial equality trait for the version struct, to easily allow version comparison.
 impl<'a> PartialEq for Version<'a> {
     fn eq(&self, other: &Self) -> bool {
-        self.compare_to(other, &CompOp::Eq)
+        self.compare_to(other, Cmp::Eq)
     }
 }
 
@@ -467,11 +467,11 @@ impl<'a> PartialEq for Version<'a> {
 mod tests {
     use std::cmp;
 
-    use crate::comp_op::CompOp;
     use crate::test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use crate::test::test_version_set::TEST_VERSION_SETS;
     use crate::version_manifest::VersionManifest;
     use crate::version_part::VersionPart;
+    use crate::Cmp;
 
     use super::Version;
 
@@ -681,7 +681,7 @@ mod tests {
                 "Testing that {} is {} {}",
                 &entry.0,
                 &entry.2.sign(),
-                &entry.1
+                &entry.1,
             );
         }
     }
@@ -695,16 +695,16 @@ mod tests {
             let version_b = Version::from(&entry.1).unwrap();
 
             // Test
-            assert!(version_a.compare_to(&version_b, &entry.2));
+            assert!(version_a.compare_to(&version_b, entry.2));
 
             // Make sure the inverse operator is not correct
-            assert_eq!(version_a.compare_to(&version_b, &entry.2.invert()), false);
+            assert_eq!(version_a.compare_to(&version_b, entry.2.invert()), false);
         }
 
         // Assert an exceptional case, compare to not equal
         assert!(Version::from("1.2")
             .unwrap()
-            .compare_to(&Version::from("1.2.3").unwrap(), &CompOp::Ne,));
+            .compare_to(&Version::from("1.2.3").unwrap(), Cmp::Ne,));
     }
 
     #[test]
@@ -734,9 +734,9 @@ mod tests {
 
             // Compare and assert
             match entry.2 {
-                CompOp::Eq => assert!(version_a == version_b),
-                CompOp::Lt => assert!(version_a < version_b),
-                CompOp::Gt => assert!(version_a > version_b),
+                Cmp::Eq => assert!(version_a == version_b),
+                Cmp::Lt => assert!(version_a < version_b),
+                Cmp::Gt => assert!(version_a > version_b),
                 _ => {}
             }
         }
@@ -748,7 +748,7 @@ mod tests {
         for entry in TEST_VERSION_SETS {
             // Skip entries that are less or equal, or greater or equal
             match entry.2 {
-                CompOp::Le | CompOp::Ge => continue,
+                Cmp::Le | Cmp::Ge => continue,
                 _ => {}
             }
 
@@ -758,7 +758,7 @@ mod tests {
 
             // Determine what the result should be
             let result = match entry.2 {
-                CompOp::Eq => true,
+                Cmp::Eq => true,
                 _ => false,
             };
 

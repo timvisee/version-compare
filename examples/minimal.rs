@@ -6,7 +6,7 @@
 
 extern crate version_compare;
 
-use version_compare::{CompOp, VersionCompare};
+use version_compare::{Cmp, VersionCompare};
 
 fn main() {
     // Define some version numbers
@@ -15,9 +15,9 @@ fn main() {
 
     // Match
     match VersionCompare::compare(&a, &b).unwrap() {
-        CompOp::Lt => println!("Version a is less than b"),
-        CompOp::Eq => println!("Version a is equal to b"),
-        CompOp::Gt => println!("Version a is greater than b"),
+        Cmp::Lt => println!("Version a is less than b"),
+        Cmp::Eq => println!("Version a is equal to b"),
+        Cmp::Gt => println!("Version a is greater than b"),
         _ => unreachable!(),
     }
 }

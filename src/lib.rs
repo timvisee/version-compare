@@ -51,7 +51,7 @@
 //!
 //! _[View complete README](https://github.com/timvisee/version-compare/blob/master/README.md)_
 
-pub mod comp_op;
+mod cmp;
 pub mod version;
 pub mod version_compare;
 pub mod version_manifest;
@@ -60,8 +60,8 @@ pub mod version_part;
 #[cfg(test)]
 mod test;
 
-// Reexports
-pub use crate::comp_op::CompOp;
+// Re-exports
+pub use crate::cmp::Cmp;
 pub use crate::version::Version;
 pub use crate::version_compare::VersionCompare;
 pub use crate::version_manifest::VersionManifest;
