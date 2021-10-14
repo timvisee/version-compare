@@ -9,7 +9,7 @@
 
 extern crate version_compare;
 
-use version_compare::{Cmp, Version, VersionCompare};
+use version_compare::{Cmp, Version};
 
 fn main() {
     // Define some version numbers
@@ -25,9 +25,9 @@ fn main() {
     // - Cmp::Gt -> Greater than
 
     // Easily compare version strings
-    assert_eq!(VersionCompare::compare(&a, &b).unwrap(), Cmp::Lt);
-    assert_eq!(VersionCompare::compare_to(&a, &b, Cmp::Le).unwrap(), true);
-    assert_eq!(VersionCompare::compare_to(&a, &b, Cmp::Gt).unwrap(), false);
+    assert_eq!(version_compare::compare(&a, &b).unwrap(), Cmp::Lt);
+    assert_eq!(version_compare::compare_to(&a, &b, Cmp::Le).unwrap(), true);
+    assert_eq!(version_compare::compare_to(&a, &b, Cmp::Gt).unwrap(), false);
 
     // Version string parsing
     let a_ver = Version::from(a).unwrap();
