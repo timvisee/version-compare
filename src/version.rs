@@ -4,6 +4,7 @@
 //! is made. This struct provides many methods and features for easy comparison, probing and other
 //! things.
 
+use std::borrow::Borrow;
 use std::cmp::Ordering;
 use std::fmt;
 use std::iter::Peekable;
@@ -39,16 +40,12 @@ impl<'a> Version<'a> {
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
-    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), Cmp::Eq);
+    /// assert_eq!(ver.compare(Version::from("1.2.3").unwrap()), Cmp::Eq);
     /// ```
     pub fn from(version: &'a str) -> Option<Self> {
-        // Split the version string
-        let parts = Self::split_version_str(version, None);
-
-        // Create and return the object
         Some(Version {
             version,
-            parts: parts?,
+            parts: split_version_str(version, None)?,
             manifest: None,
         })
     }
@@ -61,10 +58,10 @@ impl<'a> Version<'a> {
     /// ```
     /// use version_compare::{Cmp, Version, Manifest};
     /// ```
-    pub fn from_parts(version: &'a str, version_parts: Vec<Part<'a>>) -> Self {
+    pub fn from_parts(version: &'a str, parts: Vec<Part<'a>>) -> Self {
         Version {
             version,
-            parts: version_parts,
+            parts,
             manifest: None,
         }
     }
@@ -81,16 +78,12 @@ impl<'a> Version<'a> {
     /// let manifest = Manifest::default();
     /// let ver = Version::from_manifest("1.2.3", &manifest).unwrap();
     ///
-    /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), Cmp::Eq);
+    /// assert_eq!(ver.compare(Version::from("1.2.3").unwrap()), Cmp::Eq);
     /// ```
     pub fn from_manifest(version: &'a str, manifest: &'a Manifest) -> Option<Self> {
-        // Split the version string
-        let parts = Self::split_version_str(version, Some(&manifest));
-
-        // Create and return the object
         Some(Version {
             version,
-            parts: parts?,
+            parts: split_version_str(version, Some(&manifest))?,
             manifest: Some(&manifest),
         })
     }
@@ -154,79 +147,6 @@ impl<'a> Version<'a> {
         // TODO: Re-parse the version string, because the manifest might have changed.
     }
 
-    /// Split the given version string, in it's version parts.
-    /// TODO: Move this method to some sort of helper class, maybe as part of `Part`.
-    fn split_version_str(
-        version: &'a str,
-        manifest: Option<&'a Manifest>,
-    ) -> Option<Vec<Part<'a>>> {
-        // Split the version string, and create a vector to put the parts in
-        // TODO: split at specific separators instead
-        let split = version.split(|c| !char::is_alphanumeric(c));
-        let mut parts = Vec::new();
-
-        // Get the manifest to follow
-        let mut used_manifest = &Manifest::default();
-        if manifest.is_some() {
-            used_manifest = manifest.unwrap();
-        }
-
-        // Loop over the parts, and parse them
-        for part in split {
-            // We may not go over the maximum depth
-            if used_manifest.max_depth.is_some()
-                && parts.len() >= used_manifest.max_depth.unwrap_or(0)
-            {
-                break;
-            }
-
-            // Skip empty parts
-            if part.is_empty() {
-                continue;
-            }
-
-            // Try to parse the value as an number
-            match part.parse::<i32>() {
-                Ok(number) => {
-                    // Push the number part to the vector
-                    parts.push(Part::Number(number));
-                }
-                Err(_) => {
-                    // Ignore text parts if specified
-                    if used_manifest.ignore_text {
-                        continue;
-                    }
-
-                    // Numbers suffixed by text should be split into a number and text as well
-                    let split_at = part
-                        .char_indices()
-                        .take(part.len() - 1)
-                        .take_while(|(_, c)| c.is_ascii_digit())
-                        .map(|(i, c)| (i, c, part.chars().nth(i + 1).unwrap()))
-                        .filter(|(_, _, b)| b.is_alphabetic())
-                        .map(|(i, _, _)| i)
-                        .next();
-                    if let Some(at) = split_at {
-                        parts.push(Part::Number(part[..=at].parse().unwrap()));
-                        parts.push(Part::Text((&part[at + 1..]).into()));
-                        continue;
-                    }
-
-                    // Push the text part to the vector
-                    parts.push(Part::Text(part.into()))
-                }
-            }
-        }
-
-        // The version must contain a number part if any part was parsed
-        if !parts.is_empty() && !parts.iter().any(|p| matches!(p, Part::Number(_))) {
-            return None;
-        }
-
-        // Return the list of parts
-        Some(parts)
-    }
-
     /// Get the original version string.
     ///
     /// # Examples
@@ -239,7 +159,7 @@ impl<'a> Version<'a> {
     /// assert_eq!(ver.as_str(), "1.2.3");
     /// ```
     pub fn as_str(&self) -> &str {
-        &self.version
+        self.version
     }
 
     /// Get a specific version part by it's `index`.
@@ -252,18 +172,17 @@ impl<'a> Version<'a> {
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
-    /// assert_eq!(ver.part(0), Ok(&Part::Number(1)));
-    /// assert_eq!(ver.part(1), Ok(&Part::Number(2)));
-    /// assert_eq!(ver.part(2), Ok(&Part::Number(3)));
+    /// assert_eq!(ver.part(0), Ok(Part::Number(1)));
+    /// assert_eq!(ver.part(1), Ok(Part::Number(2)));
+    /// assert_eq!(ver.part(2), Ok(Part::Number(3)));
     /// ```
-    pub fn part(&self, index: usize) -> Result<&Part<'a>, ()> {
+    pub fn part(&self, index: usize) -> Result<Part<'a>, ()> {
         // Make sure the index is in-bound
         if index >= self.parts.len() {
             return Err(());
         }
 
-        // Return the requested part
-        Ok(&self.parts[index])
+        Ok(self.parts[index])
     }
 
     /// Get a vector of all version parts.
@@ -281,25 +200,8 @@ impl<'a> Version<'a> {
     ///     Part::Number(3)
     /// ]);
     /// ```
-    pub fn parts(&self) -> &Vec<Part<'a>> {
-        &self.parts
-    }
-
-    /// Get the number of parts in this version string.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use version_compare::Version;
-    ///
-    /// let ver_a = Version::from("1.2.3").unwrap();
-    /// let ver_b = Version::from("1.2.3.4").unwrap();
-    ///
-    /// assert_eq!(ver_a.part_count(), 3);
-    /// assert_eq!(ver_b.part_count(), 4);
-    /// ```
-    pub fn part_count(&self) -> usize {
-        self.parts.len()
+    pub fn parts(&self) -> &[Part<'a>] {
+        self.parts.as_slice()
     }
 
     /// Compare this version to the given `other` version.
@@ -317,14 +219,19 @@ impl<'a> Version<'a> {
     /// ```
     /// use version_compare::{Cmp, Version};
     ///
-    /// assert_eq!(Version::from("1.2").unwrap().compare(&Version::from("1.3.2").unwrap()), Cmp::Lt);
-    /// assert_eq!(Version::from("1.9").unwrap().compare(&Version::from("1.9").unwrap()), Cmp::Eq);
-    /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(&Version::from("0.3").unwrap()), Cmp::Eq);
-    /// assert_eq!(Version::from("2").unwrap().compare(&Version::from("1.7.3").unwrap()), Cmp::Gt);
+    /// assert_eq!(Version::from("1.2").unwrap().compare(Version::from("1.3.2").unwrap()), Cmp::Lt);
+    /// assert_eq!(Version::from("1.9").unwrap().compare(Version::from("1.9").unwrap()), Cmp::Eq);
+    /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(Version::from("0.3").unwrap()), Cmp::Eq);
+    /// assert_eq!(Version::from("2").unwrap().compare(Version::from("1.7.3").unwrap()), Cmp::Gt);
     /// ```
-    pub fn compare(&self, other: &'a Version) -> Cmp {
-        // Compare the versions with their peekable iterators
-        Self::compare_iter(self.parts.iter().peekable(), other.parts.iter().peekable())
+    pub fn compare<V>(&self, other: V) -> Cmp
+    where
+        V: Borrow<Version<'a>>,
+    {
+        compare_iter(
+            self.parts.iter().peekable(),
+            other.borrow().parts.iter().peekable(),
+        )
     }
 
     /// Compare this version to the given `other` version,
@@ -337,94 +244,20 @@ impl<'a> Version<'a> {
     /// ```
     /// use version_compare::{Cmp, Version};
     ///
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), Cmp::Lt));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.3.2").unwrap(), Cmp::Le));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), Cmp::Eq));
-    /// assert!(Version::from("1.2").unwrap().compare_to(&Version::from("1.2").unwrap(), Cmp::Le));
+    /// assert!(Version::from("1.2").unwrap().compare_to(Version::from("1.3.2").unwrap(), Cmp::Lt));
+    /// assert!(Version::from("1.2").unwrap().compare_to(Version::from("1.3.2").unwrap(), Cmp::Le));
+    /// assert!(Version::from("1.2").unwrap().compare_to(Version::from("1.2").unwrap(), Cmp::Eq));
+    /// assert!(Version::from("1.2").unwrap().compare_to(Version::from("1.2").unwrap(), Cmp::Le));
     /// ```
-    pub fn compare_to(&self, other: &Version, operator: Cmp) -> bool {
-        // Get the comparison result
-        let result = self.compare(&other);
-
-        // Match the result against the given operator
-        match result {
+    pub fn compare_to<V>(&self, other: V, operator: Cmp) -> bool
+    where
+        V: Borrow<Version<'a>>,
+    {
+        match self.compare(other) {
             Cmp::Eq => matches!(operator, Cmp::Eq | Cmp::Le | Cmp::Ge),
             Cmp::Lt => matches!(operator, Cmp::Ne | Cmp::Lt | Cmp::Le),
             Cmp::Gt => matches!(operator, Cmp::Ne | Cmp::Gt | Cmp::Ge),
             _ => unreachable!(),
-        }
-    }
-
-    /// Compare two version numbers based on the iterators of their version parts.
-    ///
-    /// This method returns one of the following comparison operators:
-    ///
-    /// * `Lt`
-    /// * `Eq`
-    /// * `Gt`
-    ///
-    /// Other comparison operators can be used when comparing, but aren't returned by this method.
-    fn compare_iter(
-        mut iter: Peekable<Iter<Part<'a>>>,
-        mut other_iter: Peekable<Iter<Part<'a>>>,
-    ) -> Cmp {
-        // Iterate through the parts of this version
-        let mut other_part: Option<&Part>;
-
-        // Iterate over the iterator, without consuming it
-        while let Some(part) = iter.next() {
-            // Get the part for the other version
-            other_part = other_iter.next();
-
-            // If there are no parts left in the other version, try to determine the result
-            if other_part.is_none() {
-                // In the main version: if the current part is zero, continue to the next one
-                match part {
-                    Part::Number(num) => {
-                        if *num == 0 {
-                            continue;
-                        }
-                    }
-                    Part::Text(_) => return Cmp::Lt,
-                }
-
-                // The main version is greater
-                return Cmp::Gt;
-            }
-
-            // Match both parts as numbers to destruct their numerical values
-            if let Part::Number(num) = part {
-                if let Part::Number(other) = other_part.unwrap() {
-                    // Compare the numbers
-                    match num {
-                        n if n < other => return Cmp::Lt,
-                        n if n > other => return Cmp::Gt,
-                        _ => continue,
-                    }
-                }
-            }
-            // Match both parts as strings
-            else if let Part::Text(val) = part {
-                if let Part::Text(other_val) = other_part.unwrap() {
-                    // normalize case
-                    let (val_lwr, other_val_lwr) = (val.to_lowercase(), other_val.to_lowercase());
-                    // compare text: for instance, "RC1" will be less than "RC2", so this works out.
-                    if val_lwr < other_val_lwr {
-                        return Cmp::Lt;
-                    } else if val_lwr > other_val_lwr {
-                        return Cmp::Gt;
-                    }
-                }
-            }
-        }
-
-        // Check whether we should iterate over the other iterator, if it has any items left
-        match other_iter.peek() {
-            // Compare based on the other iterator
-            Some(_) => Self::compare_iter(other_iter, iter).flip(),
-
-            // Nothing more to iterate over, the versions should be equal
-            None => Cmp::Eq,
         }
     }
 }
@@ -460,6 +293,149 @@ impl<'a> PartialEq for Version<'a> {
     }
 }
 
+/// Split the given version string, in it's version parts.
+fn split_version_str<'a>(
+    version: &'a str,
+    manifest: Option<&'a Manifest>,
+) -> Option<Vec<Part<'a>>> {
+    // Split the version string, and create a vector to put the parts in
+    let split = version.split(|c| !char::is_alphanumeric(c));
+    let mut parts = Vec::new();
+
+    // Get the manifest to follow
+    let mut used_manifest = &Manifest::default();
+    if manifest.is_some() {
+        used_manifest = manifest.unwrap();
+    }
+
+    // Loop over the parts, and parse them
+    for part in split {
+        // We may not go over the maximum depth
+        if used_manifest.max_depth.is_some() && parts.len() >= used_manifest.max_depth.unwrap_or(0)
+        {
+            break;
+        }
+
+        // Skip empty parts
+        if part.is_empty() {
+            continue;
+        }
+
+        // Try to parse the value as an number
+        match part.parse::<i32>() {
+            Ok(number) => {
+                // Push the number part to the vector
+                parts.push(Part::Number(number));
+            }
+            Err(_) => {
+                // Ignore text parts if specified
+                if used_manifest.ignore_text {
+                    continue;
+                }
+
+                // Numbers suffixed by text should be split into a number and text as well
+                let split_at = part
+                    .char_indices()
+                    .take(part.len() - 1)
+                    .take_while(|(_, c)| c.is_ascii_digit())
+                    .map(|(i, c)| (i, c, part.chars().nth(i + 1).unwrap()))
+                    .filter(|(_, _, b)| b.is_alphabetic())
+                    .map(|(i, _, _)| i)
+                    .next();
+                if let Some(at) = split_at {
+                    parts.push(Part::Number(part[..=at].parse().unwrap()));
+                    parts.push(Part::Text((&part[at + 1..]).into()));
+                    continue;
+                }
+
+                // Push the text part to the vector
+                parts.push(Part::Text(part.into()))
+            }
+        }
+    }
+
+    // The version must contain a number part if any part was parsed
+    if !parts.is_empty() && !parts.iter().any(|p| matches!(p, Part::Number(_))) {
+        return None;
+    }
+
+    // Return the list of parts
+    Some(parts)
+}
+
+/// Compare two version numbers based on the iterators of their version parts.
+///
+/// This method returns one of the following comparison operators:
+///
+/// * `Lt`
+/// * `Eq`
+/// * `Gt`
+///
+/// Other comparison operators can be used when comparing, but aren't returned by this method.
+fn compare_iter<'a>(
+    mut iter: Peekable<Iter<Part<'a>>>,
+    mut other_iter: Peekable<Iter<Part<'a>>>,
+) -> Cmp {
+    // Iterate through the parts of this version
+    let mut other_part: Option<&Part>;
+
+    // Iterate over the iterator, without consuming it
+    while let Some(part) = iter.next() {
+        // Get the part for the other version
+        other_part = other_iter.next();
+
+        // If there are no parts left in the other version, try to determine the result
+        if other_part.is_none() {
+            // In the main version: if the current part is zero, continue to the next one
+            match part {
+                Part::Number(num) => {
+                    if *num == 0 {
+                        continue;
+                    }
+                }
+                Part::Text(_) => return Cmp::Lt,
+            }
+
+            // The main version is greater
+            return Cmp::Gt;
+        }
+
+        // Match both parts as numbers to destruct their numerical values
+        if let Part::Number(num) = part {
+            if let Part::Number(other) = other_part.unwrap() {
+                // Compare the numbers
+                match num {
+                    n if n < other => return Cmp::Lt,
+                    n if n > other => return Cmp::Gt,
+                    _ => continue,
+                }
+            }
+        }
+        // Match both parts as strings
+        else if let Part::Text(val) = part {
+            if let Part::Text(other_val) = other_part.unwrap() {
+                // normalize case
+                let (val_lwr, other_val_lwr) = (val.to_lowercase(), other_val.to_lowercase());
+                // compare text: for instance, "RC1" will be less than "RC2", so this works out.
+                if val_lwr < other_val_lwr {
+                    return Cmp::Lt;
+                } else if val_lwr > other_val_lwr {
+                    return Cmp::Gt;
+                }
+            }
+        }
+    }
+
+    // Check whether we should iterate over the other iterator, if it has any items left
+    match other_iter.peek() {
+        // Compare based on the other iterator
+        Some(_) => compare_iter(other_iter, iter).flip(),
+
+        // Nothing more to iterate over, the versions should be equal
+        None => Cmp::Eq,
+    }
+}
+
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
@@ -476,12 +452,12 @@ mod tests {
     fn from() {
         // Test whether parsing works for each test version
         for version in TEST_VERSIONS {
-            assert!(Version::from(&version.0).is_some());
+            assert!(Version::from(version.0).is_some());
         }
 
         // Test whether parsing works for each test invalid version
         for version in TEST_VERSIONS_ERROR {
-            assert!(Version::from(&version.0).is_none());
+            assert!(Version::from(version.0).is_none());
         }
     }
 
@@ -494,7 +470,7 @@ mod tests {
         // Test whether parsing works for each test version
         for version in TEST_VERSIONS {
             assert_eq!(
-                Version::from_manifest(&version.0, &manifest)
+                Version::from_manifest(version.0, &manifest)
                     .unwrap()
                     .manifest,
                 Some(&manifest)
@@ -503,7 +479,7 @@ mod tests {
 
         // Test whether parsing works for each test invalid version
         for version in TEST_VERSIONS_ERROR {
-            assert!(Version::from_manifest(&version.0, &manifest).is_none());
+            assert!(Version::from_manifest(version.0, &manifest).is_none());
         }
     }
 
@@ -548,7 +524,7 @@ mod tests {
         // Test for each test version
         for version in TEST_VERSIONS {
             // The input version string must be the same as the returned string
-            assert_eq!(Version::from(&version.0).unwrap().as_str(), version.0);
+            assert_eq!(Version::from(version.0).unwrap().as_str(), version.0);
         }
     }
 
@@ -557,11 +533,11 @@ mod tests {
         // Test for each test version
         for version in TEST_VERSIONS {
             // Create a version object
-            let ver = Version::from(&version.0).unwrap();
+            let ver = Version::from(version.0).unwrap();
 
             // Loop through each part
             for i in 0..version.1 {
-                assert_eq!(ver.part(i), Ok(&ver.parts[i]));
+                assert_eq!(ver.part(i), Ok(ver.parts[i]));
             }
 
             // A value outside the range must return an error
@@ -574,7 +550,7 @@ mod tests {
         // Test for each test version
         for version in TEST_VERSIONS {
             // The number of parts must match
-            assert_eq!(Version::from(&version.0).unwrap().parts().len(), version.1);
+            assert_eq!(Version::from(version.0).unwrap().parts().len(), version.1);
         }
     }
 
@@ -654,30 +630,21 @@ mod tests {
     }
 
     #[test]
-    fn part_count() {
-        // Test for each test version
-        for version in TEST_VERSIONS {
-            // The number of parts must match the metadata
-            assert_eq!(Version::from(&version.0).unwrap().part_count(), version.1);
-        }
-    }
-
-    #[test]
     fn compare() {
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             // Get both versions
-            let version_a = Version::from(&entry.0).unwrap();
-            let version_b = Version::from(&entry.1).unwrap();
+            let a = Version::from(entry.0).unwrap();
+            let b = Version::from(entry.1).unwrap();
 
             // Compare them
             assert_eq!(
-                version_a.compare(&version_b),
+                a.compare(b),
                 entry.2.clone(),
                 "Testing that {} is {} {}",
-                &entry.0,
-                &entry.2.sign(),
-                &entry.1,
+                entry.0,
+                entry.2.sign(),
+                entry.1,
             );
         }
     }
@@ -687,20 +654,18 @@ mod tests {
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             // Get both versions
-            let version_a = Version::from(&entry.0).unwrap();
-            let version_b = Version::from(&entry.1).unwrap();
+            let a = Version::from(entry.0).unwrap();
+            let b = Version::from(entry.1).unwrap();
 
-            // Test
-            assert!(version_a.compare_to(&version_b, entry.2));
-
-            // Make sure the inverse operator is not correct
-            assert_eq!(version_a.compare_to(&version_b, entry.2.invert()), false);
+            // Test normally and inverse
+            assert!(a.compare_to(&b, entry.2));
+            assert!(!a.compare_to(b, entry.2.invert()));
         }
 
         // Assert an exceptional case, compare to not equal
         assert!(Version::from("1.2")
             .unwrap()
-            .compare_to(&Version::from("1.2.3").unwrap(), Cmp::Ne,));
+            .compare_to(Version::from("1.2.3").unwrap(), Cmp::Ne,));
     }
 
     #[test]
@@ -725,14 +690,14 @@ mod tests {
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             // Get both versions
-            let version_a = Version::from(&entry.0).unwrap();
-            let version_b = Version::from(&entry.1).unwrap();
+            let a = Version::from(entry.0).unwrap();
+            let b = Version::from(entry.1).unwrap();
 
             // Compare and assert
             match entry.2 {
-                Cmp::Eq => assert!(version_a == version_b),
-                Cmp::Lt => assert!(version_a < version_b),
-                Cmp::Gt => assert!(version_a > version_b),
+                Cmp::Eq => assert!(a == b),
+                Cmp::Lt => assert!(a < b),
+                Cmp::Gt => assert!(a > b),
                 _ => {}
             }
         }
@@ -749,8 +714,8 @@ mod tests {
             }
 
             // Get both versions
-            let version_a = Version::from(&entry.0).unwrap();
-            let version_b = Version::from(&entry.1).unwrap();
+            let a = Version::from(entry.0).unwrap();
+            let b = Version::from(entry.1).unwrap();
 
             // Determine what the result should be
             let result = match entry.2 {
@@ -759,7 +724,7 @@ mod tests {
             };
 
             // Test
-            assert_eq!(version_a == version_b, result);
+            assert_eq!(a == b, result);
         }
 
         // Assert an exceptional case, compare to not equal

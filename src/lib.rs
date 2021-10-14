@@ -54,7 +54,7 @@ mod cmp;
 mod compare;
 mod manifest;
 mod part;
-pub mod version;
+mod version;
 
 #[cfg(test)]
 mod test;
