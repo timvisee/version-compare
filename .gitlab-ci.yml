@@ -74,7 +74,7 @@ test-coverage:
     - apt-get update
     - apt-get install -y --no-install-recommends pkg-config libssl-dev
     - cargo install cargo-tarpaulin -f
-    - cargo tarpaulin --coveralls $COVERALLS_TOKEN
+    - cargo tarpaulin --verbose --avoid-cfg-tarpaulin --coveralls $COVERALLS_TOKEN
 
 # Release crate on crates.io
 release-crate:
