@@ -9,7 +9,7 @@ use std::fmt;
 use std::iter::Peekable;
 use std::slice::Iter;
 
-use crate::version_manifest::VersionManifest;
+use crate::manifest::Manifest;
 use crate::version_part::VersionPart;
 use crate::Cmp;
 
@@ -26,7 +26,7 @@ use crate::Cmp;
 pub struct Version<'a> {
     version: &'a str,
     parts: Vec<VersionPart<'a>>,
-    manifest: Option<&'a VersionManifest>,
+    manifest: Option<&'a Manifest>,
 }
 
 impl<'a> Version<'a> {
@@ -61,7 +61,7 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{Cmp, Version, VersionManifest};
+    /// use version_compare::{Cmp, Version, Manifest};
     /// ```
     pub fn from_parts(version: &'a str, version_parts: Vec<VersionPart<'a>>) -> Self {
         Version {
@@ -78,14 +78,14 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{Cmp, Version, VersionManifest};
+    /// use version_compare::{Cmp, Version, Manifest};
     ///
-    /// let manifest = VersionManifest::new();
+    /// let manifest = Manifest::default();
     /// let ver = Version::from_manifest("1.2.3", &manifest).unwrap();
     ///
     /// assert_eq!(ver.compare(&Version::from("1.2.3").unwrap()), Cmp::Eq);
     /// ```
-    pub fn from_manifest(version: &'a str, manifest: &'a VersionManifest) -> Option<Self> {
+    pub fn from_manifest(version: &'a str, manifest: &'a Manifest) -> Option<Self> {
         // Split the version string
         let parts = Self::split_version_str(version, Some(&manifest));
 
@@ -109,13 +109,13 @@ impl<'a> Version<'a> {
     /// if version.has_manifest() {
     ///     println!(
     ///         "Maximum version part depth is {} for this version",
-    ///         version.manifest().unwrap().max_depth_number()
+    ///         version.manifest().unwrap().max_depth.unwrap_or(0),
     ///     );
     /// } else {
     ///     println!("Version has no manifest");
     /// }
     /// ```
-    pub fn manifest(&self) -> Option<&VersionManifest> {
+    pub fn manifest(&self) -> Option<&Manifest> {
         self.manifest
     }
 
@@ -143,14 +143,14 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{Version, VersionManifest};
+    /// use version_compare::{Version, Manifest};
     ///
-    /// let manifest = VersionManifest::new();
+    /// let manifest = Manifest::default();
     /// let mut version = Version::from("1.2.3").unwrap();
     ///
     /// version.set_manifest(Some(&manifest));
     /// ```
-    pub fn set_manifest(&mut self, manifest: Option<&'a VersionManifest>) {
+    pub fn set_manifest(&mut self, manifest: Option<&'a Manifest>) {
         self.manifest = manifest;
 
         // TODO: Re-parse the version string, because the manifest might have changed.
@@ -160,7 +160,7 @@ impl<'a> Version<'a> {
     /// TODO: Move this method to some sort of helper class, maybe as part of `VersionPart`.
     fn split_version_str(
         version: &'a str,
-        manifest: Option<&'a VersionManifest>,
+        manifest: Option<&'a Manifest>,
     ) -> Option<Vec<VersionPart<'a>>> {
         // Split the version string, and create a vector to put the parts in
         // TODO: split at specific separators instead
@@ -168,7 +168,7 @@ impl<'a> Version<'a> {
         let mut parts = Vec::new();
 
         // Get the manifest to follow
-        let mut used_manifest = &VersionManifest::new();
+        let mut used_manifest = &Manifest::default();
         if manifest.is_some() {
             used_manifest = manifest.unwrap();
         }
@@ -176,8 +176,8 @@ impl<'a> Version<'a> {
         // Loop over the parts, and parse them
         for part in split {
             // We may not go over the maximum depth
-            if used_manifest.max_depth().is_some()
-                && parts.len() >= used_manifest.max_depth_number()
+            if used_manifest.max_depth.is_some()
+                && parts.len() >= used_manifest.max_depth.unwrap_or(0)
             {
                 break;
             }
@@ -195,7 +195,7 @@ impl<'a> Version<'a> {
                 }
                 Err(_) => {
                     // Ignore text parts if specified
-                    if used_manifest.ignore_text() {
+                    if used_manifest.ignore_text {
                         continue;
                     }
 
@@ -469,9 +469,8 @@ mod tests {
 
     use crate::test::test_version::{TEST_VERSIONS, TEST_VERSIONS_ERROR};
     use crate::test::test_version_set::TEST_VERSION_SETS;
-    use crate::version_manifest::VersionManifest;
     use crate::version_part::VersionPart;
-    use crate::Cmp;
+    use crate::{Cmp, Manifest};
 
     use super::Version;
 
@@ -493,7 +492,7 @@ mod tests {
     // TODO: This doesn't really test whether this method fully works
     fn from_manifest() {
         // Create a manifest
-        let manifest = VersionManifest::new();
+        let manifest = Manifest::default();
 
         // Test whether parsing works for each test version
         for version in TEST_VERSIONS {
@@ -513,7 +512,7 @@ mod tests {
 
     #[test]
     fn manifest() {
-        let manifest = VersionManifest::new();
+        let manifest = Manifest::default();
         let mut version = Version::from("1.2.3").unwrap();
 
         version.manifest = Some(&manifest);
@@ -525,7 +524,7 @@ mod tests {
 
     #[test]
     fn has_manifest() {
-        let manifest = VersionManifest::new();
+        let manifest = Manifest::default();
         let mut version = Version::from("1.2.3").unwrap();
 
         version.manifest = Some(&manifest);
@@ -537,7 +536,7 @@ mod tests {
 
     #[test]
     fn set_manifest() {
-        let manifest = VersionManifest::new();
+        let manifest = Manifest::default();
         let mut version = Version::from("1.2.3").unwrap();
 
         version.set_manifest(Some(&manifest));
@@ -585,12 +584,12 @@ mod tests {
     #[test]
     fn parts_max_depth() {
         // Create a manifest
-        let mut manifest = VersionManifest::new();
+        let mut manifest = Manifest::default();
 
         // Loop through a range of numbers
         for depth in 0..5 {
             // Set the maximum depth
-            manifest.set_max_depth_number(depth);
+            manifest.max_depth = if depth > 0 { Some(depth) } else { None };
 
             // Test for each test version with the manifest
             for version in TEST_VERSIONS {
@@ -620,12 +619,12 @@ mod tests {
     #[test]
     fn parts_ignore_text() {
         // Create a manifest
-        let mut manifest = VersionManifest::new();
+        let mut manifest = Manifest::default();
 
         // Try this for true and false
         for ignore in vec![true, false] {
             // Set to ignore text
-            manifest.set_ignore_text(ignore);
+            manifest.ignore_text = ignore;
 
             // Keep track whether any version passed with text
             let mut had_text = false;

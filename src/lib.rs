@@ -48,13 +48,12 @@
 //! ## Examples
 //! Check out the [examples](https://github.com/timvisee/version-compare/tree/master/examples) directory for all available examples.
 //!
-//!
 //! _[View complete README](https://github.com/timvisee/version-compare/blob/master/README.md)_
 
 mod cmp;
 mod compare;
+mod manifest;
 pub mod version;
-pub mod version_manifest;
 pub mod version_part;
 
 #[cfg(test)]
@@ -63,6 +62,6 @@ mod test;
 // Re-exports
 pub use crate::cmp::Cmp;
 pub use crate::compare::{compare, compare_to};
+pub use crate::manifest::Manifest;
 pub use crate::version::Version;
-pub use crate::version_manifest::VersionManifest;
 pub use crate::version_part::VersionPart;
