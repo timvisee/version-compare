@@ -25,17 +25,21 @@ use crate::Cmp;
 /// assert_eq!(compare("1.2.3", "1.2.4"), Ok(Cmp::Lt));
 /// assert_eq!(compare("1", "0.1"), Ok(Cmp::Gt));
 /// ```
-pub fn compare(a: &str, b: &str) -> Result<Cmp, ()> {
-    let a_ver = Version::from(a);
-    let b_ver = Version::from(b);
+pub fn compare<A, B>(a: A, b: B) -> Result<Cmp, ()>
+where
+    A: AsRef<str>,
+    B: AsRef<str>,
+{
+    let a = Version::from(a.as_ref());
+    let b = Version::from(b.as_ref());
 
     // Both version numbers must have been parsed
-    if a_ver.is_none() || b_ver.is_none() {
+    if a.is_none() || b.is_none() {
         return Err(());
     }
 
     // Compare and return the result
-    Ok(a_ver.unwrap().compare(&b_ver.unwrap()))
+    Ok(a.unwrap().compare(&b.unwrap()))
 }
 
 /// Compare two version number strings to each other and check whether the given comparison
@@ -55,9 +59,13 @@ pub fn compare(a: &str, b: &str) -> Result<Cmp, ()> {
 /// assert!(compare_to("1", "0.1", Cmp::Gt).unwrap());
 /// assert!(compare_to("1", "0.1", Cmp::Ge).unwrap());
 /// ```
-pub fn compare_to(a: &str, b: &str, operator: Cmp) -> Result<bool, ()> {
-    let a = Version::from(a);
-    let b = Version::from(b);
+pub fn compare_to<A, B>(a: A, b: B, operator: Cmp) -> Result<bool, ()>
+where
+    A: AsRef<str>,
+    B: AsRef<str>,
+{
+    let a = Version::from(a.as_ref());
+    let b = Version::from(b.as_ref());
 
     // Both version numbers must have been parsed
     if a.is_none() || b.is_none() {
@@ -79,21 +87,21 @@ mod tests {
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             assert_eq!(
-                super::compare(&entry.0, &entry.1),
-                Ok(entry.2.clone()),
+                super::compare(entry.0, entry.1),
+                Ok(entry.2),
                 "Testing that {} is {} {}",
-                &entry.0,
-                &entry.2.sign(),
-                &entry.1,
+                entry.0,
+                entry.2.sign(),
+                entry.1,
             );
         }
 
         // Compare each error version in the version set
         for entry in TEST_VERSION_SETS_ERROR {
-            let result = super::compare(&entry.0, &entry.1);
+            let result = super::compare(entry.0, entry.1);
 
             if result.is_ok() {
-                assert!(result != Ok(entry.2.clone()));
+                assert!(result != Ok(entry.2));
             }
         }
     }
@@ -103,18 +111,18 @@ mod tests {
         // Compare each version in the version set
         for entry in TEST_VERSION_SETS {
             // Test
-            assert!(super::compare_to(&entry.0, &entry.1, entry.2).unwrap());
+            assert!(super::compare_to(entry.0, entry.1, entry.2).unwrap());
 
             // Make sure the inverse operator is not correct
             assert_eq!(
-                super::compare_to(&entry.0, &entry.1, entry.2.invert()).unwrap(),
+                super::compare_to(entry.0, entry.1, entry.2.invert()).unwrap(),
                 false
             );
         }
 
         // Compare each error version in the version set
         for entry in TEST_VERSION_SETS_ERROR {
-            let result = super::compare_to(&entry.0, &entry.1, entry.2);
+            let result = super::compare_to(entry.0, entry.1, entry.2);
 
             if result.is_ok() {
                 assert!(!result.unwrap())
