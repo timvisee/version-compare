@@ -48,7 +48,7 @@ check-msrv:
   variables:
     RUST_VERSION: "1.42.0"
 
-# Build using Rust stable
+# Build on stable
 build:
   stage: build
   needs: []
@@ -56,7 +56,7 @@ build:
   script:
     - cargo build --release --verbose
 
-# Run the unit tests through Cargo
+# Test on stable
 test:
   stage: test
   needs: []
@@ -67,6 +67,9 @@ test:
 # Gather test coverage
 test-coverage:
   stage: test
+  only:
+    - master
+    - /^v(\d+\.)*\d+$/
   needs: []
   dependencies: []
   coverage: '/^\d+.\d+% coverage/'
