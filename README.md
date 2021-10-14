@@ -1,5 +1,4 @@
-[![Build status on Travis CI][travis-master-badge]][travis-link]
-[![Built status on AppVeyor][appveyor-master-badge]][appveyor-master-link]
+[![Build status on GitLab CI][gitlab-ci-master-badge]][gitlab-ci-link]
 [![Crate version][crate-version-badge]][crate-link]
 [![Documentation][docs-badge]][docs]
 [![Download statistics][crate-download-badge]][crate-link]
@@ -7,15 +6,17 @@
 [![Dependencies][dependency-badge]][crate-link]
 [![License][crate-license-badge]][crate-link]
 
-[crate-version-badge]: https://img.shields.io/crates/v/version-compare.svg
+[coverage-badge]: https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master
+[coverage-link]: https://coveralls.io/github/timvisee/version-compare?branch=master
 [crate-download-badge]: https://img.shields.io/crates/d/version-compare.svg
 [crate-license-badge]: https://img.shields.io/crates/l/version-compare.svg
 [crate-link]: https://crates.io/crates/version-compare
-[coverage-badge]: https://coveralls.io/repos/github/timvisee/version-compare/badge.svg?branch=master
-[coverage-link]: https://coveralls.io/github/timvisee/version-compare?branch=master
+[crate-version-badge]: https://img.shields.io/crates/v/version-compare.svg
 [dependency-badge]: https://img.shields.io/badge/dependencies-none!-green.svg
+[docs-badge]: https://img.shields.io/docsrs/version-compare
 [docs]: https://docs.rs/version-compare
-[docs-badge]: https://docs.rs/version-compare/badge.svg
+[gitlab-ci-link]: https://gitlab.com/timvisee/version-compare/pipelines
+[gitlab-ci-master-badge]: https://gitlab.com/timvisee/version-compare/badges/master/pipeline.svg
 
 # Rust library: version-compare
 > A Rust library to easily compare version numbers in any format, and test them against various comparison operators.
@@ -126,22 +127,10 @@ fn main() {
 Check out the [examples](examples) directory for more complete examples.
 
 ## Builds
-This library is automatically build and tested for each commit using CI services.
 
-| Service   | Platforms    | Branch      | Build Status                                                   |                                     |
-| --------: | :----------- | :---------- | :------------------------------------------------------------: | :---------------------------------- |
-| Travis CI | Linux, macOS | master      | [![Build status][travis-master-badge]][travis-link]            | [View Status][travis-link]          |
-| Travis CI | Linux, macOS | last commit | [![Build status][travis-last-badge]][travis-link]              | [View Status][travis-link]          |
-| AppVeyor  | Windows      | master      | [![Build status][appveyor-master-badge]][appveyor-master-link] | [View Status][appveyor-master-link] |
-| AppVeyor  | Windows      | last commit | [![Build status][appveyor-last-badge]][appveyor-last-link]     | [View Status][appveyor-last-link]   |
+This library is automatically build and tested every day and for each commit using CI services.
 
-[travis-master-badge]:   https://travis-ci.org/timvisee/version-compare.svg?branch=master
-[travis-last-badge]:     https://travis-ci.org/timvisee/version-compare.svg
-[travis-link]:           https://travis-ci.org/timvisee/version-compare
-[appveyor-master-badge]: https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6/branch/master?svg=true
-[appveyor-last-badge]:   https://ci.appveyor.com/api/projects/status/nikhmuoonooo05a6?svg=true
-[appveyor-master-link]:  https://ci.appveyor.com/project/timvisee/version-compare/branch/master
-[appveyor-last-link]:    https://ci.appveyor.com/project/timvisee/version-compare
+See the current status here: https://gitlab.com/timvisee/version-compare/-/pipelines
 
 ## License
 This project is released under the MIT license. Check out the [LICENSE](LICENSE) file for more information.
