@@ -1,8 +1,8 @@
-//! The most minimal usage example of the version-compare library.
+//! A minimal usage example of the version-compare crate.
 //!
-//! This example compares two given version numbers, and matches the comparison result.
+//! This compares two given version number strings, and outputs which is greater.
 //!
-//! You can run this example file by using the command `cargo run --example minimal`.
+//! Run this example by invoking `cargo run --example minimal`.
 
 use version_compare::{compare, Cmp};
 
@@ -10,10 +10,10 @@ fn main() {
     let a = "1.3";
     let b = "1.2.4";
 
-    match compare(a, b).unwrap() {
-        Cmp::Lt => println!("Version a is less than b"),
-        Cmp::Eq => println!("Version a is equal to b"),
-        Cmp::Gt => println!("Version a is greater than b"),
-        _ => unreachable!(),
+    match compare(a, b) {
+        Ok(Cmp::Lt) => println!("Version a is less than b"),
+        Ok(Cmp::Eq) => println!("Version a is equal to b"),
+        Ok(Cmp::Gt) => println!("Version a is greater than b"),
+        _ => panic!("Invalid version number"),
     }
 }

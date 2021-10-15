@@ -83,10 +83,9 @@ version-compare = "0.1"
 
 [example.rs:](examples/example.rs)
 ```rust
-use version_compare::{Cmp, Version};
+use version_compare::{compare, compare_to, Cmp, Version};
 
 fn main() {
-    // Define some version numbers
     let a = "1.2";
     let b = "1.5.1";
 
@@ -99,24 +98,23 @@ fn main() {
     // - Cmp::Gt -> Greater than
 
     // Easily compare version strings
-    assert_eq!(version_compare::compare(a, b).unwrap(), Cmp::Lt);
-    assert_eq!(version_compare::compare_to(a, b, Cmp::Le).unwrap(), true);
-    assert_eq!(version_compare::compare_to(a, b, Cmp::Gt).unwrap(), false);
+    assert_eq!(compare(a, b), Ok(Cmp::Lt));
+    assert_eq!(compare_to(a, b, Cmp::Le), Ok(true));
+    assert_eq!(compare_to(a, b, Cmp::Gt), Ok(false));
 
-    // Version string parsing
+    // Parse and wrap version strings as a Version
     let a = Version::from(a).unwrap();
     let b = Version::from(b).unwrap();
 
-    // Directly compare parsed versions
+    // The Version can easily be compared with
     assert_eq!(a < b, true);
     assert_eq!(a <= b, true);
     assert_eq!(a > b, false);
     assert_eq!(a != b, true);
     assert_eq!(a.compare(&b), Cmp::Lt);
-    assert_eq!(b.compare(&a), Cmp::Gt);
     assert_eq!(a.compare_to(&b, Cmp::Lt), true);
 
-    // Match
+    // Or match the comparison operators
     match a.compare(b) {
         Cmp::Lt => println!("Version a is less than b"),
         Cmp::Eq => println!("Version a is equal to b"),
