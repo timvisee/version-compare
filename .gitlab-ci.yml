@@ -67,9 +67,6 @@ test:
 # Gather test coverage
 test-coverage:
   stage: test
-  only:
-    - master
-    - /^v(\d+\.)*\d+$/
   needs: []
   dependencies: []
   coverage: '/^\d+.\d+% coverage/'
@@ -77,7 +74,11 @@ test-coverage:
     - apt-get update
     - apt-get install -y --no-install-recommends pkg-config libssl-dev
     - cargo install cargo-tarpaulin -f
-    - cargo tarpaulin --verbose --avoid-cfg-tarpaulin --coveralls $COVERALLS_TOKEN --out Xml
+    - if [ -z "$COVERALLS_TOKEN" ]; then
+        cargo tarpaulin --verbose --avoid-cfg-tarpaulin --out Xml
+      else
+        cargo tarpaulin --verbose --avoid-cfg-tarpaulin --coveralls $COVERALLS_TOKEN --out Xml
+      fi
   artifacts:
     reports:
       cobertura:
