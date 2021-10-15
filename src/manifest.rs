@@ -7,6 +7,22 @@
 /// Version manifest (configuration).
 ///
 /// A manifest (configuration) that is used respectively when parsing and comparing version strings.
+///
+/// # Examples
+///
+/// ```rust
+/// use version_compare::{Manifest, Version};
+///
+/// // Create manifest with max depth of 2
+/// let mut manifest = Manifest::default();
+/// manifest.max_depth = Some(2);
+///
+/// // Version strings equal with manifest because we compare up-to 2 parts deep
+/// let a = Version::from_manifest("1.0.1", &manifest).unwrap();
+/// let b = Version::from_manifest("1.0.2", &manifest).unwrap();
+/// assert!(a == b);
+/// ```
+
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct Manifest {
     /// The maximum depth of a version number.

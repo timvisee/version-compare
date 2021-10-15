@@ -1,54 +1,27 @@
-//! A Rust library to easily compare version numbers in any format, and test them against various comparison operators.
+//! Rust library to easily compare version numbers with no specific format, and test against various comparison operators.
 //!
-//! Comparing version numbers is hard. Especially when version numbers get really complex,
-//! or when their formatting differs.
+//! Comparing version numbers is hard, especially with weird version number formats.
 //!
-//! This library helps you to easily compare any kind of version number with minimal code.
-//! Two version numbers can be compared to each other, to get a relevant comparison operator (`<`, `==`, `>`),
-//! or version numbers can be tested against any given comparison operator.
+//! This library helps you to easily compare any kind of version number with no
+//! specific format using a best-effort approach.
+//! Two version numbers can be compared to each other to get a comparison operator
+//! (`<`, `==`, `>`), or test them against a comparison operator.
 //!
-//! Along with version comparison, the library also features other useful tools.  
-//! For example: version numbers can be parsed to inspect a version number by it's bare numeric or text based parts.
+//! Along with version comparison, the library provides various other tools for
+//! working with version numbers.
 //!
 //! Inspired by PHPs [version_compare()](http://php.net/manual/en/function.version-compare.php).
 //!
 //! ### Formats
 //!
-//! A list of version number examples that are parsed successfully:
+//! Version numbers that would parse successfully include:  
+//! `1`, `3.10.4.1`, `1.2.alpha`, `1.2.dev.4`, ` `, ` .   -32 . 1`, `MyApp 3.2.0 / build 0932` ...
 //!
-//! - `1`
-//! - `3.10.4.1`
-//! - `1.2.alpha`
-//! - `1.2.dev.4`
-//! - ` ` _(empty)_
-//! - ` .   -32 . 1` _(undefined formats)_
-//! - `MyApp 3.2.0 / build 0932` _(complex formats, not fully functional yet)_
-//! - _Many more and support for custom formats to come..._
-//!
-//! ### Semver
-//!
-//! Version number formats like [_semver_](http://semver.org/) try to make version numbers consistent and manageable,
-//! there are too many projects however that don't follow such format.
-//!
-//! `version-compare` makes working with them easy and supports semver formats out of the box with zero configuration.
-//!
-//! ## Features
-//!
-//! * Compare two version numbers, get: `<`, `==` or `>`.
-//! * Compare two version numbers against a comparison operator
-//! * Parse complex and undefined version number formats.
-//! * Static, standalone methods to easily compare version strings
-//!
-//! The following features will be added in a later version:
-//!
-//! * Version manifest, to specify detailed version number constraints.
-//! * Version ranges, and tests against them.
-//! * Support for operators in version strings, [npm-style](https://docs.npmjs.com/misc/semver), and tests against them.
-//! * Batch comparisons.
+//! See a list of how version numbers compare [here](https://github.com/timvisee/version-compare/blob/411ed7135741ed7cf2fcf4919012fb5412dc122b/src/test.rs#L50-L103).
 //!
 //! ## Examples
 //!
-//! [example.rs:](examples/example.rs)
+//! [example.rs](examples/example.rs):
 //! ```rust
 //! use version_compare::{compare, compare_to, Cmp, Version};
 //!
@@ -91,7 +64,27 @@
 //! }
 //! ```
 //!
-//! Check out the [examples](https://github.com/timvisee/version-compare/tree/master/examples) directory for more.
+//! See the [`examples`](https://github.com/timvisee/version-compare/tree/master/examples) directory for more.
+//!
+//! ## Features
+//!
+//! * Compare version numbers, get: `<`, `==`, `>`
+//! * Compare against a comparison operator
+//!   (`<`, `<=`, `==`, `!=`, `>=`, `>`)
+//! * Parse complex and unspecified formats
+//! * Static, standalone methods to easily compare version strings in a single line
+//!   of code
+//!
+//! ### Semver
+//!
+//! Version numbers using the [semver](http://semver.org/) format are compared
+//! correctly with no additional configuration.
+//!
+//! If your version number strings follow this exact format you may be better off
+//! using the [`semver`](https://crates.io/crates/semver) crate for more format
+//! specific features.
+//!
+//! If that isn't certain however, `version-compare` makes comparing a breeze.
 //!
 //! _[View complete README](https://github.com/timvisee/version-compare/blob/master/README.md)_
 

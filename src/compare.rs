@@ -8,9 +8,9 @@ use crate::Cmp;
 /// This compares version `a` to version `b`, and returns whether version `a` is greater, less
 /// or equal to version `b`.
 ///
-/// The two given version numbers must be valid, or an error will be returned.
+/// If either version number string is invalid an error is returned.
 ///
-/// One of the following ok results may be returned:
+/// One of the following operators is returned:
 ///
 /// * `Cmp::Eq`
 /// * `Cmp::Lt`
@@ -21,7 +21,6 @@ use crate::Cmp;
 /// ```
 /// use version_compare::{Cmp, compare};
 ///
-/// // Compare version numbers
 /// assert_eq!(compare("1.2.3", "1.2.3"), Ok(Cmp::Eq));
 /// assert_eq!(compare("1.2.3", "1.2.4"), Ok(Cmp::Lt));
 /// assert_eq!(compare("1", "0.1"), Ok(Cmp::Gt));
@@ -31,29 +30,21 @@ where
     A: AsRef<str>,
     B: AsRef<str>,
 {
-    let a = Version::from(a.as_ref());
-    let b = Version::from(b.as_ref());
-
-    // Both version numbers must have been parsed
-    if a.is_none() || b.is_none() {
-        return Err(());
-    }
-
-    // Compare and return the result
-    Ok(a.unwrap().compare(b.unwrap()))
+    let a = Version::from(a.as_ref()).ok_or(())?;
+    let b = Version::from(b.as_ref()).ok_or(())?;
+    Ok(a.compare(b))
 }
 
 /// Compare two version number strings to each other and test against the given comparison
 /// `operator`.
 ///
-/// The two given version numbers must be valid, or an error will be returned.
+/// If either version number string is invalid an error is returned.
 ///
 /// # Examples
 ///
 /// ```
 /// use version_compare::{Cmp, compare_to};
 ///
-/// // Compare version numbers
 /// assert!(compare_to("1.2.3", "1.2.3", Cmp::Eq).unwrap());
 /// assert!(compare_to("1.2.3", "1.2.3", Cmp::Le).unwrap());
 /// assert!(compare_to("1.2.3", "1.2.4", Cmp::Lt).unwrap());
@@ -65,16 +56,9 @@ where
     A: AsRef<str>,
     B: AsRef<str>,
 {
-    let a = Version::from(a.as_ref());
-    let b = Version::from(b.as_ref());
-
-    // Both version numbers must have been parsed
-    if a.is_none() || b.is_none() {
-        return Err(());
-    }
-
-    // Compare and return the result
-    Ok(a.unwrap().compare_to(&b.unwrap(), operator))
+    let a = Version::from(a.as_ref()).ok_or(())?;
+    let b = Version::from(b.as_ref()).ok_or(())?;
+    Ok(a.compare_to(b, operator))
 }
 
 #[cfg_attr(tarpaulin, skip)]
@@ -117,7 +101,7 @@ mod tests {
             // Make sure the inverse operator is not correct
             assert_eq!(
                 super::compare_to(entry.0, entry.1, entry.2.invert()).unwrap(),
-                false
+                false,
             );
         }
 

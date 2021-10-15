@@ -14,14 +14,21 @@ use crate::{Cmp, Manifest, Part};
 
 /// Version struct, wrapping a string, providing useful comparison functions.
 ///
-/// A version in string format can be parsed using methods like `Version::from("1.2.3");`.
-/// These methods return a `Result` holding the parsed version or an error on failure.
+/// A version in string format can be parsed using methods like `Version::from("1.2.3");`,
+/// returning a `Result` with the parse result.
 ///
-/// The original version string is stored in the struct, and can be accessed using the
-/// `version.as_str()` method. Note, that when the version wasn't parsed from a string
-/// representation, the returned value is generated.
+/// The original version string can be accessed using `version.as_str()`. A `Version` that isn't
+/// derrived from a version string returns a generated string.
 ///
-/// The struct provides many methods for comparison and probing.
+/// The struct provides many methods for easy comparison and probing.
+///
+/// # Examples
+///
+/// ```
+/// use version_compare::{Version};
+///
+/// let ver = Version::from("1.2.3").unwrap();
+/// ```
 #[derive(Clone, Eq)]
 pub struct Version<'a> {
     version: &'a str,
@@ -39,9 +46,10 @@ impl<'a> Version<'a> {
     /// ```
     /// use version_compare::{Cmp, Version};
     ///
-    /// let ver = Version::from("1.2.3").unwrap();
+    /// let a = Version::from("1.2.3").unwrap();
+    /// let b = Version::from("1.3.0").unwrap();
     ///
-    /// assert_eq!(ver.compare(Version::from("1.2.3").unwrap()), Cmp::Eq);
+    /// assert_eq!(a.compare(b), Cmp::Lt);
     /// ```
     pub fn from(version: &'a str) -> Option<Self> {
         Some(Version {
@@ -57,7 +65,9 @@ impl<'a> Version<'a> {
     /// # Examples
     ///
     /// ```
-    /// use version_compare::{Cmp, Version, Manifest};
+    /// use version_compare::{Cmp, Version, Part};
+    ///
+    /// let ver = Version::from_parts("1.0", vec![Part::Number(1), Part::Number(0)]);
     /// ```
     pub fn from_parts(version: &'a str, parts: Vec<Part<'a>>) -> Self {
         Version {
@@ -195,7 +205,7 @@ impl<'a> Version<'a> {
     ///
     /// let ver = Version::from("1.2.3").unwrap();
     ///
-    /// assert_eq!(ver.parts(), &vec![
+    /// assert_eq!(ver.parts(), [
     ///     Part::Number(1),
     ///     Part::Number(2),
     ///     Part::Number(3)
@@ -220,10 +230,12 @@ impl<'a> Version<'a> {
     /// ```
     /// use version_compare::{Cmp, Version};
     ///
-    /// assert_eq!(Version::from("1.2").unwrap().compare(Version::from("1.3.2").unwrap()), Cmp::Lt);
-    /// assert_eq!(Version::from("1.9").unwrap().compare(Version::from("1.9").unwrap()), Cmp::Eq);
-    /// assert_eq!(Version::from("0.3.0.0").unwrap().compare(Version::from("0.3").unwrap()), Cmp::Eq);
-    /// assert_eq!(Version::from("2").unwrap().compare(Version::from("1.7.3").unwrap()), Cmp::Gt);
+    /// let a = Version::from("1.2").unwrap();
+    /// let b = Version::from("1.3.2").unwrap();
+    ///
+    /// assert_eq!(a.compare(&b), Cmp::Lt);
+    /// assert_eq!(b.compare(&a), Cmp::Gt);
+    /// assert_eq!(a.compare(&a), Cmp::Eq);
     /// ```
     pub fn compare<V>(&self, other: V) -> Cmp
     where
@@ -245,10 +257,13 @@ impl<'a> Version<'a> {
     /// ```
     /// use version_compare::{Cmp, Version};
     ///
-    /// assert!(Version::from("1.2").unwrap().compare_to(Version::from("1.3.2").unwrap(), Cmp::Lt));
-    /// assert!(Version::from("1.2").unwrap().compare_to(Version::from("1.3.2").unwrap(), Cmp::Le));
-    /// assert!(Version::from("1.2").unwrap().compare_to(Version::from("1.2").unwrap(), Cmp::Eq));
-    /// assert!(Version::from("1.2").unwrap().compare_to(Version::from("1.2").unwrap(), Cmp::Le));
+    /// let a = Version::from("1.2").unwrap();
+    /// let b = Version::from("1.3.2").unwrap();
+    ///
+    /// assert!(a.compare_to(&b, Cmp::Lt));
+    /// assert!(a.compare_to(&b, Cmp::Le));
+    /// assert!(a.compare_to(&a, Cmp::Eq));
+    /// assert!(a.compare_to(&a, Cmp::Le));
     /// ```
     pub fn compare_to<V>(&self, other: V, operator: Cmp) -> bool
     where
