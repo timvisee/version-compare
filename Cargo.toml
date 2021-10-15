@@ -11,3 +11,4 @@ description = "Rust library to easily compare version numbers with no specific f
 keywords = ["version", "compare", "comparison", "comparing"]
 categories = ["parser-implementations", "parsing"]
 edition = "2018"
+include = ["/src", "/examples", "Cargo.toml", "LICENSE", "README.md"]
