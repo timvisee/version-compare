@@ -6,8 +6,8 @@
 [![Dependencies][dependency-badge]][crate-link]
 [![License][crate-license-badge]][crate-link]
 
-[coverage-badge]: https://coveralls.io/repos/gitlab/timvisee/version-compare/badge.svg?branch=master
-[coverage-link]: https://coveralls.io/gitlab/timvisee/version-compare?branch=master
+[coverage-badge]: https://gitlab.com/timvisee/version-compare/badges/master/coverage.svg
+[coverage-link]: https://coveralls.io/gitlab/timvisee/version-compare
 [crate-download-badge]: https://img.shields.io/crates/d/version-compare.svg
 [crate-license-badge]: https://img.shields.io/crates/l/version-compare.svg
 [crate-link]: https://crates.io/crates/version-compare
