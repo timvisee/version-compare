@@ -74,10 +74,11 @@ test-coverage:
     - apt-get update
     - apt-get install -y --no-install-recommends pkg-config libssl-dev
     - cargo install cargo-tarpaulin -f
-    - if [ -z "$COVERALLS_TOKEN" ]; then
-        cargo tarpaulin --verbose --avoid-cfg-tarpaulin --out Xml
+    - |
+      if [ -z "$COVERALLS_TOKEN" ]; then
+          cargo tarpaulin --verbose --avoid-cfg-tarpaulin --out Xml;
       else
-        cargo tarpaulin --verbose --avoid-cfg-tarpaulin --coveralls $COVERALLS_TOKEN --out Xml
+          cargo tarpaulin --verbose --avoid-cfg-tarpaulin --coveralls $COVERALLS_TOKEN --out Xml;
       fi
   artifacts:
     reports:
