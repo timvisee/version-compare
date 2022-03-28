@@ -60,6 +60,7 @@ impl Cmp {
     /// assert_eq!(Cmp::from_sign("  >=   "), Ok(Cmp::Ge));
     /// assert!(Cmp::from_sign("*").is_err());
     /// ```
+    #[allow(clippy::result_unit_err)]
     pub fn from_sign<S: AsRef<str>>(sign: S) -> Result<Cmp, ()> {
         match sign.as_ref().trim() {
             "==" | "=" => Ok(Cmp::Eq),
@@ -86,6 +87,7 @@ impl Cmp {
     /// assert_eq!(Cmp::from_name("  Ge   "), Ok(Cmp::Ge));
     /// assert!(Cmp::from_name("abc").is_err());
     /// ```
+    #[allow(clippy::result_unit_err)]
     pub fn from_name<S: AsRef<str>>(sign: S) -> Result<Cmp, ()> {
         match sign.as_ref().trim().to_lowercase().as_str() {
             "eq" => Ok(Cmp::Eq),

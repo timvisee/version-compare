@@ -94,8 +94,8 @@ impl<'a> Version<'a> {
     pub fn from_manifest(version: &'a str, manifest: &'a Manifest) -> Option<Self> {
         Some(Version {
             version,
-            parts: split_version_str(version, Some(&manifest))?,
-            manifest: Some(&manifest),
+            parts: split_version_str(version, Some(manifest))?,
+            manifest: Some(manifest),
         })
     }
 
@@ -187,6 +187,7 @@ impl<'a> Version<'a> {
     /// assert_eq!(ver.part(1), Ok(Part::Number(2)));
     /// assert_eq!(ver.part(2), Ok(Part::Number(3)));
     /// ```
+    #[allow(clippy::result_unit_err)]
     pub fn part(&self, index: usize) -> Result<Part<'a>, ()> {
         // Make sure the index is in-bound
         if index >= self.parts.len() {
@@ -320,8 +321,8 @@ fn split_version_str<'a>(
 
     // Get the manifest to follow
     let mut used_manifest = &Manifest::default();
-    if manifest.is_some() {
-        used_manifest = manifest.unwrap();
+    if let Some(m) = manifest {
+        used_manifest = m;
     }
 
     // Loop over the parts, and parse them
@@ -360,12 +361,12 @@ fn split_version_str<'a>(
                     .next();
                 if let Some(at) = split_at {
                     parts.push(Part::Number(part[..=at].parse().unwrap()));
-                    parts.push(Part::Text((&part[at + 1..]).into()));
+                    parts.push(Part::Text((part[at + 1..]).into()));
                     continue;
                 }
 
                 // Push the text part to the vector
-                parts.push(Part::Text(part.into()))
+                parts.push(Part::Text(part))
             }
         }
     }
@@ -396,7 +397,7 @@ fn compare_iter<'a>(
     let mut other_part: Option<&Part>;
 
     // Iterate over the iterator, without consuming it
-    while let Some(part) = iter.next() {
+    for part in &mut iter {
         // Get the part for the other version
         other_part = other_iter.next();
 
@@ -433,6 +434,7 @@ fn compare_iter<'a>(
                 // normalize case
                 let (val_lwr, other_val_lwr) = (val.to_lowercase(), other_val.to_lowercase());
                 // compare text: for instance, "RC1" will be less than "RC2", so this works out.
+                #[allow(clippy::comparison_chain)]
                 if val_lwr < other_val_lwr {
                     return Cmp::Lt;
                 } else if val_lwr > other_val_lwr {
