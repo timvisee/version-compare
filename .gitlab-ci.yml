@@ -80,10 +80,6 @@ test-coverage:
       else
           cargo tarpaulin --verbose --avoid-cfg-tarpaulin --coveralls $COVERALLS_TOKEN --out Xml;
       fi
-  artifacts:
-    reports:
-      cobertura:
-        - cobertura.xml
 
 # Release crate on crates.io
 release-crate:
