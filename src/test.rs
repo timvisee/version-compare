@@ -28,6 +28,10 @@ pub const VERSIONS: &'static [Version] = &[
     Version("1.2-alpha-4", 4),
     Version("snapshot.1.2", 3),
     Version("snapshot-1.2", 3),
+    Version("0.0.1-test.0222426166a", 6),
+    Version("0.0.1-test.0222426166565421816516584651684351354", 5),
+    Version("0.0.1-test.02224261665a", 5),
+    Version("0.0.1-test.02224261665d7b1b689816d12f6bcacb", 5),
 ];
 
 /// List of version numbers that contain errors with metadata for dynamic tests

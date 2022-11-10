@@ -350,7 +350,8 @@ fn split_version_str<'a>(
                     continue;
                 }
 
-                // Numbers suffixed by text should be split into a number and text as well
+                // Numbers suffixed by text should be split into a number and text as well,
+                // if the number overflows, handle it as text
                 let split_at = part
                     .char_indices()
                     .take(part.len() - 1)
@@ -360,8 +361,12 @@ fn split_version_str<'a>(
                     .map(|(i, _, _)| i)
                     .next();
                 if let Some(at) = split_at {
-                    parts.push(Part::Number(part[..=at].parse().unwrap()));
-                    parts.push(Part::Text((part[at + 1..]).into()));
+                    if let Ok(n) = part[..=at].parse() {
+                        parts.push(Part::Number(n));
+                        parts.push(Part::Text(&part[at + 1..]));
+                    } else {
+                        parts.push(Part::Text(part));
+                    }
                     continue;
                 }
 
