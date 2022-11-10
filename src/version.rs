@@ -187,7 +187,7 @@ impl<'a> Version<'a> {
     /// assert_eq!(ver.part(1), Ok(Part::Number(2)));
     /// assert_eq!(ver.part(2), Ok(Part::Number(3)));
     /// ```
-    #[allow(clippy::result_unit_err)]
+    #[allow(clippy::result_map_unit_fn)]
     pub fn part(&self, index: usize) -> Result<Part<'a>, ()> {
         // Make sure the index is in-bound
         if index >= self.parts.len() {
