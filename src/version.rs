@@ -422,30 +422,26 @@ fn compare_iter<'a>(
             return Cmp::Gt;
         }
 
-        // Match both parts as numbers to destruct their numerical values
-        if let Part::Number(num) = part {
-            if let Part::Number(other) = other_part.unwrap() {
-                // Compare the numbers
-                match num {
-                    n if n < other => return Cmp::Lt,
-                    n if n > other => return Cmp::Gt,
-                    _ => continue,
+        match (part, other_part.unwrap()) {
+            // Compare numbers
+            (Part::Number(a), Part::Number(b)) => {
+                let cmp = Cmp::from(a.cmp(b));
+                if cmp != Cmp::Eq {
+                    return cmp;
                 }
             }
-        }
-        // Match both parts as strings
-        else if let Part::Text(val) = part {
-            if let Part::Text(other_val) = other_part.unwrap() {
-                // normalize case
-                let (val_lwr, other_val_lwr) = (val.to_lowercase(), other_val.to_lowercase());
-                // compare text: for instance, "RC1" will be less than "RC2", so this works out.
-                #[allow(clippy::comparison_chain)]
-                if val_lwr < other_val_lwr {
-                    return Cmp::Lt;
-                } else if val_lwr > other_val_lwr {
-                    return Cmp::Gt;
+
+            // Compare text
+            (Part::Text(a), Part::Text(b)) => {
+                // Normalize case and compare text: "RC1" will be less than "RC2"
+                let cmp = Cmp::from(a.to_lowercase().cmp(&b.to_lowercase()));
+                if cmp != Cmp::Eq {
+                    return cmp;
                 }
             }
+
+            // TODO: decide what to do for other type combinations
+            _ => {}
         }
     }
 
