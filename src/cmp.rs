@@ -107,12 +107,9 @@ impl Cmp {
     /// * `Ordering::Less` -> `Lt`
     /// * `Ordering::Equal` -> `Eq`
     /// * `Ordering::Greater` -> `Gt`
+    #[deprecated(since = "0.1.2", note = "use Cmp::from(ord) instead")]
     pub fn from_ord(ord: Ordering) -> Cmp {
-        match ord {
-            Ordering::Less => Cmp::Lt,
-            Ordering::Equal => Cmp::Eq,
-            Ordering::Greater => Cmp::Gt,
-        }
+        Self::from(ord)
     }
 
     /// Get the name of this comparison operator.
@@ -317,6 +314,23 @@ impl Cmp {
     }
 }
 
+impl From<Ordering> for Cmp {
+    /// Get the comparison operator from Rusts `Ordering` enum.
+    ///
+    /// The following comparison operators are returned:
+    ///
+    /// * `Ordering::Less` -> `Lt`
+    /// * `Ordering::Equal` -> `Eq`
+    /// * `Ordering::Greater` -> `Gt`
+    fn from(ord: Ordering) -> Self {
+        match ord {
+            Ordering::Less => Cmp::Lt,
+            Ordering::Equal => Cmp::Eq,
+            Ordering::Greater => Cmp::Gt,
+        }
+    }
+}
+
 #[cfg_attr(tarpaulin, skip)]
 #[cfg(test)]
 mod tests {
@@ -359,9 +373,9 @@ mod tests {
 
     #[test]
     fn from_ord() {
-        assert_eq!(Cmp::from_ord(Ordering::Less), Cmp::Lt);
-        assert_eq!(Cmp::from_ord(Ordering::Equal), Cmp::Eq);
-        assert_eq!(Cmp::from_ord(Ordering::Greater), Cmp::Gt);
+        assert_eq!(Cmp::from(Ordering::Less), Cmp::Lt);
+        assert_eq!(Cmp::from(Ordering::Equal), Cmp::Eq);
+        assert_eq!(Cmp::from(Ordering::Greater), Cmp::Gt);
     }
 
     #[test]
