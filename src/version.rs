@@ -398,45 +398,32 @@ fn compare_iter<'a>(
     mut iter: Peekable<Iter<Part<'a>>>,
     mut other_iter: Peekable<Iter<Part<'a>>>,
 ) -> Cmp {
-    // Iterate through the parts of this version
-    let mut other_part: Option<&Part>;
-
     // Iterate over the iterator, without consuming it
     for part in &mut iter {
-        // Get the part for the other version
-        other_part = other_iter.next();
-
-        // If there are no parts left in the other version, try to determine the result
-        if other_part.is_none() {
-            // In the main version: if the current part is zero, continue to the next one
-            match part {
-                Part::Number(num) => {
-                    if *num == 0 {
-                        continue;
-                    }
-                }
-                Part::Text(_) => return Cmp::Lt,
+        match (part, other_iter.next()) {
+            // If we only have a zero on the lhs, continue
+            (Part::Number(lhs), None) if lhs == &0 => {
+                continue;
             }
 
-            // The main version is greater
-            return Cmp::Gt;
-        }
+            // If we only have text on the lhs, it is less
+            (Part::Text(_), None) => return Cmp::Lt,
 
-        match (part, other_part.unwrap()) {
+            // If we have anything else on the lhs, it is greater
+            (_, None) => return Cmp::Gt,
+
             // Compare numbers
-            (Part::Number(a), Part::Number(b)) => {
-                let cmp = Cmp::from(a.cmp(b));
-                if cmp != Cmp::Eq {
-                    return cmp;
-                }
-            }
+            (Part::Number(lhs), Some(Part::Number(rhs))) => match Cmp::from(lhs.cmp(rhs)) {
+                Cmp::Eq => {}
+                cmp => return cmp,
+            },
 
             // Compare text
-            (Part::Text(a), Part::Text(b)) => {
+            (Part::Text(lhs), Some(Part::Text(rhs))) => {
                 // Normalize case and compare text: "RC1" will be less than "RC2"
-                let cmp = Cmp::from(a.to_lowercase().cmp(&b.to_lowercase()));
-                if cmp != Cmp::Eq {
-                    return cmp;
+                match Cmp::from(lhs.to_lowercase().cmp(&rhs.to_lowercase())) {
+                    Cmp::Eq => {}
+                    cmp => return cmp,
                 }
             }
 
