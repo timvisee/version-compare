@@ -61,6 +61,7 @@ mod tests {
     use super::Manifest;
 
     #[test]
+    #[allow(clippy::field_reassign_with_default)]
     fn has_max_depth() {
         let mut manifest = Manifest::default();
 

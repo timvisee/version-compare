@@ -1,3 +1,5 @@
+#![allow(clippy::bool_assert_comparison)]
+
 //! Usage examples of the version-compare crate.
 //!
 //! This shows various ways this library provides for comparing version numbers.

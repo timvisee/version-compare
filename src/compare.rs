@@ -25,7 +25,7 @@ use crate::Cmp;
 /// assert_eq!(compare("1.2.3", "1.2.4"), Ok(Cmp::Lt));
 /// assert_eq!(compare("1", "0.1"), Ok(Cmp::Gt));
 /// ```
-#[allow(clippy::result_map_unit_fn)]
+#[allow(clippy::result_unit_err)]
 pub fn compare<A, B>(a: A, b: B) -> Result<Cmp, ()>
 where
     A: AsRef<str>,
@@ -52,7 +52,7 @@ where
 /// assert!(compare_to("1", "0.1", Cmp::Gt).unwrap());
 /// assert!(compare_to("1", "0.1", Cmp::Ge).unwrap());
 /// ```
-#[allow(clippy::result_map_unit_fn)]
+#[allow(clippy::result_unit_err)]
 pub fn compare_to<A, B>(a: A, b: B, operator: Cmp) -> Result<bool, ()>
 where
     A: AsRef<str>,
@@ -101,10 +101,7 @@ mod tests {
             assert!(super::compare_to(entry.0, entry.1, entry.2).unwrap());
 
             // Make sure the inverse operator is not correct
-            assert_eq!(
-                super::compare_to(entry.0, entry.1, entry.2.invert()).unwrap(),
-                false,
-            );
+            assert!(!super::compare_to(entry.0, entry.1, entry.2.invert()).unwrap());
         }
 
         // Compare each error version in the version set

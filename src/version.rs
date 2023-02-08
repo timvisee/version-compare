@@ -187,7 +187,7 @@ impl<'a> Version<'a> {
     /// assert_eq!(ver.part(1), Ok(Part::Number(2)));
     /// assert_eq!(ver.part(2), Ok(Part::Number(3)));
     /// ```
-    #[allow(clippy::result_map_unit_fn)]
+    #[allow(clippy::result_unit_err)]
     pub fn part(&self, index: usize) -> Result<Part<'a>, ()> {
         // Make sure the index is in-bound
         if index >= self.parts.len() {
@@ -585,7 +585,7 @@ mod tests {
             // Test for each test version with the manifest
             for version in VERSIONS {
                 // Create a version object, and count it's parts
-                let ver = Version::from_manifest(&version.0, &manifest);
+                let ver = Version::from_manifest(version.0, &manifest);
 
                 // Some versions might be none, because not all of the start with a number when the
                 // maximum depth is 1. A version string with only text isn't allowed,
@@ -613,7 +613,7 @@ mod tests {
         let mut manifest = Manifest::default();
 
         // Try this for true and false
-        for ignore in vec![true, false] {
+        for ignore in [true, false] {
             // Set to ignore text
             manifest.ignore_text = ignore;
 
@@ -623,21 +623,18 @@ mod tests {
             // Test each test version
             for version in VERSIONS {
                 // Create a version instance, and get it's parts
-                let ver = Version::from_manifest(&version.0, &manifest).unwrap();
+                let ver = Version::from_manifest(version.0, &manifest).unwrap();
 
                 // Loop through all version parts
                 for part in ver.parts() {
-                    match part {
-                        Part::Text(_) => {
-                            // Set the flag
-                            had_text = true;
+                    if let Part::Text(_) = part {
+                        // Set the flag
+                        had_text = true;
 
-                            // Break the loop if we already reached text when not ignored
-                            if !ignore {
-                                break;
-                            }
+                        // Break the loop if we already reached text when not ignored
+                        if !ignore {
+                            break;
                         }
-                        _ => {}
                     }
                 }
             }
@@ -736,10 +733,7 @@ mod tests {
             let b = Version::from(entry.1).unwrap();
 
             // Determine what the result should be
-            let result = match entry.2 {
-                Cmp::Eq => true,
-                _ => false,
-            };
+            let result = matches!(entry.2, Cmp::Eq);
 
             // Test
             assert_eq!(a == b, result);

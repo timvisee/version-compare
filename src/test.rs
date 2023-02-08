@@ -10,7 +10,7 @@ use crate::Cmp;
 pub struct Version(pub &'static str, pub usize);
 
 /// List of version numbers with metadata for dynamic tests
-pub const VERSIONS: &'static [Version] = &[
+pub const VERSIONS: &[Version] = &[
     Version("1", 1),
     Version("1.2", 2),
     Version("1.2.3.4", 4),
@@ -36,7 +36,7 @@ pub const VERSIONS: &'static [Version] = &[
 ];
 
 /// List of version numbers that contain errors with metadata for dynamic tests
-pub const VERSIONS_ERROR: &'static [Version] = &[
+pub const VERSIONS_ERROR: &[Version] = &[
     Version("abc", 1),
     Version("alpha.dev.snapshot", 3),
     Version("test. .snapshot", 3),
@@ -53,7 +53,7 @@ pub const VERSIONS_ERROR: &'static [Version] = &[
 pub struct VersionCombi(pub &'static str, pub &'static str, pub Cmp);
 
 /// List of version combinations for dynamic tests
-pub const COMBIS: &'static [VersionCombi] = &[
+pub const COMBIS: &[VersionCombi] = &[
     VersionCombi("1", "1", Cmp::Eq),
     VersionCombi("1.0.0.0", "1", Cmp::Eq),
     VersionCombi("1", "1.0.0.0", Cmp::Eq),
@@ -108,7 +108,7 @@ pub const COMBIS: &'static [VersionCombi] = &[
 ];
 
 /// List of invalid version combinations for dynamic tests
-pub const COMBIS_ERROR: &'static [VersionCombi] = &[
+pub const COMBIS_ERROR: &[VersionCombi] = &[
     VersionCombi("1.2.3", "1.2.3", Cmp::Lt),
     VersionCombi("1.2", "1.2.0.0", Cmp::Ne),
     VersionCombi("1.2.3.dev", "dev", Cmp::Eq),
