@@ -631,9 +631,9 @@ mod tests {
         let mut manifest = Manifest::default();
 
         // Try this for true and false
-        for ignore in [true, false] {
+        for ignore in &[true, false] {
             // Set to ignore text
-            manifest.ignore_text = ignore;
+            manifest.ignore_text = *ignore;
 
             // Keep track whether any version passed with text
             let mut had_text = false;
