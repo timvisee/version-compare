@@ -24,6 +24,7 @@
 /// ```
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[non_exhaustive]
 pub struct Manifest {
     /// The maximum depth of a version number.
     ///
