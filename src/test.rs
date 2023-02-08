@@ -1,4 +1,11 @@
-use crate::Cmp;
+use crate::{Cmp, Manifest};
+
+/// A manifest configuration for GNU versions.
+const MANIFEST_GNU: Option<Manifest> = Some(Manifest {
+    gnu_ordering: true,
+    max_depth: None,
+    ignore_text: false,
+});
 
 /// Struct containing a version number with some meta data.
 /// Such a set can be used for testing.
@@ -126,6 +133,16 @@ pub const COMBIS: &[VersionCombi] = &[
     ),
     // Issue: https://github.com/timvisee/version-compare/issues/24
     VersionCombi("7.2p1", "7.1", Cmp::Gt, None),
+    // GNU style versioning, issue: https://github.com/timvisee/version-compare/issues/27
+    VersionCombi("1.02", "1.2", Cmp::Lt, MANIFEST_GNU),
+    VersionCombi("1.02", "1.03", Cmp::Lt, MANIFEST_GNU),
+    VersionCombi("1.0.2", "1.02", Cmp::Lt, MANIFEST_GNU),
+    VersionCombi(
+        "string start 5.04.0 end of str",
+        "string start 5.4.0 end of str",
+        Cmp::Lt,
+        MANIFEST_GNU,
+    ),
     // TODO: inspect these cases
     VersionCombi("snapshot.1.2.3", "1.2.3.alpha", Cmp::Lt, None),
     VersionCombi("snapshot-1.2.3", "1.2.3-alpha", Cmp::Lt, None),

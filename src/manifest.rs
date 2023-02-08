@@ -32,6 +32,13 @@ pub struct Manifest {
 
     /// Whether to ignore text parts in version strings.
     pub ignore_text: bool,
+
+    /// Use GNU sort based ordering.
+    ///
+    /// Enabling this modifies the ordering of numbers with a leading zero to mimick GNUs sort.
+    ///
+    /// Issue: https://github.com/timvisee/version-compare/issues/27
+    pub gnu_ordering: bool,
 }
 
 /// Version manifest implementation.

@@ -342,6 +342,15 @@ fn split_version_str<'a>(
         // Try to parse the value as an number
         match part.parse::<i32>() {
             Ok(number) => {
+                // For GNU ordering we parse numbers with leading zero as string
+                if number > 0
+                    && part.starts_with('0')
+                    && manifest.map(|m| m.gnu_ordering).unwrap_or(false)
+                {
+                    parts.push(Part::Text(part));
+                    continue;
+                }
+
                 // Push the number part to the vector
                 parts.push(Part::Number(number));
             }
@@ -424,6 +433,26 @@ fn compare_iter<'a>(
             (Part::Text(lhs), Some(Part::Text(rhs))) => {
                 // Normalize case and compare text: "RC1" will be less than "RC2"
                 match Cmp::from(lhs.to_lowercase().cmp(&rhs.to_lowercase())) {
+                    Cmp::Eq => {}
+                    cmp => return cmp,
+                }
+            }
+
+            // For GNU ordering we have a special number/text comparison
+            (Part::Number(lhs), Some(Part::Text(rhs)))
+                if rhs.starts_with('0') && manifest.map(|m| m.gnu_ordering).unwrap_or(false) =>
+            {
+                // TODO: format is inefficient, find something better
+                match format!("{}", lhs).as_str().cmp(rhs).into() {
+                    Cmp::Eq => {}
+                    cmp => return cmp,
+                }
+            }
+            (Part::Text(lhs), Some(Part::Number(rhs)))
+                if lhs.starts_with('0') && manifest.map(|m| m.gnu_ordering).unwrap_or(false) =>
+            {
+                // TODO: format is inefficient, find something better
+                match lhs.cmp(&format!("{}", rhs).as_str()).into() {
                     Cmp::Eq => {}
                     cmp => return cmp,
                 }
