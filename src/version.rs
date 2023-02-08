@@ -216,7 +216,7 @@ impl<'a> Version<'a> {
         self.parts.as_slice()
     }
 
-    /// Compare this version to the given `other` version.
+    /// Compare this version to the given `other` version using the default `Manifest`.
     ///
     /// This method returns one of the following comparison operators:
     ///
@@ -245,11 +245,12 @@ impl<'a> Version<'a> {
         compare_iter(
             self.parts.iter().peekable(),
             other.borrow().parts.iter().peekable(),
+            self.manifest,
         )
     }
 
     /// Compare this version to the given `other` version,
-    /// and check whether the given comparison operator is valid.
+    /// and check whether the given comparison operator is valid using the default `Manifest`.
     ///
     /// All comparison operators can be used.
     ///
@@ -397,6 +398,7 @@ fn split_version_str<'a>(
 fn compare_iter<'a>(
     mut iter: Peekable<Iter<Part<'a>>>,
     mut other_iter: Peekable<Iter<Part<'a>>>,
+    manifest: Option<&Manifest>,
 ) -> Cmp {
     // Iterate over the iterator, without consuming it
     for part in &mut iter {
@@ -435,7 +437,7 @@ fn compare_iter<'a>(
     // Check whether we should iterate over the other iterator, if it has any items left
     match other_iter.peek() {
         // Compare based on the other iterator
-        Some(_) => compare_iter(other_iter, iter).flip(),
+        Some(_) => compare_iter(other_iter, iter, manifest).flip(),
 
         // Nothing more to iterate over, the versions should be equal
         None => Cmp::Eq,
@@ -636,8 +638,7 @@ mod tests {
         // Compare each version in the version set
         for entry in COMBIS {
             // Get both versions
-            let a = Version::from(entry.0).unwrap();
-            let b = Version::from(entry.1).unwrap();
+            let (a, b) = entry.versions();
 
             // Compare them
             assert_eq!(
@@ -654,10 +655,9 @@ mod tests {
     #[test]
     fn compare_to() {
         // Compare each version in the version set
-        for entry in COMBIS {
+        for entry in COMBIS.iter().filter(|c| c.3.is_none()) {
             // Get both versions
-            let a = Version::from(entry.0).unwrap();
-            let b = Version::from(entry.1).unwrap();
+            let (a, b) = entry.versions();
 
             // Test normally and inverse
             assert!(a.compare_to(&b, entry.2));
@@ -692,8 +692,7 @@ mod tests {
         // Compare each version in the version set
         for entry in COMBIS {
             // Get both versions
-            let a = Version::from(entry.0).unwrap();
-            let b = Version::from(entry.1).unwrap();
+            let (a, b) = entry.versions();
 
             // Compare and assert
             match entry.2 {
@@ -716,8 +715,7 @@ mod tests {
             }
 
             // Get both versions
-            let a = Version::from(entry.0).unwrap();
-            let b = Version::from(entry.1).unwrap();
+            let (a, b) = entry.versions();
 
             // Determine what the result should be
             let result = matches!(entry.2, Cmp::Eq);

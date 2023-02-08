@@ -71,8 +71,8 @@ mod tests {
 
     #[test]
     fn compare() {
-        // Compare each version in the version set
-        for entry in COMBIS {
+        // Compare each version in the version set having the default manifest
+        for entry in COMBIS.iter().filter(|c| c.3.is_none()) {
             assert_eq!(
                 super::compare(entry.0, entry.1),
                 Ok(entry.2),
@@ -95,8 +95,8 @@ mod tests {
 
     #[test]
     fn compare_to() {
-        // Compare each version in the version set
-        for entry in COMBIS {
+        // Compare each version in the version set having the default manifest
+        for entry in COMBIS.iter().filter(|c| c.3.is_none()) {
             // Test
             assert!(super::compare_to(entry.0, entry.1, entry.2).unwrap());
 
