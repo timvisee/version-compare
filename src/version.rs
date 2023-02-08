@@ -439,22 +439,13 @@ fn compare_iter<'a>(
             }
 
             // For GNU ordering we have a special number/text comparison
-            (Part::Number(lhs), Some(Part::Text(rhs)))
-                if rhs.starts_with('0') && manifest.map(|m| m.gnu_ordering).unwrap_or(false) =>
+            (lhs @ Part::Number(_), Some(rhs @ Part::Text(_)))
+            | (lhs @ Part::Text(_), Some(rhs @ Part::Number(_)))
+                if manifest.map(|m| m.gnu_ordering).unwrap_or(false) =>
             {
-                // TODO: format is inefficient, find something better
-                match format!("{}", lhs).as_str().cmp(rhs).into() {
-                    Cmp::Eq => {}
-                    cmp => return cmp,
-                }
-            }
-            (Part::Text(lhs), Some(Part::Number(rhs)))
-                if lhs.starts_with('0') && manifest.map(|m| m.gnu_ordering).unwrap_or(false) =>
-            {
-                // TODO: format is inefficient, find something better
-                match lhs.cmp(&format!("{}", rhs).as_str()).into() {
-                    Cmp::Eq => {}
-                    cmp => return cmp,
+                match compare_gnu_number_text(lhs, rhs) {
+                    Some(Cmp::Eq) | None => {}
+                    Some(cmp) => return cmp,
                 }
             }
 
@@ -471,6 +462,50 @@ fn compare_iter<'a>(
         // Nothing more to iterate over, the versions should be equal
         None => Cmp::Eq,
     }
+}
+
+/// Special logic for comparing a number and text with GNU ordering.
+///
+/// Numbers should be ordered like this:
+///
+/// - 3
+/// - 04
+/// - 4
+// TODO: this is not efficient, find a better method
+fn compare_gnu_number_text(lhs: &Part, rhs: &Part) -> Option<Cmp> {
+    // Both values must be parsable as numbers
+    let lhs_num = match lhs {
+        Part::Number(n) => *n,
+        Part::Text(n) => n.parse().ok()?,
+    };
+    let rhs_num = match rhs {
+        Part::Number(n) => *n,
+        Part::Text(n) => n.parse().ok()?,
+    };
+
+    // Return ordering if numeric values are different
+    match lhs_num.cmp(&rhs_num).into() {
+        Cmp::Eq => {}
+        cmp => return Some(cmp),
+    }
+
+    // Either value must have a leading zero
+    if !matches!(lhs, Part::Text(t) if t.starts_with('0'))
+        && !matches!(rhs, Part::Text(t) if t.starts_with('0'))
+    {
+        return None;
+    }
+
+    let lhs = match lhs {
+        Part::Number(n) => format!("{}", n),
+        Part::Text(n) => n.to_string(),
+    };
+    let rhs = match rhs {
+        Part::Number(n) => format!("{}", n),
+        Part::Text(n) => n.to_string(),
+    };
+
+    Some(lhs.cmp(&rhs).into())
 }
 
 #[cfg_attr(tarpaulin, skip)]
