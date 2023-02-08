@@ -23,7 +23,7 @@
 /// assert!(a == b);
 /// ```
 
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct Manifest {
     /// The maximum depth of a version number.
