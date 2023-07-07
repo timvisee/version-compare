@@ -8,7 +8,7 @@ const MANIFEST_GNU: Option<Manifest> = Some(Manifest {
     epoch: false,
 });
 
-/// A manifest configuration for GNU versions.
+/// A manifest configuration for Python versions possibly containing an epoch.
 const MANIFEST_PYTHON: Option<Manifest> = Some(Manifest {
     gnu_ordering: true,
     max_depth: None,
