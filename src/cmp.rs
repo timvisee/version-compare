@@ -107,7 +107,7 @@ impl Cmp {
     /// * `Ordering::Less` -> `Lt`
     /// * `Ordering::Equal` -> `Eq`
     /// * `Ordering::Greater` -> `Gt`
-    #[deprecated(since = "0.1.2", note = "use Cmp::from(ord) instead")]
+    #[deprecated(since = "0.2.0", note = "use Cmp::from(ord) instead")]
     pub fn from_ord(ord: Ordering) -> Cmp {
         Self::from(ord)
     }
