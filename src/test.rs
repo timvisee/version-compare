@@ -5,6 +5,15 @@ const MANIFEST_GNU: Option<Manifest> = Some(Manifest {
     gnu_ordering: true,
     max_depth: None,
     ignore_text: false,
+    epoch: false,
+});
+
+/// A manifest configuration for Python versions possibly containing an epoch.
+const MANIFEST_PYTHON: Option<Manifest> = Some(Manifest {
+    gnu_ordering: true,
+    max_depth: None,
+    ignore_text: false,
+    epoch: true,
 });
 
 /// Struct containing a version number with some meta data.
@@ -40,6 +49,9 @@ pub const VERSIONS: &[Version] = &[
     Version("0.0.1-test.0222426166565421816516584651684351354", 5),
     Version("0.0.1-test.02224261665a", 5),
     Version("0.0.1-test.02224261665d7b1b689816d12f6bcacb", 5),
+    // Version Epoch as defined by Python's PEP440 https://peps.python.org/pep-0440/#version-epochs
+    Version("0!0.0.1-test.02224261665d7b1b689816d12f6bcacb", 6),
+    Version("1!1.2.1", 4),
 ];
 
 /// List of version numbers that contain errors with metadata for dynamic tests
@@ -153,6 +165,10 @@ pub const COMBIS: &[VersionCombi] = &[
     // TODO: inspect these cases
     VersionCombi("snapshot.1.2.3", "1.2.3.alpha", Cmp::Lt, None),
     VersionCombi("snapshot-1.2.3", "1.2.3-alpha", Cmp::Lt, None),
+    // Version Epoch as defined by Python's PEP440 https://peps.python.org/pep-0440/#version-epochs
+    VersionCombi("0!0.0.1", "0.0.1", Cmp::Eq, MANIFEST_PYTHON),
+    VersionCombi("1!1.2.1", "0!1.2.1", Cmp::Gt, MANIFEST_PYTHON),
+    VersionCombi("0!2.1.2", "1!0.2.1", Cmp::Lt, MANIFEST_PYTHON),
 ];
 
 /// List of invalid version combinations for dynamic tests
