@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 (2025-10-31)
+
+- Hide `cfg(tarpaulin)` warning during compilation
+
 ## 0.2.0 (2024-03-16)
 
 - Add manifest option to use GNU based ordering
