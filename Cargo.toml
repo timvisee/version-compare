@@ -13,3 +13,6 @@ categories = ["parser-implementations", "parsing"]
 edition = "2021"
 rust-version = "1.56.0"
 include = ["/src", "/examples", "Cargo.toml", "LICENSE", "README.md"]
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin)'] }
