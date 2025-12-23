@@ -326,6 +326,12 @@ fn split_version_str<'a>(
         used_manifest = m;
     }
 
+    // If we are doing the python style versions, inject an implicit epoch, unless already
+    // specified
+    if used_manifest.epoch && !version.contains('!') {
+        parts.push(Part::Number(0))
+    }
+
     // Loop over the parts, and parse them
     for part in split {
         // We may not go over the maximum depth

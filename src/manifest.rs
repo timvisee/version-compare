@@ -40,6 +40,16 @@ pub struct Manifest {
     ///
     /// Issue: https://github.com/timvisee/version-compare/issues/27
     pub gnu_ordering: bool,
+
+    /// Support Python style version epochs.
+    /// If `true` and no epoch is specified, it will assume everything is prefixed by `0!`.
+    /// Examples:
+    /// `0!1.2.1` == `1.2.1`
+    /// `1!0.2.1` > `1.2.1`
+    ///
+    /// For details see:
+    /// https://peps.python.org/pep-0440/#version-epochs
+    pub epoch: bool,
 }
 
 /// Version manifest implementation.
